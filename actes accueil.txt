@@ -1,0 +1,94 @@
+Voici plusieurs **idées de catégories de prestations** que tu peux intégrer dans un logiciel de clinique. Ces catégories permettent d’organiser les services médicaux, paramédicaux et administratifs de manière claire pour la gestion et la facturation.
+
+---
+
+### 🏥 **Catégories de prestations médicales**
+
+1. **Consultations**
+
+   * Consultation générale
+   * Consultation spécialisée
+   * Suivi post-opératoire
+
+2. **Hospitalisation**
+
+   * Hospitalisation journalière
+   * Hospitalisation complète
+   * Réanimation / soins intensifs
+
+3. **Chirurgie**
+
+   * Chirurgie générale
+   * Chirurgie orthopédique
+   * Chirurgie gynécologique
+   * Chirurgie ORL
+
+4. **Imagerie médicale**
+
+   * Radiologie
+   * Échographie
+   * Scanner (CT-scan)
+   * IRM
+
+5. **Analyses médicales / Laboratoire**
+
+   * Hématologie
+   * Biochimie
+   * Microbiologie
+   * Immunologie
+   * Bactériologie
+
+6. **Maternité / Gynécologie**
+
+   * Accouchement
+   * Suivi prénatal
+   * Suivi postnatal
+   * Consultation gynécologique
+
+---
+
+### 💉 **Catégories paramédicales**
+
+7. **Soins infirmiers**
+
+   * Injection
+   * Pansement
+   * Perfusion
+   * Prise de tension
+
+8. **Kinésithérapie / Rééducation**
+
+   * Rééducation motrice
+   * Massages thérapeutiques
+
+9. **Consultations spécialisées**
+
+   * Cardiologie
+   * Dermatologie
+   * Ophtalmologie
+   * ORL
+   * Neurologie
+
+---
+
+### 🧾 **Catégories administratives et annexes**
+
+10. **Frais de dossier**
+11. **Frais de chambre / séjour**
+12. **Frais de transport médicalisé**
+13. **Frais de bloc opératoire**
+14. **Frais d’anesthésie**
+15. **Frais de matériel médical**
+
+---
+
+### 💊 **Pharmacie / Médicaments**
+
+16. **Médicaments**
+
+* Médicaments génériques
+* Médicaments de spécialité
+
+---
+
+Souhaites-tu que je t’aide à insérer ces catégories dans une table `categories` avec migration, modèle, contrôleur, etc. ?
