@@ -22,6 +22,7 @@ class CategoryPrestationsSeeder extends Seeder
             'Soins infirmiers',
             'Kinésithérapie / Rééducation',
             'Consultations spécialisées',
+            'Pharmacie',
         ];
 
         foreach ($categories as $categorie) {

@@ -8,9 +8,9 @@ class Specialite extends Model
 {
     protected $fillable = ['nom', 'description'];
 
-    public function specialite()
+    public function medecins()
     {
-        return $this->belongsTo(Specialite::class);
+        return $this->hasMany(Medecin::class);
     }
 
     

@@ -11,20 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('consultations', function (Blueprint $table) {
+        Schema::create('hospitalisations', function (Blueprint $table) {
             $table->id();
-            $table->string('numero_recu')->unique();
-            $table->foreignId('patient_id')->constrained();
+            $table->foreignId('patient_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained();
-            $table->foreignId('medecin_id')->constrained(); 
+            $table->foreignId('medecin_id')->nullable()->constrained()->onDelete('set null');
+
             $table->decimal('total', 10, 2);
             $table->decimal('ticket_moderateur', 10, 2);
             $table->decimal('reduction', 10, 2)->default(0);
             $table->decimal('montant_a_paye', 10, 2);
-            $table->decimal('montant_paye', 10, 2);
-            $table->decimal('reste_a_payer', 10, 2)->default(0);
-            $table->string('methode_paiement');
-            $table->date('date_consultation');
+
+            $table->timestamp('date_entree')->useCurrent();
+            $table->timestamp('date_sortie')->nullable();
             $table->timestamps();
         });
     }
@@ -34,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('consultations');
+        Schema::dropIfExists('hospitalisations');
     }
 };

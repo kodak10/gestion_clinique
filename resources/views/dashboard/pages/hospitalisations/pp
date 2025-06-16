@@ -1,0 +1,233 @@
+@extends('dashboard.layouts.master')
+
+@section('content')
+<div class="page-header d-print-none">
+    <div class="container-xl">
+        <div class="row g-2 align-items-center">
+            <div class="col">
+                <h2 class="page-title">Pharmacie du patient</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-body">
+    <div class="container-xl">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        <form id="consultation-form" action="" method="POST">
+            @csrf
+            <input type="hidden" name="numero_recu" id="numero-recu">
+            <div class="row">
+                <!-- Carte Info Patient (Gauche) -->
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Informations Patient</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Nom & Prénoms</label>
+                                    <input type="text" class="form-control" value="{{ $patient->nom }} {{ $patient->prenoms }}" readonly>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Carte Prestations -->
+                <div class="col-md-12">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="prestations-repeater">
+                                <div data-repeater-list="prestations">
+                                    <div data-repeater-item class="mb-3 border-bottom pb-3">
+                                        <div class="row mt-2">
+                                            <div class="col-md-5">
+                                                <label class="form-label">Médicament</label>
+                                                <select class="form-control prestation-select" name="prestation_id">
+                                                    <option value="">Sélectionner les médicaments</option>
+                                                    @foreach($prestations as $medicament)
+                                                        <option value="{{ $medicament->id }}" data-montant="{{ $medicament->montant }}">
+                                                            {{ $medicament->libelle }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label">Montant (FCFA)</label>
+                                                <input type="number" class="form-control montant" name="montant">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label">Quantité</label>
+                                                <input type="number" class="form-control quantite" name="quantite" min="1" value="1">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label">Total (FCFA)</label>
+                                                <input type="number" class="form-control total" name="total" readonly>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="form-label d-block">.</label>
+                                                <button type="button" data-repeater-delete class="btn btn-danger btn-sm">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button type="button" data-repeater-create class="btn bg-primary-subtle text-primary">
+                                    <span class="fs-4 me-1">+</span>
+                                    Ajouter un autre médicament
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bouton de soumission -->
+            <div class="row mt-3">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Enregistrer la consultation</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection
+
+@push('scripts')
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.repeater/1.2.1/jquery.repeater.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+<script>
+    $(document).ready(function() {
+    // Initialisation du répéteur avec gestion du recalcul
+    $('.prestations-repeater').repeater({
+        initEmpty: false, // Toujours afficher au moins une ligne
+        isFirstItemUndeletable: true, // Empêche la suppression de la dernière ligne
+        
+        show: function() {
+            $(this).slideDown(function() {
+                // Initialisation Select2 pour la nouvelle ligne
+                $(this).find('.prestation-select').select2({
+                    width: '100%',
+                    placeholder: "Sélectionner une prestation"
+                });
+                
+                // Initialisation des valeurs par défaut
+                $(this).find('.montant').val(0);
+                $(this).find('.quantite').val(1);
+                $(this).find('.total').val(0);
+            });
+        },
+        
+        hide: function(deleteElement) {
+            // Vérifier le nombre de lignes avant suppression
+            if ($('[data-repeater-item]').length > 1) {
+                $(this).slideUp(deleteElement, function() {
+                    $(this).remove(); // Suppression effective
+                    recalculerTotauxGlobaux(); // Recalcul après suppression
+                });
+            }
+        },
+        
+        ready: function(setIndexes) {
+            // Initialisation pour les lignes existantes
+            $('.prestation-select').select2();
+            recalculerTotauxGlobaux();
+            
+            // Empêcher la suppression de la dernière ligne
+            $('[data-repeater-delete]').each(function() {
+                if ($('[data-repeater-item]').length === 1) {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+
+    // Gestion des événements
+    $(document)
+        .on('change', '.prestation-select', function() {
+            const selected = $(this).find('option:selected');
+            const montant = selected.data('montant') || 0;
+            const ligne = $(this).closest('[data-repeater-item]');
+            
+            ligne.find('.montant').val(montant);
+            calculerTotalLigne(ligne);
+        })
+        .on('input', '.montant, .quantite', function() {
+            const ligne = $(this).closest('[data-repeater-item]');
+            calculerTotalLigne(ligne);
+        })
+        .on('input', '#reduction, #payer', recalculerTotauxGlobaux)
+        .on('click', '[data-repeater-delete]', function() {
+            // Mise à jour de l'affichage des boutons de suppression
+            if ($('[data-repeater-item]').length === 2) {
+                $('[data-repeater-delete]').hide();
+            }
+        })
+        .on('click', '[data-repeater-create]', function() {
+            // Réafficher les boutons de suppression si nécessaire
+            if ($('[data-repeater-item]').length >= 1) {
+                $('[data-repeater-delete]').show();
+            }
+        });
+
+    // Fonction de calcul pour une ligne
+    function calculerTotalLigne(ligne) {
+        const qte = parseFloat(ligne.find('.quantite').val()) || 0;
+        const montant = parseFloat(ligne.find('.montant').val()) || 0;
+        const total = (qte * montant).toFixed(2);
+        
+        ligne.find('.total').val(total);
+        recalculerTotauxGlobaux();
+    }
+
+    // Fonction de recalcul global
+    function recalculerTotauxGlobaux() {
+        let totalPrestations = 0;
+        
+        // Calcul du total des prestations
+        $('[data-repeater-item]').each(function() {
+            const total = parseFloat($(this).find('.total').val()) || 0;
+            totalPrestations += total;
+        });
+
+        // Calcul du ticket modérateur
+        const tauxAssurance = parseFloat($('#assurance-taux').val().replace('%', '')) || 0;
+        const ticketModerateur = totalPrestations * (1 - tauxAssurance / 100);
+        
+        // Application de la réduction
+        const reduction = parseFloat($('#reduction').val()) || 0;
+        const montantAPayer = Math.max(0, ticketModerateur - reduction);
+        
+        // Mise à jour des champs globaux
+        $('#total-prestations').val(totalPrestations.toFixed(2));
+        $('#ticket-moderateur').val(ticketModerateur.toFixed(2));
+        $('#a-payer').val(montantAPayer.toFixed(2));
+        
+        // Synchronisation du montant perçu
+        const montantPercu = parseFloat($('#payer').val()) || 0;
+        if (montantPercu === 0) {
+            $('#payer').val(montantAPayer.toFixed(2));
+        }
+    }
+});
+</script>
+@endpush

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('frais_hospitalisations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')->constrained();
+            $table->foreignId('category_id')->constrained('category_frais__hospitalisations')->onDelete('cascade');
             $table->string('libelle');
             $table->decimal('montant', 10, 2);
             $table->text('description')->nullable();

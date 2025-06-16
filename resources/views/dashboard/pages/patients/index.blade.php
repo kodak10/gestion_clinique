@@ -48,7 +48,17 @@
                                                     <a class="dropdown-item" href="#" >Imprimer le dossier</a>
                                                    <a class="dropdown-item" href="{{ route('consultations.create', $patient->id) }}">Consultation</a>
 
-                                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modal-edit-{{ $patient->id }}">A Hospitaliser</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('hospitalisations.store.simple', ['patient' => $patient->id]) }}"
+                                                        onclick="event.preventDefault(); if(confirm('Voulez-vous vraiment hospitaliser ce patient ?')) document.getElementById('hospitaliser-form-{{ $patient->id }}').submit();">
+                                                        À Hospitaliser
+                                                    </a>
+
+                                                    <form id="hospitaliser-form-{{ $patient->id }}"
+                                                        action="{{ route('hospitalisations.store.simple', ['patient' => $patient->id]) }}"
+                                                        method="POST" style="display: none;">
+                                                        @csrf
+                                                    </form>
                                                     <button class="dropdown-item" onclick="confirmDelete({{ $patient->id }})">Supprimer</button>
                                                 </div>
                                             </div>

@@ -13,8 +13,18 @@
 
 <div class="page-body">
     <div class="container-xl">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <form id="consultation-form" action="{{ route('consultations.store', $patient) }}" method="POST">
             @csrf
+            <input type="hidden" name="numero_recu" id="numero-recu">
             <div class="row">
                 <!-- Carte Info Patient (Gauche) -->
                 <div class="col-md-6">
@@ -57,14 +67,27 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label class="form-label">Medecin</label>
-                                        <input type="text" class="form-control" value="{{ $patient->assurance->name ?? 'Aucune' }}" readonly>
+                                        <label class="form-label">Médecin</label>
+                                        <select class="form-control select2" id="medecin-select" name="medecin_id">
+                                            <option value="">Sélectionner un Médecin</option>
+                                            @foreach($categorie_medecins as $categorie_medecin)
+                                                <optgroup label="{{ $categorie_medecin->nom }}">
+                                                    @foreach($categorie_medecin->medecins as $medecin)
+                                                        <option value="{{ $medecin->id }}" 
+                                                                data-specialite="{{ $categorie_medecin->nom }}"
+                                                                data-montant="{{ $medecin->montant ?? '' }}">
+                                                            {{ $medecin->nom_complet }}
+                                                        </option>
+                                                    @endforeach
+                                                </optgroup>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label class="form-label">Spécialité</label>
-                                        <input type="text" class="form-control" id="assurance-taux" value="{{ $patient->assurance->taux ?? '0' }}%" readonly>
+                                        <input type="text" class="form-control" id="specialite-input" name="specialite" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -76,7 +99,7 @@
                 <div class="col-md-12">
                     <div class="card mb-3">
                         <div class="card-body">
-                            <div class="repeater">
+                            <div class="prestations-repeater">
                                 <div data-repeater-list="prestations">
                                     <div data-repeater-item class="mb-3 border-bottom pb-3">
                                         <div class="row mt-2">
@@ -88,24 +111,25 @@
                                                         <optgroup label="{{ $categorie->nom }}">
                                                             @foreach($categorie->prestations as $prestation)
                                                                 <option value="{{ $prestation->id }}" data-montant="{{ $prestation->montant }}">
-                                                                    {{ $prestation->libelle }} ({{ $prestation->montant }} FCFA)
+                                                                    {{ $prestation->libelle }}
                                                                 </option>
                                                             @endforeach
                                                         </optgroup>
                                                     @endforeach
                                                 </select>
+                                                
                                             </div>
                                             <div class="col-md-2">
-                                                <label class="form-label">Montant</label>
-                                                <input type="text" class="form-control montant" name="montant" >
+                                                <label class="form-label">Montant (FCFA)</label>
+                                                <input type="number" class="form-control montant" name="montant">
                                             </div>
                                             <div class="col-md-2">
                                                 <label class="form-label">Quantité</label>
                                                 <input type="number" class="form-control quantite" name="quantite" min="1" value="1">
                                             </div>
                                             <div class="col-md-2">
-                                                <label class="form-label">Total</label>
-                                                <input type="text" class="form-control total" name="total" readonly>
+                                                <label class="form-label">Total (FCFA)</label>
+                                                <input type="number" class="form-control total" name="total" readonly>
                                             </div>
                                             <div class="col-md-1">
                                                 <label class="form-label d-block">.</label>
@@ -116,8 +140,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="button" data-repeater-create class="btn btn-primary">
-                                    <i class="fas fa-plus"></i> Ajouter une prestation
+                                
+                                <button type="button" data-repeater-create class="btn bg-primary-subtle text-primary">
+                                    <span class="fs-4 me-1">+</span>
+                                    Ajouter une autre prestation
                                 </button>
                             </div>
                         </div>
@@ -132,22 +158,22 @@
                         <div class="card-body">
                             <div class="mb-3">
                                 <label class="form-label">Total Prestations</label>
-                                <input type="text" class="form-control" id="total-prestations" name="total_prestations" readonly>
+                                <input type="number" class="form-control" id="total-prestations" name="total" readonly>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="card">
                         <div class="card-body">
                             <div class="mb-3">
                                 <label class="form-label">Ticket Modérateur</label>
-                                <input type="text" class="form-control" id="ticket-moderateur" name="ticket_moderateur" readonly>
+                                <input type="number" class="form-control" id="ticket-moderateur" name="ticket_moderateur" readonly>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="card">
                         <div class="card-body">
                             <div class="mb-3">
@@ -157,12 +183,22 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="card">
                         <div class="card-body">
                             <div class="mb-3">
                                 <label class="form-label">À Payer</label>
-                                <input type="text" class="form-control" id="a-payer" name="montant_paye" readonly>
+                                <input type="number" class="form-control" id="a-payer" name="montant_a_paye"  readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Montant Perçu</label>
+                                <input type="number" class="form-control" id="payer" name="montant_paye" value="">
                             </div>
                         </div>
                     </div>
@@ -174,7 +210,7 @@
                 <div class="col-lg-3">
                     <div class="form-selectgroup form-selectgroup-boxes d-flex flex-column">
                         <label class="form-selectgroup-item flex-fill">
-                            <input type="radio" name="form-payment" value="mastercard" class="form-selectgroup-input" checked="">
+                            <input type="radio" name="methode_paiement" value="cash" class="form-selectgroup-input" checked>
                             <div class="form-selectgroup-label d-flex align-items-center p-3">
                                 <div class="me-3">
                                     <span class="form-selectgroup-check"></span>
@@ -190,21 +226,21 @@
                 
                 <div class="col-lg-5">
                     <label class="form-selectgroup-item flex-fill">
-                        <input type="radio" name="form-payment" value="visa" class="form-selectgroup-input">
+                        <input type="radio" name="methode_paiement" value="mobile_money" class="form-selectgroup-input">
                         <div class="form-selectgroup-label d-flex align-items-center p-3">
-                        <div class="me-3">
-                            <span class="form-selectgroup-check"></span>
-                        </div>
-                        <div>
-                            <span class="payment payment-provider-visa payment-xs me-2"></span>
-                            <strong>Wave / Orange Money / Momo / Moov Money</strong>
-                        </div>
+                            <div class="me-3">
+                                <span class="form-selectgroup-check"></span>
+                            </div>
+                            <div>
+                                <span class="payment payment-provider-visa payment-xs me-2"></span>
+                                <strong>Wave / Orange Money / Momo / Moov Money</strong>
+                            </div>
                         </div>
                     </label>
                 </div>
                 <div class="col-lg-4">
                     <label class="form-selectgroup-item flex-fill">
-                        <input type="radio" name="form-payment" value="paypal" class="form-selectgroup-input">
+                        <input type="radio" name="methode_paiement" value="virement" class="form-selectgroup-input">
                         <div class="form-selectgroup-label d-flex align-items-center p-3">
                             <div class="me-3">
                                 <span class="form-selectgroup-check"></span>
@@ -230,97 +266,203 @@
 @endsection
 
 @push('scripts')
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.repeater/1.2.1/jquery.repeater.min.js"></script>
-<script>
-$(document).ready(function() {
-    // Initialiser le repeater
-    $('.repeater').repeater({
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+{{-- <script>
+    $(document).ready(function() {
+    // Initialisation des select2
+    $('.select2').select2({
+        width: '100%',
+        placeholder: "Sélectionner",
+        allowClear: true
+    });
+
+    // Gestion du médecin et spécialité
+    $('#medecin-select').on('change', function() {
+        const selected = $(this).find('option:selected');
+        $('#specialite-input').val(selected.data('specialite') || '');
+    });
+
+    // Initialisation du répéteur de prestations
+    $('.prestations-repeater').repeater({
         initEmpty: false,
-        defaultValues: {
-            'quantite': 1
-        },
         show: function() {
             $(this).slideDown();
-            // Réinitialiser les champs pour la nouvelle ligne
-            $(this).find('select[name="prestation_id"]').val('');
-            $(this).find('.montant, .total').val('');
+            $(this).find('.prestation-select').select2({
+                width: '100%',
+                placeholder: "Sélectionner une prestation"
+            });
             $(this).find('.quantite').val(1);
+
+            calculerLigne($(this));
         },
+        
+
         hide: function(deleteElement) {
-            if(confirm('Voulez-vous vraiment supprimer cette prestation ?')) {
-                $(this).slideUp(deleteElement);
-                updateTotals();
-            }
-        },
-        ready: function() {
-            updateTotals();
+            $(this).slideUp(deleteElement, updateCalculsGlobaux);
         }
     });
 
-    // Mettre à jour le montant lorsqu'une prestation est sélectionnée
-    $(document).on('change', 'select[name="prestation_id"]', function() {
-        let selectedOption = $(this).find('option:selected');
-        let montant = selectedOption.data('montant') || 0;
-        let item = $(this).closest('[data-repeater-item]');
-        
-        item.find('.montant').val(montant);
-        updateItemTotal(item);
-        updateTotals();
-    });
+    // Gestion des événements pour les calculs
+    $(document)
+        .on('change', '.prestation-select', function() {
+            const montant = $(this).find('option:selected').data('montant') || 0;
+            const row = $(this).closest('[data-repeater-item]');
+            row.find('.montant').val(montant).prop('readonly', false);
+            calculerLigne(row);
+        })
+        .on('input', '.montant, .quantite', function() {
+            calculerLigne($(this).closest('[data-repeater-item]'));
+        })
+        .on('input', '#reduction', updateCalculsGlobaux);
 
-    // Mettre à jour le total lorsqu'on change la quantité
-    $(document).on('input', '.quantite', function() {
-        let item = $(this).closest('[data-repeater-item]');
-        updateItemTotal(item);
-        updateTotals();
-    });
-
-    // Mettre à jour la réduction
-    $(document).on('input', '#reduction', function() {
-        updateTotals();
-    });
-
-    // Calculer le total pour une ligne
-    function updateItemTotal(item) {
-        let montant = parseFloat(item.find('.montant').val()) || 0;
-        let quantite = parseInt(item.find('.quantite').val()) || 1;
-        let total = montant * quantite;
-        item.find('.total').val(total.toFixed(2));
+    function calculerLigne(row) {
+        const qte = parseFloat(row.find('.quantite').val()) || 0;
+        const montant = parseFloat(row.find('.montant').val()) || 0;
+        const total = (qte * montant).toFixed(2);
+        row.find('.total').val(total);
+        updateCalculsGlobaux();
     }
 
-    // Calculer les totaux globaux
-    function updateTotals() {
+    function updateCalculsGlobaux() {
         let totalPrestations = 0;
         
         $('[data-repeater-item]').each(function() {
-            let total = parseFloat($(this).find('.total').val()) || 0;
+            const total = parseFloat($(this).find('.total').val()) || 0;
             totalPrestations += total;
         });
 
-        let assuranceTaux = parseFloat($('#assurance-taux').val().replace('%', '')) || 0;
-        let ticketModerateur = totalPrestations * (assuranceTaux / 100);
-        let reduction = parseFloat($('#reduction').val()) || 0;
-        let aPayer = totalPrestations - ticketModerateur - reduction;
+        const tauxAssurance = parseFloat($('#assurance-taux').val()) || 0;
+        const reduction = parseFloat($('#reduction').val()) || 0;
+        
+        const ticketModerateur = totalPrestations * (1 - tauxAssurance / 100);
+        const montantAPayer = ticketModerateur - reduction;
 
-        $('#total-prestations').val(totalPrestations.toFixed(2) + ' FCFA');
-        $('#ticket-moderateur').val(ticketModerateur.toFixed(2) + ' FCFA');
-        $('#a-payer').val(Math.max(0, aPayer).toFixed(2) + ' FCFA');
+        $('#total-prestations').val(totalPrestations.toFixed(2));
+        $('#ticket-moderateur').val(ticketModerateur.toFixed(2));
+        $('#a-payer').val(montantAPayer.toFixed(2));
+        $('#payer').val(montantAPayer.toFixed(3));
+    }
+});
+</script> --}}
+
+<script>
+    $(document).ready(function() {
+    // Initialisation du répéteur avec gestion du recalcul
+    $('.prestations-repeater').repeater({
+        initEmpty: false, // Toujours afficher au moins une ligne
+        isFirstItemUndeletable: true, // Empêche la suppression de la dernière ligne
+        
+        show: function() {
+            $(this).slideDown(function() {
+                // Initialisation Select2 pour la nouvelle ligne
+                $(this).find('.prestation-select').select2({
+                    width: '100%',
+                    placeholder: "Sélectionner une prestation"
+                });
+                
+                // Initialisation des valeurs par défaut
+                $(this).find('.montant').val(0);
+                $(this).find('.quantite').val(1);
+                $(this).find('.total').val(0);
+            });
+        },
+        
+        hide: function(deleteElement) {
+            // Vérifier le nombre de lignes avant suppression
+            if ($('[data-repeater-item]').length > 1) {
+                $(this).slideUp(deleteElement, function() {
+                    $(this).remove(); // Suppression effective
+                    recalculerTotauxGlobaux(); // Recalcul après suppression
+                });
+            }
+        },
+        
+        ready: function(setIndexes) {
+            // Initialisation pour les lignes existantes
+            $('.prestation-select').select2();
+            recalculerTotauxGlobaux();
+            
+            // Empêcher la suppression de la dernière ligne
+            $('[data-repeater-delete]').each(function() {
+                if ($('[data-repeater-item]').length === 1) {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+
+    // Gestion des événements
+    $(document)
+        .on('change', '.prestation-select', function() {
+            const selected = $(this).find('option:selected');
+            const montant = selected.data('montant') || 0;
+            const ligne = $(this).closest('[data-repeater-item]');
+            
+            ligne.find('.montant').val(montant);
+            calculerTotalLigne(ligne);
+        })
+        .on('input', '.montant, .quantite', function() {
+            const ligne = $(this).closest('[data-repeater-item]');
+            calculerTotalLigne(ligne);
+        })
+        .on('input', '#reduction, #payer', recalculerTotauxGlobaux)
+        .on('click', '[data-repeater-delete]', function() {
+            // Mise à jour de l'affichage des boutons de suppression
+            if ($('[data-repeater-item]').length === 2) {
+                $('[data-repeater-delete]').hide();
+            }
+        })
+        .on('click', '[data-repeater-create]', function() {
+            // Réafficher les boutons de suppression si nécessaire
+            if ($('[data-repeater-item]').length >= 1) {
+                $('[data-repeater-delete]').show();
+            }
+        });
+
+    // Fonction de calcul pour une ligne
+    function calculerTotalLigne(ligne) {
+        const qte = parseFloat(ligne.find('.quantite').val()) || 0;
+        const montant = parseFloat(ligne.find('.montant').val()) || 0;
+        const total = (qte * montant).toFixed(2);
+        
+        ligne.find('.total').val(total);
+        recalculerTotauxGlobaux();
     }
 
-    // Soumission du formulaire
-    $('#consultation-form').on('submit', function(e) {
-        e.preventDefault();
+    // Fonction de recalcul global
+    function recalculerTotauxGlobaux() {
+        let totalPrestations = 0;
         
-        // Vérifier qu'il y a au moins une prestation
-        if ($('[data-repeater-item]').length === 0) {
-            alert('Veuillez ajouter au moins une prestation');
-            return;
-        }
+        // Calcul du total des prestations
+        $('[data-repeater-item]').each(function() {
+            const total = parseFloat($(this).find('.total').val()) || 0;
+            totalPrestations += total;
+        });
 
-        // Soumettre le formulaire
-        this.submit();
-    });
+        // Calcul du ticket modérateur
+        const tauxAssurance = parseFloat($('#assurance-taux').val().replace('%', '')) || 0;
+        const ticketModerateur = totalPrestations * (1 - tauxAssurance / 100);
+        
+        // Application de la réduction
+        const reduction = parseFloat($('#reduction').val()) || 0;
+        const montantAPayer = Math.max(0, ticketModerateur - reduction);
+        
+        // Mise à jour des champs globaux
+        $('#total-prestations').val(totalPrestations.toFixed(2));
+        $('#ticket-moderateur').val(ticketModerateur.toFixed(2));
+        $('#a-payer').val(montantAPayer.toFixed(2));
+        
+        // Synchronisation du montant perçu
+        const montantPercu = parseFloat($('#payer').val()) || 0;
+        if (montantPercu === 0) {
+            $('#payer').val(montantAPayer.toFixed(2));
+        }
+    }
 });
 </script>
 @endpush

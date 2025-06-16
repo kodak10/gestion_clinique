@@ -414,13 +414,13 @@
                             <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
                           </svg>
                         </span>
-                        <span class="nav-link-title"> Laboratoire </span>
+                        <span class="nav-link-title"> Examens </span>
                       </a>
                     </li>
 
                     
                     <li class="nav-item">
-                      <a class="nav-link" href="#">
+                      <a class="nav-link" href="{{ route('hospitalisations.index') }}">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
                           <!-- Download SVG icon from http://tabler.io/icons/icon/home -->
                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">

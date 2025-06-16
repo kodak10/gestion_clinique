@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('reglements', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('consultation_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // caissier
+            $table->decimal('montant', 10, 2);
+            $table->enum('methode_paiement', ['cash', 'mobile_money', 'virement']);
+            $table->string('type')->default('entrée'); // ou 'sortie' si un jour tu fais aussi des dépenses
             $table->timestamps();
         });
     }

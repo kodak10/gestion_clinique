@@ -8,7 +8,9 @@
                 <h2 class="page-title">Frais d'Hospitalisations</h2>
             </div>
             <div class="col">
-                <a href="#" class="btn btn-2 float-end" data-bs-toggle="modal" data-bs-target="#modal-report">Ajouter</a>
+                <a href="#" class="btn btn-2 float-end mr-3" data-bs-toggle="modal" data-bs-target="#modal-report">Ajouter un Frais</a>
+
+                <a href="#" class="btn btn-2 float-end" data-bs-toggle="modal" data-bs-target="#modal-category">Ajouter Une Catégorie</a>
             </div>
         </div>
     </div>
@@ -31,7 +33,8 @@
                         <tbody>
                             @foreach ($frais as $fraisItem)
                                 <tr>
-                                    <td>{{ $fraisItem->category->nom }}</td>
+                                    <td>{{ optional($fraisItem->category)->nom ?? 'Non catégorisé' }}</td>
+
                                     <td>{{ $fraisItem->libelle }}</td>
                                     <td>{{ number_format($fraisItem->montant, 0) }}</td>
                                     <td>
@@ -158,6 +161,50 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-link link-secondary btn-3" data-bs-dismiss="modal">Annuler</a>
+                    <button type="submit" class="btn btn-primary btn-5 ms-auto">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-blur fade" id="modal-category" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nouvelle catégorie d'Hospitalisation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+                <form action="{{ route('category.hospitalisation.store') }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label class="form-label">Nom de la catégorie</label>
+                                <input type="text" class="form-control @error('nom') is-invalid @enderror" name="nom" value="{{ old('nom') }}" required>
+                                @error('nom')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
                         </div>
                     </div>
                     
