@@ -57,7 +57,7 @@ class PatientController extends Controller
             },
         ],
         'contact_urgence' => 'nullable|string|max:255',
-        'contact_patient' => 'nullable|string|max:20',
+        'contact_patient' => 'required|string|max:20',
         'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         'envoye_par' => 'nullable|string|max:255',
     ]);
@@ -113,12 +113,5 @@ class PatientController extends Controller
         return back()->with('success', 'Photo supprimée avec succès');
     }
 
-    public function destroy(Patient $patient)
-    {
-        if ($patient->photo) {
-            Storage::disk('public')->delete($patient->photo);
-        }
-        $patient->delete();
-        return redirect()->route('patients.index')->with('success', 'Patient supprimé avec succès');
-    }
+    
 }

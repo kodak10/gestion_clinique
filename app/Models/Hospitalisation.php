@@ -26,8 +26,25 @@ class Hospitalisation extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function medecin(): BelongsTo
+    public function medecin()
     {
         return $this->belongsTo(Medecin::class);
+    }
+    public function frais()
+    {
+        return $this->hasMany(FraisHospitalisation::class);
+    }
+
+    public function fraisHospitalisations()
+    {
+        return $this->hasMany(FraisHospitalisation::class);
+    }
+
+    public function details()
+    {
+        return $this->hasManyThrough(
+            HospitalisationDetail::class,
+            FraisHospitalisation::class
+        );
     }
 }

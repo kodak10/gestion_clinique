@@ -54,12 +54,7 @@
                                                         À Hospitaliser
                                                     </a>
 
-                                                    <form id="hospitaliser-form-{{ $patient->id }}"
-                                                        action="{{ route('hospitalisations.store.simple', ['patient' => $patient->id]) }}"
-                                                        method="POST" style="display: none;">
-                                                        @csrf
-                                                    </form>
-                                                    <button class="dropdown-item" onclick="confirmDelete({{ $patient->id }})">Supprimer</button>
+                                                    
                                                 </div>
                                             </div>
                                         </div>
@@ -89,20 +84,9 @@
 
 
 
-<!-- Script pour la suppression -->
-<script>
-function confirmDelete(id) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cet Patient ?')) {
-        document.getElementById('delete-form-'+id).submit();
-    }
-}
+
 </script>
 
-@foreach ($patients as $patient)
-<form id="delete-form-{{ $patient->id }}" action="{{ route('patients.destroy', $patient->id) }}" method="POST" style="display: none;">
-    @csrf @method('DELETE')
-</form>
-@endforeach
 
 @endsection
 

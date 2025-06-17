@@ -72,6 +72,7 @@
     <!-- BEGIN DEMO SCRIPTS -->
     <script src="{{ asset('assets/preview/js/demo.min.js') }}" defer=""></script>
     <script src="{{ asset('assets/libs/tom-select/dist/js/tom-select.base.min.js') }} " defer=""></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.repeater/1.2.1/jquery.repeater.min.js"></script>
     <!-- END DEMO SCRIPTS -->
@@ -79,7 +80,7 @@
         @stack('scripts')
 
 
-<script>
+{{-- <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Gestion du chargement pour les formulaires
         const forms = document.querySelectorAll('form');
@@ -104,7 +105,7 @@
             });
         });
     });
-</script>
+</script> --}}
     <!-- BEGIN PAGE SCRIPTS -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {

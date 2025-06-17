@@ -36,7 +36,7 @@ class FraisHospitalisationController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'category_id' => 'required|exists:categories,id',
+            'category_id' => 'required|exists:category_frais__hospitalisations,id',
             'libelle' => 'required|string|max:255',
             'montant' => 'required|numeric|min:0',
         ]);
@@ -50,7 +50,7 @@ class FraisHospitalisationController extends Controller
     public function update(Request $request, FraisHospitalisation $fraisHospitalisation)
     {
         $validated = $request->validate([
-            'category_id' => 'required|exists:categories,id',
+            'category_id' => 'required|exists:category_frais__hospitalisations,id',
             'libelle' => 'required|string|max:255',
             'montant' => 'required|numeric|min:0',
             'description' => 'nullable|string'

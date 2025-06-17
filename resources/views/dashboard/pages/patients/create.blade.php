@@ -176,7 +176,7 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
-                                <label class="form-label">Contact</label>
+                                <label class="form-label">Contact <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('contact_patient') is-invalid @enderror" name="contact_patient" value="{{ old('contact_patient') }}">
                                 @error('contact_patient')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -214,3 +214,42 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+
+<script>
+    $(document).ready(function() {
+        // ... votre code existant ...
+
+        // Gestion de la soumission du formulaire
+        $('form').on('submit', function(e) {
+            e.preventDefault();
+            
+            Swal.fire({
+                title: 'Confirmation',
+                text: "Êtes-vous sûr de l'enregistrement de ce patient ?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui, enregistrer',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Soumettre le formulaire
+                    this.submit();
+                }
+            });
+        });
+
+        // Afficher un message de succès si présent dans la session
+        @if(session('success'))
+            Swal.fire(
+                'Succès !',
+                '{{ session('success') }}',
+                'success'
+            );
+        @endif
+    });
+</script>
+@endpush

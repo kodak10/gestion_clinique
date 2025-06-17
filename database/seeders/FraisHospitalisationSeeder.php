@@ -32,10 +32,16 @@ class FraisHospitalisationSeeder extends Seeder
                 ['libelle' => 'Visite d\'un Ami', 'montant' => 1000, 'description' => 'Frais liés à la visite d\'un ami pendant l\'hospitalisation.'],
             ],
             'Pharmacie' => [
-                ['libelle' => 'Médicaments Standards', 'montant' => 5000, 'description' => 'Médicaments standard pour les patients.'],
-                ['libelle' => 'Médicaments Spécialisés', 'montant' => 8000, 'description' => 'Médicaments spécialisés pour certaines pathologies.'],
-            ]
+                ['libelle' => 'Paracétamol 500mg (boite)', 'montant' => 1500, 'description' => 'Antidouleur et antipyrétique'],
+                ['libelle' => 'Ibuprofène 400mg (boite)', 'montant' => 2000, 'description' => 'Anti-inflammatoire non stéroïdien'],
+                ['libelle' => 'Amoxicilline 500mg (boite)', 'montant' => 3500, 'description' => 'Antibiotique à large spectre'],
+                ['libelle' => 'Doliprane 1000mg (boite)', 'montant' => 2500, 'description' => 'Antalgique et antipyrétique'],
+                ['libelle' => 'Smecta (sachets)', 'montant' => 1800, 'description' => 'Traitement des diarrhées'],
+                ['libelle' => 'Vitamine C 500mg (boite)', 'montant' => 3000, 'description' => 'Complément vitaminique'],
+                ['libelle' => 'Dafalgan 1g (boite)', 'montant' => 2200, 'description' => 'Antidouleur et antipyrétique'],
+            ],
         ];
+
 
         // Ajouter les catégories et les frais
         foreach ($categories as $categoryName => $frais) {

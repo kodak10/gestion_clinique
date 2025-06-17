@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Models\ConsultationDetail;
 
 class Consultation extends Model
 {
@@ -13,17 +14,17 @@ class Consultation extends Model
         'methode_paiement', 'date_consultation'
     ];
 
-    public function patient(): BelongsTo
+    public function patient()
     {
         return $this->belongsTo(Patient::class);
     }
 
-    public function medecin(): BelongsTo
+    public function medecin()
     {
         return $this->belongsTo(Medecin::class);
     }
 
-    public function prestations(): BelongsToMany
+    public function prestations()
     {
         return $this->belongsToMany(Prestation::class, 'consultation_details')
             ->withPivot('quantite', 'montant', 'total')
@@ -47,6 +48,11 @@ class Consultation extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function details()
+{
+    return $this->hasMany(ConsultationDetail::class);
+}
 
     
 }

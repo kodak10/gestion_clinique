@@ -7,6 +7,7 @@ use App\Http\Controllers\HospitalisationController;
 use App\Http\Controllers\MedecinController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PrestationController;
+use App\Http\Controllers\ReglementController;
 use App\Http\Controllers\UtilisateurController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -53,11 +54,12 @@ Route::middleware(['auth',])->group(function () {
     Route::get('/hospitalisations/{patient}/facture/create', [HospitalisationController::class, 'createFacture'])->name('hospitalisations.facture.create');
     Route::post('/hospitalisations/{patient}/facture', [HospitalisationController::class, 'storeFacture'])->name('hospitalisations.facture.store');
 
-Route::get('/hospitalisations/{hospitalisation}/pharmacie/create', [HospitalisationController::class, 'createPharmacie'])->name('hospitalisations.pharmacie.create');
-Route::post('/hospitalisations/{hospitalisation}/pharmacie', [HospitalisationController::class, 'storePharmacie'])->name('hospitalisations.pharmacie.store');
+    Route::get('/hospitalisations/{hospitalisation}/pharmacie/create', [HospitalisationController::class, 'createPharmacie'])->name('hospitalisations.pharmacie.create');
+    Route::post('/hospitalisations/{hospitalisation}/pharmacie', [HospitalisationController::class, 'storePharmacie'])->name('hospitalisations.pharmacie.store');
 
     Route::get('/hospitalisations/{patient}/laboratoire/create', [HospitalisationController::class, 'createLaboratoire'])->name('hospitalisations.laboratoire.create');
     Route::post('/hospitalisations/{patient}/laboratoire', [HospitalisationController::class, 'storeLaboratoire'])->name('hospitalisations.laboratoire.store');
 
+    Route::get('/comptabilite/journalcaisse', [ReglementController::class, 'journalCaisse'])->name('comptabilite.journalcaisse');
 });
 

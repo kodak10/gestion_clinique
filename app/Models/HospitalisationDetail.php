@@ -19,13 +19,11 @@ class HospitalisationDetail extends Model
         'total'
     ];
 
-    public function fraisHospitalisation(): BelongsTo
-    {
-        return $this->belongsTo(FraisHospitalisation::class);
-    }
+    
 
-    public function prestation(): BelongsTo
-    {
-        return $this->belongsTo(Prestation::class);
-    }
+    public function fraisHospitalisation()
+{
+    return $this->belongsTo(FraisHospitalisation::class);
+}
+
 }

@@ -73,9 +73,7 @@
                                             @foreach($categorie_medecins as $categorie_medecin)
                                                 <optgroup label="{{ $categorie_medecin->nom }}">
                                                     @foreach($categorie_medecin->medecins as $medecin)
-                                                        <option value="{{ $medecin->id }}" 
-                                                                data-specialite="{{ $categorie_medecin->nom }}"
-                                                                data-montant="{{ $medecin->montant ?? '' }}">
+                                                        <option value="{{ $medecin->id }}" data-specialite="{{ $categorie_medecin->nom }}">
                                                             {{ $medecin->nom_complet }}
                                                         </option>
                                                     @endforeach
@@ -272,86 +270,42 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-{{-- <script>
-    $(document).ready(function() {
-    // Initialisation des select2
-    $('.select2').select2({
-        width: '100%',
-        placeholder: "Sélectionner",
-        allowClear: true
-    });
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('consultation-form');
+        const montantPerçuInput = document.getElementById('payer');
 
-    // Gestion du médecin et spécialité
-    $('#medecin-select').on('change', function() {
-        const selected = $(this).find('option:selected');
-        $('#specialite-input').val(selected.data('specialite') || '');
-    });
+        form.addEventListener('submit', function (e) {
+            e.preventDefault(); // Bloquer la soumission
 
-    // Initialisation du répéteur de prestations
-    $('.prestations-repeater').repeater({
-        initEmpty: false,
-        show: function() {
-            $(this).slideDown();
-            $(this).find('.prestation-select').select2({
-                width: '100%',
-                placeholder: "Sélectionner une prestation"
+            const montant = parseFloat(montantPerçuInput.value || 0).toFixed(0);
+
+            Swal.fire({
+                title: 'Confirmation',
+                text: `Êtes-vous sûr de l'encaissement de ${Number(montant).toLocaleString('fr-FR')} FCFA ?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Oui, confirmer',
+                cancelButtonText: 'Annuler',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
             });
-            $(this).find('.quantite').val(1);
-
-            calculerLigne($(this));
-        },
-        
-
-        hide: function(deleteElement) {
-            $(this).slideUp(deleteElement, updateCalculsGlobaux);
-        }
-    });
-
-    // Gestion des événements pour les calculs
-    $(document)
-        .on('change', '.prestation-select', function() {
-            const montant = $(this).find('option:selected').data('montant') || 0;
-            const row = $(this).closest('[data-repeater-item]');
-            row.find('.montant').val(montant).prop('readonly', false);
-            calculerLigne(row);
-        })
-        .on('input', '.montant, .quantite', function() {
-            calculerLigne($(this).closest('[data-repeater-item]'));
-        })
-        .on('input', '#reduction', updateCalculsGlobaux);
-
-    function calculerLigne(row) {
-        const qte = parseFloat(row.find('.quantite').val()) || 0;
-        const montant = parseFloat(row.find('.montant').val()) || 0;
-        const total = (qte * montant).toFixed(2);
-        row.find('.total').val(total);
-        updateCalculsGlobaux();
-    }
-
-    function updateCalculsGlobaux() {
-        let totalPrestations = 0;
-        
-        $('[data-repeater-item]').each(function() {
-            const total = parseFloat($(this).find('.total').val()) || 0;
-            totalPrestations += total;
         });
-
-        const tauxAssurance = parseFloat($('#assurance-taux').val()) || 0;
-        const reduction = parseFloat($('#reduction').val()) || 0;
-        
-        const ticketModerateur = totalPrestations * (1 - tauxAssurance / 100);
-        const montantAPayer = ticketModerateur - reduction;
-
-        $('#total-prestations').val(totalPrestations.toFixed(2));
-        $('#ticket-moderateur').val(ticketModerateur.toFixed(2));
-        $('#a-payer').val(montantAPayer.toFixed(2));
-        $('#payer').val(montantAPayer.toFixed(3));
-    }
-});
-</script> --}}
-
+    });
+</script>
 <script>
     $(document).ready(function() {
+    const medecinSelect = document.getElementById('medecin-select');
+        const specialiteInput = document.getElementById('specialite-input');
+
+        medecinSelect.addEventListener('change', function () {
+            const selectedOption = this.options[this.selectedIndex];
+            const specialite = selectedOption.getAttribute('data-specialite');
+            specialiteInput.value = specialite || '';
+        });
+
     // Initialisation du répéteur avec gestion du recalcul
     $('.prestations-repeater').repeater({
         initEmpty: false, // Toujours afficher au moins une ligne
@@ -456,12 +410,13 @@
         $('#total-prestations').val(totalPrestations.toFixed(2));
         $('#ticket-moderateur').val(ticketModerateur.toFixed(2));
         $('#a-payer').val(montantAPayer.toFixed(2));
-        
-        // Synchronisation du montant perçu
-        const montantPercu = parseFloat($('#payer').val()) || 0;
-        if (montantPercu === 0) {
+       // Ne modifier que si l'utilisateur n'a encore rien saisi
+        const montantPercu = $('#payer').val();
+        if (!montantPercu || parseFloat(montantPercu) === 0) {
             $('#payer').val(montantAPayer.toFixed(2));
         }
+
+
     }
 });
 </script>

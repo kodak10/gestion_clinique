@@ -16,19 +16,19 @@ class PrestationSeeder extends Seeder
     {
         // Liste des prestations à ajouter avec des catégories spécifiques
         $prestations = [
-            [
-                // Catégorie: Pharmacie
-                'categorie' => 'Pharmacie',
-                'prestations' => [
-                    ['libelle' => 'Paracétamol 500mg (boite)', 'montant' => 1500, 'description' => 'Antidouleur et antipyrétique'],
-                    ['libelle' => 'Ibuprofène 400mg (boite)', 'montant' => 2000, 'description' => 'Anti-inflammatoire non stéroïdien'],
-                    ['libelle' => 'Amoxicilline 500mg (boite)', 'montant' => 3500, 'description' => 'Antibiotique à large spectre'],
-                    ['libelle' => 'Doliprane 1000mg (boite)', 'montant' => 2500, 'description' => 'Antalgique et antipyrétique'],
-                    ['libelle' => 'Smecta (sachets)', 'montant' => 1800, 'description' => 'Traitement des diarrhées'],
-                    ['libelle' => 'Vitamine C 500mg (boite)', 'montant' => 3000, 'description' => 'Complément vitaminique'],
-                    ['libelle' => 'Dafalgan 1g (boite)', 'montant' => 2200, 'description' => 'Antidouleur et antipyrétique'],
-                ],
-            ],
+            // [
+            //     // Catégorie: Pharmacie
+            //     'categorie' => 'Pharmacie',
+            //     'prestations' => [
+            //         ['libelle' => 'Paracétamol 500mg (boite)', 'montant' => 1500, 'description' => 'Antidouleur et antipyrétique'],
+            //         ['libelle' => 'Ibuprofène 400mg (boite)', 'montant' => 2000, 'description' => 'Anti-inflammatoire non stéroïdien'],
+            //         ['libelle' => 'Amoxicilline 500mg (boite)', 'montant' => 3500, 'description' => 'Antibiotique à large spectre'],
+            //         ['libelle' => 'Doliprane 1000mg (boite)', 'montant' => 2500, 'description' => 'Antalgique et antipyrétique'],
+            //         ['libelle' => 'Smecta (sachets)', 'montant' => 1800, 'description' => 'Traitement des diarrhées'],
+            //         ['libelle' => 'Vitamine C 500mg (boite)', 'montant' => 3000, 'description' => 'Complément vitaminique'],
+            //         ['libelle' => 'Dafalgan 1g (boite)', 'montant' => 2200, 'description' => 'Antidouleur et antipyrétique'],
+            //     ],
+            // ],
             // Catégorie: Consultations
             [
                 'categorie' => 'Consultations',

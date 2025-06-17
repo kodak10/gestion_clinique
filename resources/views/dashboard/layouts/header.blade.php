@@ -449,7 +449,7 @@
                           <div class="dropdown-menu-column">
                             <a class="dropdown-item" href=""> Règlements </a>
                             <a class="dropdown-item" href=""> Ecritures Comptables / Dépenses </a>
-                            <a class="dropdown-item" href=""> Journal de caisse </a>
+                            <a class="dropdown-item" href="{{ route('comptabilite.journalcaisse') }}"> Journal de caisse </a>
                             <a class="dropdown-item" href=""> Bilan financier </a>
                             
                             

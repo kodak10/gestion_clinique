@@ -8,14 +8,17 @@ class FraisHospitalisation extends Model
 {
     protected $fillable = ['category_id', 'libelle', 'montant', 'description'];
 
+   
+
+   
+
     public function category()
     {
         return $this->belongsTo(CategoryFrais_Hospitalisation::class, 'category_id');
     }
 
-
-    public function detailsPharmacie(): HasMany
+    public function details()
     {
-        return $this->hasMany(DetailFraisPharmacie::class);
+        return $this->hasMany(HospitalisationDetail::class);
     }
 }
