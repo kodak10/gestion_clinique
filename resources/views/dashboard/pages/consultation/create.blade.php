@@ -102,7 +102,6 @@
                                     <div data-repeater-item class="mb-3 border-bottom pb-3">
                                         <div class="row mt-2">
                                             <div class="col-md-5">
-                                                <label class="form-label">Prestation</label>
                                                 <select class="form-control prestation-select" name="prestation_id">
                                                     <option value="">Sélectionner une prestation</option>
                                                     @foreach($categories as $categorie)
@@ -118,19 +117,15 @@
                                                 
                                             </div>
                                             <div class="col-md-2">
-                                                <label class="form-label">Montant (FCFA)</label>
                                                 <input type="number" class="form-control montant" name="montant">
                                             </div>
                                             <div class="col-md-2">
-                                                <label class="form-label">Quantité</label>
                                                 <input type="number" class="form-control quantite" name="quantite" min="1" value="1">
                                             </div>
                                             <div class="col-md-2">
-                                                <label class="form-label">Total (FCFA)</label>
                                                 <input type="number" class="form-control total" name="total" readonly>
                                             </div>
                                             <div class="col-md-1">
-                                                <label class="form-label d-block">.</label>
                                                 <button type="button" data-repeater-delete class="btn btn-danger btn-sm">
                                                     <i class="fas fa-trash"></i>
                                                 </button>

@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Ethnie;
 use App\Models\Patient;
+use App\Models\Profession;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,6 +15,32 @@ class PatientSeeder extends Seeder
      */
     public function run()
     {
+        $ethnies = [
+            ['nom' => 'Akan'],
+            ['nom' => 'Baoulé'],
+            ['nom' => 'Bété'],
+            ['nom' => 'Sénoufo'],
+            ['nom' => 'Malinké'],
+            ['nom' => 'Dan']
+        ];
+
+        foreach ($ethnies as $ethnie) {
+            Ethnie::create($ethnie);
+        }
+
+        $professions = [
+            ['nom' => 'Agriculteur'],
+            ['nom' => 'Commerçant'],
+            ['nom' => 'Enseignant'],
+            ['nom' => 'Infirmier'],
+            ['nom' => 'Fonctionnaire'],
+            ['nom' => 'Artisan']
+        ];
+
+        foreach ($professions as $profession) {
+            Profession::create($profession);
+        }
+
         $patients = [
             [
                 'nom' => 'Kouassi',
@@ -20,8 +48,8 @@ class PatientSeeder extends Seeder
                 'date_naissance' => '1985-06-15',
                 'domicile' => 'Abidjan, Cocody',
                 'sexe' => 'M',
-                'profession' => 'Ingénieur',
-                'ethnie' => 'Akan',
+                'profession_id' => '1',
+                'ethnie_id' => '2',
                 'religion' => 'Chrétien',
                 'groupe_rhesus' => 'A+',
                 'contact_urgence' => 'Kouadio Paul',
@@ -34,8 +62,8 @@ class PatientSeeder extends Seeder
                 'date_naissance' => '1992-03-22',
                 'domicile' => 'Abidjan, Yopougon',
                 'sexe' => 'F',
-                'profession' => 'Enseignante',
-                'ethnie' => 'Baoulé',
+                'profession_id' => '3',
+                'ethnie_id' => '4',
                 'religion' => 'Musulmane',
                 'groupe_rhesus' => 'B+',
                 'assurance_id' => 2,
@@ -50,8 +78,8 @@ class PatientSeeder extends Seeder
                 'date_naissance' => '1978-11-05',
                 'domicile' => 'Bouaké',
                 'sexe' => 'M',
-                'profession' => 'Commerçant',
-                'ethnie' => 'Malinké',
+                'profession_id' => '2',
+                'ethnie_id' => '1',
                 'religion' => 'Musulman',
                 'groupe_rhesus' => 'O+',
                 'envoye_par' => 'Dr. Koné',
@@ -64,8 +92,8 @@ class PatientSeeder extends Seeder
                 'date_naissance' => '1995-08-30',
                 'domicile' => 'Abidjan, Treichville',
                 'sexe' => 'F',
-                'profession' => 'Infirmière',
-                'ethnie' => 'Sénoufo',
+                'profession_id' => '4',
+                'ethnie_id' => '3',
                 'religion' => 'Animiste',
                 'groupe_rhesus' => 'AB+',
                 'assurance_id' => 4,
@@ -80,8 +108,8 @@ class PatientSeeder extends Seeder
                 'date_naissance' => '1988-04-17',
                 'domicile' => 'San Pedro',
                 'sexe' => 'F',
-                'profession' => 'Fonitrice',
-                'ethnie' => 'Bété',
+                'profession_id' => '2',
+                'ethnie_id' => '4',
                 'religion' => 'Chrétienne',
                 'groupe_rhesus' => 'A-',
                 'contact_urgence' => 'Konan Koffi',

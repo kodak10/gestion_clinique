@@ -5,7 +5,7 @@
     <div class="container-xl">
         <div class="row g-2 align-items-center">
             <div class="col">
-                <h2 class="page-title">Pharmacie du patient : {{ $patient->nom }} {{ $patient->prenom }}</h2>
+                <h2 class="page-title">Examen du patient : {{ $patient->nom }} {{ $patient->prenom }}</h2>
             </div>
             <div class="col-auto ms-auto">
                 <a href="{{ route('hospitalisations.index') }}" class="btn btn-secondary">
@@ -52,7 +52,6 @@
                 </div>
             </div>
         </div>
-
         <div class="card">
             <div class="card-body">
                 @if(session('swal_success'))
@@ -70,40 +69,48 @@
                     </div>
                 @endif
 
-                
-
-                <form action="{{ route('hospitalisations.pharmacie.store', $hospitalisation->id) }}" method="POST" id="pharmacieForm">
+                <form action="{{ route('hospitalisations.laboratoire.store', $hospitalisation->id) }}" method="POST" id="examenForm">
                     @csrf
-                    <div class="medicaments-repeater">
-                        <div data-repeater-list="medicaments">
+                    <div class="examens-repeater">
+                        <div data-repeater-list="examens">
                             @forelse($details as $detail)
                                 <div data-repeater-item class="mb-3 border-bottom pb-3">
-                                    <input type="hidden" name="medicaments[{{ $loop->index }}][id]" value="{{ $detail->id }}">
+                                    <input type="hidden" name="examens[{{ $loop->index }}][id]" value="{{ $detail->id }}">
                                     <div class="row mt-2 align-items-end">
                                         <div class="col-md-5">
-                                            <select class="form-select medicament-select" name="medicaments[{{ $loop->index }}][frais_id]" required>
-                                                @foreach($medicaments as $categorie)
+                                            <select class="form-select examen-select" name="examens[{{ $loop->index }}][frais_id]" required>
+                                                @foreach($examens as $categorie)
                                                     <optgroup label="{{ $categorie->libelle }}">
-                                                        @foreach($categorie->fraisHospitalisations as $med)
+                                                        @if(!empty($categorie->fraisHospitalisations))
+                                                            @foreach($categorie->fraisHospitalisations as $med)
+                                                                <option value="{{ $med->id }}" data-prix="{{ $med->montant }}"
+                                                                    @if($med->id == $detail->frais_hospitalisation_id) selected @endif>
+                                                                    {{ $med->libelle }}
+                                                                </option>
+                                                            @endforeach
+                                                        @else
+                                                            <p>Aucun frais trouvé pour cette catégorie.</p>
+                                                        @endif
+                                                        {{-- @foreach($categorie->fraisHospitalisations as $med)
                                                             <option value="{{ $med->id }}" data-prix="{{ $med->montant }}"
                                                                 @if($med->id == $detail->frais_hospitalisation_id) selected @endif>
                                                                 {{ $med->libelle }}
                                                             </option>
-                                                        @endforeach
+                                                        @endforeach --}}
                                                     </optgroup>
                                                 @endforeach
                                             </select>
                                         </div>
                                         <div class="col-md-2">
-                                            <input type="number" class="form-control prix" name="medicaments[{{ $loop->index }}][prix]" 
+                                            <input type="number" class="form-control prix" name="examens[{{ $loop->index }}][prix]" 
                                                    value="{{ $detail->prix_unitaire }}" >
                                         </div>
                                         <div class="col-md-2">
-                                            <input type="number" class="form-control quantite" name="medicaments[{{ $loop->index }}][quantite]" 
+                                            <input type="number" class="form-control quantite" name="examens[{{ $loop->index }}][quantite]" 
                                                    value="{{ $detail->quantite }}" min="1" required>
                                         </div>
                                         <div class="col-md-2">
-                                            <input type="number" class="form-control total" name="medicaments[{{ $loop->index }}][total]" 
+                                            <input type="number" class="form-control total" name="examens[{{ $loop->index }}][total]" 
                                                    value="{{ $detail->total }}" readonly>
                                         </div>
                                         <div class="col-md-1 text-center">
@@ -118,29 +125,37 @@
                                     <div class="row mt-2 align-items-end">
                                         <div class="col-md-5">
                                             <label class="form-label">Médicament <span class="text-danger">*</span></label>
-                                            <select class="form-select medicament-select" name="medicaments[0][frais_id]" required>
-                                                @foreach($medicaments as $categorie)
+                                            <select class="form-select examen-select" name="examens[0][frais_id]" required>
+                                                @foreach($examens as $categorie)
                                                     <optgroup label="{{ $categorie->libelle }}">
-                                                        @foreach($categorie->fraisHospitalisations as $med)
+                                                        {{-- @foreach($categorie->fraisHospitalisations as $med)
                                                             <option value="{{ $med->id }}" data-prix="{{ $med->montant }}">
                                                                 {{ $med->libelle }} ({{ number_format($med->montant, 0, ',', ' ') }} XOF)
                                                             </option>
-                                                        @endforeach
+                                                        @endforeach --}}
+                                                        @forelse($categorie->fraisHospitalisations ?? [] as $med)
+                                                            <option value="{{ $med->id }}" data-prix="{{ $med->montant }}">
+                                                                {{ $med->libelle }} ({{ number_format($med->montant, 0, ',', ' ') }} XOF)
+                                                            </option>
+                                                        @empty
+                                                            <option disabled>Aucun frais disponible</option>
+                                                        @endforelse
+
                                                     </optgroup>
                                                 @endforeach
                                             </select>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label">Prix unitaire (XOF)</label>
-                                            <input type="number" class="form-control prix" name="medicaments[0][prix]" readonly>
+                                            <input type="number" class="form-control prix" name="examens[0][prix]" readonly>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label">Quantité <span class="text-danger">*</span></label>
-                                            <input type="number" class="form-control quantite" name="medicaments[0][quantite]" value="1" min="1" required>
+                                            <input type="number" class="form-control quantite" name="examens[0][quantite]" value="1" min="1" required>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label">Total (XOF)</label>
-                                            <input type="number" class="form-control total" name="medicaments[0][total]" readonly>
+                                            <input type="number" class="form-control total" name="examens[0][total]" readonly>
                                         </div>
                                         <div class="col-md-1 text-center">
                                             <button type="button" data-repeater-delete class="btn btn-danger btn-sm" title="Supprimer cette ligne">
@@ -176,24 +191,24 @@
 <script>
     $(document).ready(function() {
     // Initialisation de Select2 pour les éléments existants
-    $('.medicament-select').select2({
+    $('.examen-select').select2({
         width: '100%',
         placeholder: "Sélectionner un médicament"
     });
 
     // Attacher les événements aux éléments existants
     $('[data-repeater-item]').each(function() {
-        attachMedicamentEvents($(this));
+        attachexamenEvents($(this));
         updateFieldNames($(this));
     });
 
     // Déclencher le changement initial
-    $('.medicament-select').each(function() {
+    $('.examen-select').each(function() {
         $(this).trigger('change');
     });
 
     // Configuration du repeater
-    $('.medicaments-repeater').repeater({
+    $('.examens-repeater').repeater({
         initEmpty: false,
         
         show: function() {
@@ -204,7 +219,7 @@
                 $(this).find('.total').val(0);
                 
                 // Attacher les événements au nouvel élément
-                attachMedicamentEvents($(this));
+                attachexamenEvents($(this));
                 
                 // Mettre à jour les noms des champs
                 updateFieldNames($(this));
@@ -224,7 +239,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Détruire Select2 avant de supprimer l'élément
-                    $(this).find('.medicament-select').select2('destroy');
+                    $(this).find('.examen-select').select2('destroy');
                     $(this).slideUp(deleteElement);
                 }
             });
@@ -232,11 +247,11 @@
         
         ready: function(setIndexes) {
             $('[data-repeater-item]').each(function() {
-                attachMedicamentEvents($(this));
+                attachexamenEvents($(this));
                 updateFieldNames($(this));
             });
 
-            $('.medicament-select').each(function() {
+            $('.examen-select').each(function() {
                 $(this).trigger('change');
             });
         }
@@ -251,9 +266,9 @@
         });
     }
 
-    function attachMedicamentEvents($container) {
+    function attachexamenEvents($container) {
         // Gestion du select
-        const $select = $container.find('.medicament-select');
+        const $select = $container.find('.examen-select');
         
         // Détruire Select2 s'il est déjà initialisé
         if ($select.hasClass('select2-hidden-accessible')) {
@@ -289,18 +304,18 @@
         $item.find('.total').val((prix * quantite).toFixed(0));
     }
 
-    $('#pharmacieForm').on('submit', function(e) {
+    $('#examenForm').on('submit', function(e) {
         e.preventDefault();
         var isValid = true;
 
         $('[data-repeater-item]').each(function() {
             var $item = $(this);
-            var medicament = $item.find('.medicament-select').val();
+            var examen = $item.find('.examen-select').val();
             var quantite = $item.find('.quantite').val();
 
             $item.find('.is-invalid').removeClass('is-invalid');
-            if (!medicament) {
-                $item.find('.medicament-select').addClass('is-invalid');
+            if (!examen) {
+                $item.find('.examen-select').addClass('is-invalid');
                 isValid = false;
             }
             if (!quantite || quantite < 1) {
@@ -445,7 +460,7 @@
         $item.find('.total').val((prix * quantite).toFixed(0));
     }
 
-    $('#pharmacieForm').on('submit', function(e) {
+    $('#examenForm').on('submit', function(e) {
         e.preventDefault();
         var isValid = true;
 

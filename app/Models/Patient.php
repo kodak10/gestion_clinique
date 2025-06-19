@@ -33,6 +33,16 @@ class Patient extends Model
         'date_naissance' => 'date',
     ];
 
+    public function profession()
+    {
+        return $this->belongsTo(Profession::class);
+    }
+
+    public function ethnie()
+    {
+        return $this->belongsTo(Ethnie::class);
+    }
+
     public function assurance()
     {
         return $this->belongsTo(Assurance::class);

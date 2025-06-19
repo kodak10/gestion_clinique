@@ -49,9 +49,9 @@
                                                    <a class="dropdown-item" href="{{ route('consultations.create', $patient->id) }}">Consultation</a>
 
                                                     <a class="dropdown-item"
-                                                        href="{{ route('hospitalisations.store.simple', ['patient' => $patient->id]) }}"
-                                                        onclick="event.preventDefault(); if(confirm('Voulez-vous vraiment hospitaliser ce patient ?')) document.getElementById('hospitaliser-form-{{ $patient->id }}').submit();">
-                                                        À Hospitaliser
+                                                    href="{{ route('hospitalisations.store.simple', ['patient' => $patient->id]) }}"
+                                                    onclick="return confirmHospitalisation(event)">
+                                                    À Hospitaliser
                                                     </a>
 
                                                     
@@ -71,6 +71,7 @@
                                     <td></td>
                                     
                                 </tr>
+                                
 
                                 
                             @endforeach
@@ -101,18 +102,58 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
+
+
 <script>
-    $(document).ready(function() {
-    $('.table').DataTable({
-        "language": {
-            "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/French.json"
-        },
-        "paging": true,
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "responsive": true
-    });
-});
-</script>
+        $(document).ready(function() {
+            $('.table').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/French.json"
+                },
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "responsive": true
+            });
+        });
+
+        // Fonction pour gérer la confirmation d'hospitalisation
+        function confirmHospitalisation(event) {
+            event.preventDefault();
+            const href = event.currentTarget.href;
+            
+            Swal.fire({
+                title: 'Confirmer l\'hospitalisation',
+                text: "Voulez-vous vraiment hospitaliser ce patient ?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui, hospitaliser',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Créer un formulaire virtuel et le soumettre
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = href;
+                    
+                    // Ajouter le token CSRF
+                    const csrfToken = document.createElement('input');
+                    csrfToken.type = 'hidden';
+                    csrfToken.name = '_token';
+                    csrfToken.value = document.querySelector('meta[name="csrf-token"]').content;
+                    form.appendChild(csrfToken);
+                    
+                    // Ajouter le formulaire au DOM et le soumettre
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+            
+            // Retourner false pour empêcher le comportement par défaut
+            return false;
+        }
+    </script>
 @endpush

@@ -25,5 +25,9 @@ class HospitalisationDetail extends Model
 {
     return $this->belongsTo(FraisHospitalisation::class);
 }
+public function frais()
+{
+    return $this->belongsTo(FraisHospitalisation::class, 'frais_hospitalisation_id');
+}
 
 }

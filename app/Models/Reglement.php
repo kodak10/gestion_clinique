@@ -19,6 +19,11 @@ class Reglement extends Model
         return $this->belongsTo(Consultation::class);
     }
 
+    public function hospitalisation()
+    {
+        return $this->belongsTo(Hospitalisation::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

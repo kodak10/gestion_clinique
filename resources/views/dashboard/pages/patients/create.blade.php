@@ -14,8 +14,7 @@
 <div class="page-body">
     <div class="container-xl">
         <div class="card p-2">
-            <form action="{{ route('patients.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
+            <form action="{{ route('patients.store') }}" method="POST" enctype="multipart/form-data" id="create-patient-form">                @csrf
                 <div class="modal-body">
                     @if ($errors->any())
                         <div class="alert alert-danger">
@@ -83,8 +82,24 @@
                         <div class="col-lg-4">
                             <div class="mb-3">
                                 <label class="form-label">Profession</label>
-                                <input type="text" class="form-control @error('profession') is-invalid @enderror" name="profession" value="{{ old('profession') }}">
-                                @error('profession')
+                                <div class="input-group">
+                                    <select class="form-select @error('profession_id') is-invalid @enderror" name="profession_id" id="profession-select">
+                                        <option value="">Sélectionner</option>
+                                        @foreach($professions as $profession)
+                                            <option value="{{ $profession->id }}" {{ old('profession_id') == $profession->id ? 'selected' : '' }}>
+                                                {{ $profession->nom }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#modal-profession">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M12 5l0 14" />
+                                            <path d="M5 12l14 0" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                @error('profession_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -92,8 +107,24 @@
                         <div class="col-lg-4">
                             <div class="mb-3">
                                 <label class="form-label">Ethnie</label>
-                                <input type="text" class="form-control @error('ethnie') is-invalid @enderror" name="ethnie" value="{{ old('ethnie') }}">
-                                @error('ethnie')
+                                <div class="input-group">
+                                    <select class="form-select @error('ethnie_id') is-invalid @enderror" name="ethnie_id" id="ethnie-select">
+                                        <option value="">Sélectionner</option>
+                                        @foreach($ethnies as $ethnie)
+                                            <option value="{{ $ethnie->id }}" {{ old('ethnie_id') == $ethnie->id ? 'selected' : '' }}>
+                                                {{ $ethnie->nom }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#modal-ethnie">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M12 5l0 14" />
+                                            <path d="M5 12l14 0" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                @error('ethnie_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -213,42 +244,138 @@
         </div>
     </div>
 </div>
+
+
+<!-- Modal Profession -->
+<div class="modal modal-blur fade" id="modal-profession" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nouvelle Profession</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="profession-form">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nom de la profession</label>
+                        <input type="text" class="form-control" name="nom" id="profession-nom" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">Annuler</a>
+                    <button type="submit" class="btn btn-primary ms-auto">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Ethnie -->
+<div class="modal modal-blur fade" id="modal-ethnie" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nouvelle Ethnie</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="ethnie-form">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nom de l'ethnie</label>
+                        <input type="text" class="form-control" name="nom" id="ethnie-nom" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">Annuler</a>
+                    <button type="submit" class="btn btn-primary ms-auto">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
+<script>
+$(document).ready(function() {
+    // Gestion de l'ajout de profession
+    $('#profession-form').submit(function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: '{{ route("professions.store") }}',
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                $('#profession-select').append(new Option(response.nom, response.id, true, true));
+                $('#modal-profession').modal('hide');
+                $('#profession-nom').val('');
+            },
+            error: function(xhr) {
+                alert('Une erreur est survenue: ' + xhr.responseJSON.message);
+            }
+        });
+    });
+
+    // Gestion de l'ajout d'ethnie
+    $('#ethnie-form').submit(function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: '{{ route("ethnies.store") }}',
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                $('#ethnie-select').append(new Option(response.nom, response.id, true, true));
+                $('#modal-ethnie').modal('hide');
+                $('#ethnie-nom').val('');
+            },
+            error: function(xhr) {
+                alert('Une erreur est survenue: ' + xhr.responseJSON.message);
+            }
+        });
+    });
+});
+</script>
 
 <script>
-    $(document).ready(function() {
-        // ... votre code existant ...
-
-        // Gestion de la soumission du formulaire
-        $('form').on('submit', function(e) {
-            e.preventDefault();
-            
-            Swal.fire({
-                title: 'Confirmation',
-                text: "Êtes-vous sûr de l'enregistrement de ce patient ?",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Oui, enregistrer',
-                cancelButtonText: 'Annuler'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Soumettre le formulaire
-                    this.submit();
-                }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Utilisez le même ID que dans votre formulaire
+        const form = document.getElementById('create-patient-form');
+        
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); // Empêche la soumission immédiate
+                
+                Swal.fire({
+                    title: 'Confirmer la création',
+                    text: "Voulez-vous enregistrer ce nouveau patient ?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Oui, enregistrer',
+                    cancelButtonText: 'Annuler',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    backdrop: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Réactive le bouton de soumission
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Enregistrement...';
+                        
+                        // Soumet le formulaire
+                        form.submit();
+                    }
+                });
             });
-        });
+        }
 
-        // Afficher un message de succès si présent dans la session
+        // Affichage des messages flash
         @if(session('success'))
-            Swal.fire(
-                'Succès !',
-                '{{ session('success') }}',
-                'success'
-            );
+            Swal.fire('Succès!', '{{ session('success') }}', 'success');
         @endif
     });
 </script>

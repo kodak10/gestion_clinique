@@ -12,6 +12,6 @@ class CategoryFrais_Hospitalisation extends Model
 
     public function fraisHospitalisations()
     {
-        return $this->hasMany(FraisHospitalisation::class);
+        return $this->hasMany(FraisHospitalisation::class, 'category_id');
     }
 }

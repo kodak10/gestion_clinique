@@ -14,9 +14,21 @@ class Hospitalisation extends Model
         'ticket_moderateur',
         'reduction',
         'montant_a_paye',
+        'reste_a_payer',
         'date_entree',
-        'date_sortie'
+        'date_sortie',
+        
     ];
+    
+    public function hospitalisation()
+    {
+        return $this->belongsTo(Hospitalisation::class);
+    }
+
+    public function frais()
+    {
+        return $this->belongsTo(FraisHospitalisation::class, 'frais_hospitalisation_id');
+    }
 
     public function patient()
     {
@@ -30,21 +42,22 @@ class Hospitalisation extends Model
     {
         return $this->belongsTo(Medecin::class);
     }
-    public function frais()
-    {
-        return $this->hasMany(FraisHospitalisation::class);
-    }
+    
 
     public function fraisHospitalisations()
     {
         return $this->hasMany(FraisHospitalisation::class);
     }
+    public function fraisPharmacie()
+    {
+        return $this->hasMany(HospitalisationDetail::class)->whereHas('frais', function($q) {
+            $q->where('category_id', 5); // ID de la catégorie Pharmacie
+        });
+    }
 
     public function details()
-    {
-        return $this->hasManyThrough(
-            HospitalisationDetail::class,
-            FraisHospitalisation::class
-        );
-    }
+{
+    return $this->hasMany(HospitalisationDetail::class);
+}
+
 }

@@ -214,7 +214,8 @@
                 </div>
                 <div class="modal-footer">
                     <a href="{{ route('patients.index') }}" class="btn btn-link link-secondary btn-3">Annuler</a>
-                    <button type="submit" class="btn btn-primary btn-5 ms-auto">Mettre à jour</button>
+                    <button type="submit" class="btn btn-primary btn-5 ms-auto" >Mettre à jour</button>
+                    
                 </div>
             </form>
 
@@ -229,3 +230,54 @@
     </div>
 </div>
 @endsection
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sélectionnez le formulaire spécifique par son action
+        const form = document.querySelector('form[action="{{ route('patients.update', $patient->id) }}"]');
+        
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                Swal.fire({
+                    title: 'Confirmation',
+                    text: "Voulez-vous vraiment modifier ce patient ?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Oui, Modifier',
+                    cancelButtonText: 'Annuler',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Désactivez le bouton pour éviter les doubles clics
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> En cours...';
+                        
+                        // Soumettez le formulaire
+                        form.submit();
+                    }
+                });
+            });
+        }
+
+        // Initialisation DataTable si nécessaire
+        if (jQuery().DataTable && $('.table').length) {
+            $('.table').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/French.json"
+                },
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "responsive": true
+            });
+        }
+    });
+</script>
+@endpush

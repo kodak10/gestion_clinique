@@ -390,7 +390,7 @@
                       </a>
                     </li>
 
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                       <a class="nav-link" href="#">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
                           <!-- Download SVG icon from http://tabler.io/icons/icon/home -->
@@ -416,7 +416,7 @@
                         </span>
                         <span class="nav-link-title"> Examens </span>
                       </a>
-                    </li>
+                    </li> --}}
 
                     
                     <li class="nav-item">
@@ -447,8 +447,8 @@
                       <div class="dropdown-menu">
                         <div class="dropdown-menu-columns">
                           <div class="dropdown-menu-column">
-                            <a class="dropdown-item" href=""> Règlements </a>
-                            <a class="dropdown-item" href=""> Ecritures Comptables / Dépenses </a>
+                            <a class="dropdown-item" href="{{ route('reglements.index') }}"> Règlements </a>
+                            <a class="dropdown-item" href="{{ route('depenses.index') }}"> Dépenses </a>
                             <a class="dropdown-item" href="{{ route('comptabilite.journalcaisse') }}"> Journal de caisse </a>
                             <a class="dropdown-item" href=""> Bilan financier </a>
                             
@@ -462,6 +462,27 @@
 
                    
 
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#navbar-extra" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                          <!-- Download SVG icon from http://tabler.io/icons/icon/star -->
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
+                            <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"></path>
+                          </svg>
+                        </span>
+                        <span class="nav-link-title"> Historique </span>
+                      </a>
+                      <div class="dropdown-menu">
+                        <div class="dropdown-menu-columns">
+                          <div class="dropdown-menu-column">
+                            <a class="dropdown-item" href=""> Consultations </a>
+                            <a class="dropdown-item" href=""> Hospitalisations </a>
+                            <a class="dropdown-item" href=""> Suivi Patient</a>
+                            
+                          </div>
+                        </div>
+                      </div>
+                    </li>
 
                     <li class="nav-item dropdown">
                       <a class="nav-link dropdown-toggle" href="#navbar-extra" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
@@ -501,7 +522,7 @@
                     </li>
                     
                   </ul>
-                  <!-- END NAVBAR MENU -->
+                  
                 </div>
                 
               </div>

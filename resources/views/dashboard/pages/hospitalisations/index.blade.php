@@ -42,9 +42,9 @@
                                                     <a class="dropdown-item" href="{{ route('pharmacie.commande', $hospitalisation->id) }}">Pharmacie</a>
                                                     <a class="dropdown-item" href="{{ route('laboratoire.demande', $hospitalisation->id) }}">Laboratoire</a> --}}
 
-                                                    <a class="dropdown-item" href="{{ route('hospitalisations.facture.create', ['patient' => $hospitalisation->id]) }}">Facture</a>
-<a class="dropdown-item" href="{{ route('hospitalisations.pharmacie.create', ['hospitalisation' => $hospitalisation->id]) }}">Pharmacie</a>
-                                                    <a class="dropdown-item" href="{{ route('hospitalisations.laboratoire.create', ['patient' => $hospitalisation->id]) }}">Laboratoire</a>
+                                                    <a class="dropdown-item" href="{{ route('hospitalisations.facture.create', ['hospitalisation' => $hospitalisation->id]) }}">Facture</a>
+                                                    <a class="dropdown-item" href="{{ route('hospitalisations.pharmacie.create', ['hospitalisation' => $hospitalisation->id]) }}">Pharmacie</a>
+                                                    <a class="dropdown-item" href="{{ route('hospitalisations.laboratoire.create', ['hospitalisation' => $hospitalisation->id]) }}">Laboratoire</a>
                                                 </div>
                                             </div>
                                         </div>

@@ -183,13 +183,13 @@
                                                     <a class="dropdown-item detail-mouvement" href="#" 
                                                         data-bs-toggle="modal" 
                                                         data-bs-target="#modal-detail"
-                                                        data-patient="{{ $reglement->consultation->patient->nom }} {{ $reglement->consultation->patient->prenoms }}"
+                                                        data-patient="{{ $reglement->consultation->patient->nom ?? $reglement->hospitalisation->patient->nom }} {{ $reglement->consultation->patient->prenoms ?? $reglement->hospitalisation->patient->prenoms }}"
                                                         data-date="{{ $reglement->created_at->format('d/m/Y H:i') }}"
-                                                        data-recus="{{ $reglement->consultation->numero_recu }}"
-                                                        data-total="{{ number_format($reglement->consultation->total, 0, ',', ' ') }}"
-                                                        data-reduction="{{ number_format($reglement->consultation->reduction, 0, ',', ' ') }}"
-                                                        data-ticket="{{ number_format($reglement->consultation->ticket_moderateur, 0, ',', ' ') }}"
-                                                        data-encaisser="{{ number_format($reglement->consultation->montant_paye, 0, ',', ' ') }}"
+                                                        data-recus="{{ $reglement->consultation->numero_recu ?? '' }}"
+                                                        data-total="{{ number_format($reglement->consultation->total ?? $reglement->hospitalisation->total, 0, ',', ' ') }}"
+                                                        data-reduction="{{ number_format($reglement->consultation->reduction ?? $reglement->hospitalisation->reduction, 0, ',', ' ') }}"
+                                                        data-ticket="{{ number_format($reglement->consultation->ticket_moderateur ?? $reglement->hospitalisation->ticket_moderateur, 0, ',', ' ') }}"
+                                                        data-encaisser="{{ number_format($reglement->consultation->montant_paye ?? $reglement->hospitalisation->montant_paye, 0, ',', ' ') }}"
                                                         data-prestations="{{ json_encode($reglement->consultation->details->map(function($item) {
                                                             return [
                                                                 'libelle' => $item->prestation->libelle,

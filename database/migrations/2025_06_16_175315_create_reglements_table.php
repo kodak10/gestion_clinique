@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('reglements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('consultation_id')->constrained()->onDelete('cascade');
+            $table->foreignId('hospitalisation_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('consultation_id')->nullable()->constrained()->cascadeOnDelete();            
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // caissier
             $table->decimal('montant', 10, 2);
             $table->enum('methode_paiement', ['cash', 'mobile_money', 'virement']);

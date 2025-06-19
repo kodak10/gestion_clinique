@@ -22,6 +22,8 @@ return new class extends Migration
             $table->decimal('reduction', 10, 2)->default(0);
             $table->decimal('montant_a_paye', 10, 2);
 
+            $table->decimal('reste_a_payer', 10, 2);
+
             $table->timestamp('date_entree')->useCurrent();
             $table->timestamp('date_sortie')->nullable();
             $table->timestamps();

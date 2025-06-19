@@ -18,8 +18,8 @@ return new class extends Migration
             $table->date('date_naissance');
             $table->string('domicile');
             $table->enum('sexe', ['M', 'F']);
-            $table->string('profession')->nullable();
-            $table->string('ethnie')->nullable();
+            $table->foreignId('profession_id')->nullable()->constrained('professions')->onDelete('set null');
+            $table->foreignId('ethnie_id')->nullable()->constrained('ethnies')->onDelete('set null');
             $table->string('religion')->nullable();
             $table->string('groupe_rhesus')->nullable();
             $table->string('electrophorese')->nullable();
