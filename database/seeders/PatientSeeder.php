@@ -43,6 +43,7 @@ class PatientSeeder extends Seeder
 
         $patients = [
             [
+                'num_dossier' => 'P001',
                 'nom' => 'Kouassi',
                 'prenoms' => 'Jean',
                 'date_naissance' => '1985-06-15',
@@ -57,6 +58,7 @@ class PatientSeeder extends Seeder
                 'contact_urgence' => 'Kouassi Jean',
             ],
             [
+                'num_dossier' => 'P002',
                 'nom' => 'Yao',
                 'prenoms' => 'Amina',
                 'date_naissance' => '1992-03-22',
@@ -73,6 +75,7 @@ class PatientSeeder extends Seeder
                 'contact_urgence' => 'Kouassi Jean',
             ],
             [
+                'num_dossier' => 'P003',
                 'nom' => 'Bamba',
                 'prenoms' => 'Moussa',
                 'date_naissance' => '1978-11-05',
@@ -87,6 +90,7 @@ class PatientSeeder extends Seeder
                 'contact_urgence' => 'Kouassi Jean',
             ],
             [
+                'num_dossier' => 'P004',
                 'nom' => 'Dosso',
                 'prenoms' => 'Fatou',
                 'date_naissance' => '1995-08-30',
@@ -103,6 +107,7 @@ class PatientSeeder extends Seeder
                 'contact_urgence' => 'Kouassi Jean',
             ],
             [
+                'num_dossier' => 'P005',
                 'nom' => 'Konan',
                 'prenoms' => 'Affoué',
                 'date_naissance' => '1988-04-17',

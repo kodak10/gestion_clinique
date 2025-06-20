@@ -17,6 +17,7 @@
             <form action="{{ route('patients.update', $patient->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
+                <input type="hidden" class="form-control" value="{{ old('num_dossier', $patient->num_dossier) }}" readonly>
                 <div class="modal-body">
                     @if ($errors->any())
                         <div class="alert alert-danger">
@@ -57,11 +58,20 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-3">
                             <div class="mb-3">
                                 <label class="form-label">Domicile <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('domicile') is-invalid @enderror" name="domicile" value="{{ old('domicile', $patient->domicile) }}" required>
                                 @error('domicile')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="form-label">Contact <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('contact_patient') is-invalid @enderror" name="contact_patient" value="{{ old('contact_patient', $patient->contact_patient) }}">
+                                @error('contact_patient')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -84,8 +94,25 @@
                         <div class="col-lg-4">
                             <div class="mb-3">
                                 <label class="form-label">Profession</label>
-                                <input type="text" class="form-control @error('profession') is-invalid @enderror" name="profession" value="{{ old('profession', $patient->profession) }}">
-                                @error('profession')
+                                <div class="input-group">
+                                    <select class="form-select @error('profession_id') is-invalid @enderror" name="profession_id" id="profession-select-edit">
+                                        <option value="">Sélectionner</option>
+                                        @foreach($professions as $profession)
+                                            <option value="{{ $profession->id }}" 
+                                                {{ old('profession_id', $patient->profession_id) == $profession->id ? 'selected' : '' }}>
+                                                {{ $profession->nom }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#modal-profession-edit">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M12 5l0 14" />
+                                            <path d="M5 12l14 0" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                @error('profession_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -93,8 +120,25 @@
                         <div class="col-lg-4">
                             <div class="mb-3">
                                 <label class="form-label">Ethnie</label>
-                                <input type="text" class="form-control @error('ethnie') is-invalid @enderror" name="ethnie" value="{{ old('ethnie', $patient->ethnie) }}">
-                                @error('ethnie')
+                                <div class="input-group">
+                                    <select class="form-select @error('ethnie_id') is-invalid @enderror" name="ethnie_id" id="ethnie-select-edit">
+                                        <option value="">Sélectionner</option>
+                                        @foreach($ethnies as $ethnie)
+                                            <option value="{{ $ethnie->id }}" 
+                                                {{ old('ethnie_id', $patient->ethnie_id) == $ethnie->id ? 'selected' : '' }}>
+                                                {{ $ethnie->nom }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#modal-ethnie-edit">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M12 5l0 14" />
+                                            <path d="M5 12l14 0" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                @error('ethnie_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -102,15 +146,47 @@
                         <div class="col-lg-4">
                             <div class="mb-3">
                                 <label class="form-label">Religion</label>
-                                <input type="text" class="form-control @error('religion') is-invalid @enderror" name="religion" value="{{ old('religion', $patient->religion) }}">
+                                <select class="form-control @error('religion') is-invalid @enderror" name="religion">
+                                    <option value="">Sélectionner</option>
+                                    <option value="Catholique" {{ old('religion', $patient->religion) == 'Catholique' ? 'selected' : '' }}>Catholique</option>
+                                    <option value="Protestant" {{ old('religion', $patient->religion) == 'Protestant' ? 'selected' : '' }}>Protestant</option>
+                                    <option value="Musulman" {{ old('religion', $patient->religion) == 'Musulman' ? 'selected' : '' }}>Musulman</option>
+                                    <option value="Autre" {{ old('religion', $patient->religion) == 'Autre' ? 'selected' : '' }}>Autre</option>
+                                </select>
                                 @error('religion')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-6">
+                        
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="form-label">Personne en cas d'urgence</label>
+                                <input type="text" class="form-control @error('contact_urgence') is-invalid @enderror" name="contact_urgence" value="{{ old('contact_urgence', $patient->contact_urgence) }}">
+                                @error('contact_urgence')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="form-label">Photo</label>
+                                <input type="file" class="form-control @error('photo') is-invalid @enderror" name="photo">
+                                @error('photo')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                @if($patient->photo)
+                                    <div class="mt-2">
+                                        <img src="{{ asset('storage/' . $patient->photo) }}" alt="Photo patient" style="max-width: 100px;">
+                                        <a href="#" class="text-danger ms-2" onclick="event.preventDefault(); document.getElementById('remove-photo').submit();">Supprimer</a>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
                             <div class="mb-3">
                                 <label class="form-label">Groupe Rhesus</label>
                                 <input type="text" class="form-control @error('groupe_rhesus') is-invalid @enderror" name="groupe_rhesus" value="{{ old('groupe_rhesus', $patient->groupe_rhesus) }}">
@@ -119,7 +195,7 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-3">
                             <div class="mb-3">
                                 <label class="form-label">Electrophorese</label>
                                 <input type="text" class="form-control @error('electrophorese') is-invalid @enderror" name="electrophorese" value="{{ old('electrophorese', $patient->electrophorese) }}">
@@ -167,50 +243,11 @@
                     </div>
                     <div class="row">
                         <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label class="form-label">Personne en cas d'urgence</label>
-                                <input type="text" class="form-control @error('contact_urgence') is-invalid @enderror" name="contact_urgence" value="{{ old('contact_urgence', $patient->contact_urgence) }}">
-                                @error('contact_urgence')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+                            
                         </div>
-                        <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label class="form-label">Contact</label>
-                                <input type="text" class="form-control @error('contact_patient') is-invalid @enderror" name="contact_patient" value="{{ old('contact_patient', $patient->contact_patient) }}">
-                                @error('contact_patient')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
+                        
                     </div>
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label class="form-label">Photo</label>
-                                <input type="file" class="form-control @error('photo') is-invalid @enderror" name="photo">
-                                @error('photo')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                                @if($patient->photo)
-                                    <div class="mt-2">
-                                        <img src="{{ asset('storage/' . $patient->photo) }}" alt="Photo patient" style="max-width: 100px;">
-                                        <a href="#" class="text-danger ms-2" onclick="event.preventDefault(); document.getElementById('remove-photo').submit();">Supprimer</a>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label class="form-label">Envoyé Par</label>
-                                <input type="text" class="form-control @error('envoye_par') is-invalid @enderror" name="envoye_par" value="{{ old('envoye_par', $patient->envoye_par) }}">
-                                @error('envoye_par')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
                 <div class="modal-footer">
                     <a href="{{ route('patients.index') }}" class="btn btn-link link-secondary btn-3">Annuler</a>
@@ -229,8 +266,119 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Profession pour l'édition -->
+<div class="modal modal-blur fade" id="modal-profession-edit" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nouvelle Profession</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="profession-form-edit">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nom de la profession</label>
+                        <input type="text" class="form-control" name="nom" id="profession-nom-edit" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">Annuler</a>
+                    <button type="submit" class="btn btn-primary ms-auto">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Ethnie pour l'édition -->
+<div class="modal modal-blur fade" id="modal-ethnie-edit" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nouvelle Ethnie</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="ethnie-form-edit">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nom de l'ethnie</label>
+                        <input type="text" class="form-control" name="nom" id="ethnie-nom-edit" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">Annuler</a>
+                    <button type="submit" class="btn btn-primary ms-auto">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 @push('scripts')
+<script>
+$(document).ready(function() {
+    // Récupérer le token CSRF
+    const csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+    // Gestion de l'ajout de profession (édition)
+    $('#profession-form-edit').submit(function(e) {
+        e.preventDefault();
+        
+        $.ajax({
+            url: '{{ route("professions.store") }}',
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken
+            },
+            data: $(this).serialize(),
+            success: function(response) {
+                $('#profession-select-edit').append(new Option(response.nom, response.id, true, true));
+                $('#modal-profession-edit').modal('hide');
+                $('#profession-nom-edit').val('');
+                toastr.success('Profession ajoutée avec succès');
+            },
+            error: function(xhr) {
+                if(xhr.status === 422) {
+                    toastr.error(xhr.responseJSON.message);
+                } else {
+                    toastr.error('Une erreur est survenue');
+                }
+            }
+        });
+    });
+
+    // Gestion de l'ajout d'ethnie (édition)
+    $('#ethnie-form-edit').submit(function(e) {
+        e.preventDefault();
+        
+        $.ajax({
+            url: '{{ route("ethnies.store") }}',
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken
+            },
+            data: $(this).serialize(),
+            success: function(response) {
+                $('#ethnie-select-edit').append(new Option(response.nom, response.id, true, true));
+                $('#modal-ethnie-edit').modal('hide');
+                $('#ethnie-nom-edit').val('');
+                toastr.success('Ethnie ajoutée avec succès');
+            },
+            error: function(xhr) {
+                if(xhr.status === 422) {
+                    toastr.error(xhr.responseJSON.message);
+                } else {
+                    toastr.error('Une erreur est survenue');
+                }
+            }
+        });
+    });
+});
+</script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Sélectionnez le formulaire spécifique par son action

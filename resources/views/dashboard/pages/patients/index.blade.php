@@ -7,6 +7,7 @@
             <div class="col">
                 <h2 class="page-title">Patients</h2>
             </div>
+            
             <div class="col">
                 <a href="{{ route('patients.create') }}" class="btn btn-2 float-end" >Ajouter</a>
             </div>
@@ -45,8 +46,12 @@
                                                 <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">Actions</button>
                                                 <div class="dropdown-menu dropdown-menu-end">
                                                     <a class="dropdown-item" href="{{ route('patients.edit', $patient->id) }}">Modifier</a>
-                                                    <a class="dropdown-item" href="#" >Imprimer le dossier</a>
-                                                   <a class="dropdown-item" href="{{ route('consultations.create', $patient->id) }}">Consultation</a>
+                                                    <a class="dropdown-item" 
+                                                    href="{{ route('patients.view-pdf', $patient->id) }}" 
+                                                    target="_blank">
+                                                    <i class="fas fa-file-pdf mr-2"></i> Ouvrir le dossier
+                                                    </a>                                                   
+                                                    <a class="dropdown-item" href="{{ route('consultations.create', $patient->id) }}">Consultation</a>
 
                                                     <a class="dropdown-item"
                                                     href="{{ route('hospitalisations.store.simple', ['patient' => $patient->id]) }}"
@@ -59,7 +64,7 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{ $patient->numero_dossier }}</td>
+                                    <td>{{ $patient->num_dossier }}</td>
                                     <td>{{ $patient->nom }}</td>
                                     <td>{{ $patient->prenoms }}</td>
                                     <td>{{ $patient->date_naissance }}</td>
@@ -102,7 +107,13 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
-
+@if(session('pdf_url'))
+<script>
+    window.onload = function() {
+        window.open('{{ session('pdf_url') }}', '_blank');
+    };
+</script>
+@endif
 
 <script>
         $(document).ready(function() {
@@ -155,5 +166,7 @@
             // Retourner false pour empêcher le comportement par défaut
             return false;
         }
+
+        
     </script>
 @endpush

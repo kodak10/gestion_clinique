@@ -10,13 +10,14 @@ class Patient extends Model
     use HasFactory;
 
     protected $fillable = [
+        'num_dossier',
         'nom',
         'prenoms',
         'date_naissance',
         'domicile',
         'sexe',
-        'profession',
-        'ethnie',
+        'profession_id',
+        'ethnie_id',
         'religion',
         'groupe_rhesus',
         'electrophorese',
@@ -26,7 +27,7 @@ class Patient extends Model
         'contact_urgence',
         'contact_patient',
         'photo',
-        'envoye_par'
+        'pdf_path',
     ];
 
     protected $casts = [

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('patients', function (Blueprint $table) {
             $table->id();
+            $table->string('num_dossier')->unique();
             $table->string('nom');
             $table->string('prenoms');
             $table->date('date_naissance');
@@ -29,6 +30,7 @@ return new class extends Migration
             $table->string('contact_urgence')->nullable();
             $table->string('contact_patient');
             $table->string('photo')->nullable();
+            $table->string('pdf_path')->nullable();
             $table->string('envoye_par')->nullable();
             $table->timestamps();
         });

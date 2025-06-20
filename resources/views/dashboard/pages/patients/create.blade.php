@@ -14,7 +14,9 @@
 <div class="page-body">
     <div class="container-xl">
         <div class="card p-2">
-            <form action="{{ route('patients.store') }}" method="POST" enctype="multipart/form-data" id="create-patient-form">                @csrf
+            <form action="{{ route('patients.store') }}" method="POST" enctype="multipart/form-data" id="create-patient-form">                
+                @csrf
+                <input type="hidden" class="form-control" value="{{ $provisionalNum }}" readonly>
                 <div class="modal-body">
                     @if ($errors->any())
                         <div class="alert alert-danger">
@@ -55,11 +57,20 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-3">
                             <div class="mb-3">
                                 <label class="form-label">Domicile <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('domicile') is-invalid @enderror" name="domicile" value="{{ old('domicile') }}" required>
                                 @error('domicile')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="form-label">Contact <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('contact_patient') is-invalid @enderror" name="contact_patient" value="{{ old('contact_patient') }}">
+                                @error('contact_patient')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -132,7 +143,13 @@
                         <div class="col-lg-4">
                             <div class="mb-3">
                                 <label class="form-label">Religion</label>
-                                <input type="text" class="form-control @error('religion') is-invalid @enderror" name="religion" value="{{ old('religion') }}">
+                                <select class="form-control" name="" id="">
+                                    <option value="">Sélectionner</option>
+                                    <option value="Catholique" {{ old('religion') == 'Catholique' ? 'selected' : '' }}>Catholique</option>
+                                    <option value="Protestant" {{ old('religion') == 'Protestant' ? 'selected' : '' }}>Protestant</option>
+                                    <option value="Musulman" {{ old('religion') == 'Musulman' ? 'selected' : '' }}>Musulman</option>
+                                    <option value="Autre" {{ old('religion') == 'Autre' ? 'selected' : '' }}>Autre</option>
+                                </select>
                                 @error('religion')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -140,7 +157,25 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-6">
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="form-label">Personne en cas d'urgence</label>
+                                <input type="text" class="form-control @error('contact_urgence') is-invalid @enderror" name="contact_urgence" value="{{ old('contact_urgence') }}">
+                                @error('contact_urgence')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="form-label">Photo</label>
+                                <input type="file" class="form-control @error('photo') is-invalid @enderror" name="photo">
+                                @error('photo')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
                             <div class="mb-3">
                                 <label class="form-label">Groupe Rhesus</label>
                                 <input type="text" class="form-control @error('groupe_rhesus') is-invalid @enderror" name="groupe_rhesus" value="{{ old('groupe_rhesus') }}">
@@ -149,7 +184,7 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-3">
                             <div class="mb-3">
                                 <label class="form-label">Electrophorese</label>
                                 <input type="text" class="form-control @error('electrophorese') is-invalid @enderror" name="electrophorese" value="{{ old('electrophorese') }}">
@@ -196,45 +231,10 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label class="form-label">Personne en cas d'urgence</label>
-                                <input type="text" class="form-control @error('contact_urgence') is-invalid @enderror" name="contact_urgence" value="{{ old('contact_urgence') }}">
-                                @error('contact_urgence')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label class="form-label">Contact <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('contact_patient') is-invalid @enderror" name="contact_patient" value="{{ old('contact_patient') }}">
-                                @error('contact_patient')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
+                        
+                        
                     </div>
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label class="form-label">Photo</label>
-                                <input type="file" class="form-control @error('photo') is-invalid @enderror" name="photo">
-                                @error('photo')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label class="form-label">Envoyé Par</label>
-                                <input type="text" class="form-control @error('envoye_par') is-invalid @enderror" name="envoye_par" value="{{ old('envoye_par') }}">
-                                @error('envoye_par')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
                 <div class="modal-footer">
                     <a href="{{ route('patients.index') }}" class="btn btn-link link-secondary btn-3">Annuler</a>
@@ -372,11 +372,26 @@ $(document).ready(function() {
                 });
             });
         }
-
-        // Affichage des messages flash
+        // Affichage des messages flash avec SweetAlert
         @if(session('success'))
-            Swal.fire('Succès!', '{{ session('success') }}', 'success');
+            Swal.fire({
+                icon: 'success',
+                title: 'Succès',
+                text: '{{ session('success') }}',
+                timer: 3000,
+                showConfirmButton: false
+            });
         @endif
+
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: '{{ session('error') }}'
+            });
+        @endif
+
+        
     });
 </script>
 @endpush

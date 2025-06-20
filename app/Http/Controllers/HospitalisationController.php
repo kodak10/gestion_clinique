@@ -447,7 +447,7 @@ public function storeFacture(Request $request, Hospitalisation $hospitalisation)
 
         return redirect()->back()->with([
             'swal_success' => 'Facture et règlement enregistrés avec succès',
-            'print_url' => route('facture.print', $hospitalisation->id) // Optionnel: URL pour impression
+           // 'print_url' => route('facture.print', $hospitalisation->id) // Optionnel: URL pour impression
         ]);
 
     } catch (\Exception $e) {
