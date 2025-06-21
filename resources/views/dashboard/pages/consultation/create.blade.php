@@ -88,8 +88,8 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label class="form-label">Spécialité</label>
-                                        <input type="text" class="form-control @error('specialite_id') is-invalid @enderror" id="specialite-input" name="specialite" value="{{ old('specialite') }}" readonly>
-                                        @error('specialite_id')
+                                        <input type="text" class="form-control @error('specialite') is-invalid @enderror" id="specialite-input" name="specialite" value="{{ old('specialite') }}" readonly>
+                                        @error('specialite')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -356,7 +356,7 @@
             const specialite = selectedOption.getAttribute('data-specialite');
             specialiteInput.value = specialite || '';
         });
-
+$('#a-payer').data('last-value', parseFloat($('#a-payer').val()) || 0);
         // Initialisation Select2
         
         // $('.select2').select2({
@@ -442,6 +442,26 @@
         }
 
         // Fonction de recalcul global
+        // function recalculerTotauxGlobaux() {
+        //     let totalPrestations = 0;
+            
+        //     $('[data-repeater-item]').each(function() {
+        //         const total = parseFloat($(this).find('.total').val()) || 0;
+        //         totalPrestations += total;
+        //     });
+
+        //     const tauxAssurance = parseFloat($('#assurance-taux').val().replace('%', '')) || 0;
+        //     const ticketModerateur = totalPrestations * (1 - tauxAssurance / 100);
+            
+        //     const reduction = parseFloat($('#reduction').val()) || 0;
+        //     const montantAPayer = Math.max(0, ticketModerateur - reduction);
+            
+        //     $('#total-prestations').val(totalPrestations.toFixed(2));
+        //     $('#ticket-moderateur').val(ticketModerateur.toFixed(2));
+        //     $('#a-payer').val(montantAPayer.toFixed(2));
+        //     $('#payer').val(montantAPayer.toFixed(2));
+        // }
+
         function recalculerTotauxGlobaux() {
             let totalPrestations = 0;
             
@@ -459,7 +479,15 @@
             $('#total-prestations').val(totalPrestations.toFixed(2));
             $('#ticket-moderateur').val(ticketModerateur.toFixed(2));
             $('#a-payer').val(montantAPayer.toFixed(2));
-            $('#payer').val(montantAPayer.toFixed(2));
+            
+            // Ne remplir que si le champ est vide ou si la valeur actuelle correspond au montant précédent
+            const payerActuel = parseFloat($('#payer').val()) || 0;
+            if (payerActuel === 0 || payerActuel === parseFloat($('#a-payer').data('last-value'))) {
+                $('#payer').val(montantAPayer.toFixed(2));
+            }
+            
+            // Stocker la nouvelle valeur pour comparaison future
+            $('#a-payer').data('last-value', montantAPayer.toFixed(2));
         }
 
         // Initialisation des valeurs si old() existe
