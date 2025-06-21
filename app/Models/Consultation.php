@@ -11,7 +11,7 @@ class Consultation extends Model
     protected $fillable = [
         'numero_recu','user_id', 'patient_id', 'medecin_id', 'total',
         'ticket_moderateur', 'reduction',  'montant_a_paye', 'montant_paye','reste_a_payer',
-        'methode_paiement', 'date_consultation'
+        'methode_paiement', 'date_consultation','pdf_path',
     ];
 
     public function patient()
@@ -53,6 +53,15 @@ class Consultation extends Model
 {
     return $this->hasMany(ConsultationDetail::class);
 }
+public function reglement()
+{
+    return $this->hasOne(Reglement::class);
+}
+
+
+protected $casts = [
+    'date_consultation' => 'datetime',
+];
 
     
 }

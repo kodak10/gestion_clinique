@@ -49,7 +49,7 @@
                                                     <a class="dropdown-item" 
                                                     href="{{ route('patients.view-pdf', $patient->id) }}" 
                                                     target="_blank">
-                                                    <i class="fas fa-file-pdf mr-2"></i> Ouvrir le dossier
+                                                     Ouvrir le dossier
                                                     </a>                                                   
                                                     <a class="dropdown-item" href="{{ route('consultations.create', $patient->id) }}">Consultation</a>
 

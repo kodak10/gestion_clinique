@@ -25,6 +25,7 @@ return new class extends Migration
             $table->decimal('reste_a_payer', 10, 2)->default(0);
             $table->string('methode_paiement');
             $table->date('date_consultation');
+            $table->string('pdf_path')->nullable(); // Chemin du PDF généré
             $table->timestamps();
         });
     }

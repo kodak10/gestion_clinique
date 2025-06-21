@@ -245,7 +245,6 @@
     </div>
 </div>
 
-
 <!-- Modal Profession -->
 <div class="modal modal-blur fade" id="modal-profession" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
@@ -254,7 +253,7 @@
                 <h5 class="modal-title">Nouvelle Profession</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="profession-form">
+            <form action="{{ route('professions.store') }}" method="POST" id="profession-form">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
@@ -279,7 +278,7 @@
                 <h5 class="modal-title">Nouvelle Ethnie</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="ethnie-form">
+            <form action="{{ route('ethnies.store') }}" method="POST" id="ethnie-form">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
@@ -295,48 +294,11 @@
         </div>
     </div>
 </div>
+
 @endsection
 
 @push('scripts')
-<script>
-$(document).ready(function() {
-    // Gestion de l'ajout de profession
-    $('#profession-form').submit(function(e) {
-        e.preventDefault();
-        $.ajax({
-            url: '{{ route("professions.store") }}',
-            method: 'POST',
-            data: $(this).serialize(),
-            success: function(response) {
-                $('#profession-select').append(new Option(response.nom, response.id, true, true));
-                $('#modal-profession').modal('hide');
-                $('#profession-nom').val('');
-            },
-            error: function(xhr) {
-                alert('Une erreur est survenue: ' + xhr.responseJSON.message);
-            }
-        });
-    });
 
-    // Gestion de l'ajout d'ethnie
-    $('#ethnie-form').submit(function(e) {
-        e.preventDefault();
-        $.ajax({
-            url: '{{ route("ethnies.store") }}',
-            method: 'POST',
-            data: $(this).serialize(),
-            success: function(response) {
-                $('#ethnie-select').append(new Option(response.nom, response.id, true, true));
-                $('#modal-ethnie').modal('hide');
-                $('#ethnie-nom').val('');
-            },
-            error: function(xhr) {
-                alert('Une erreur est survenue: ' + xhr.responseJSON.message);
-            }
-        });
-    });
-});
-</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

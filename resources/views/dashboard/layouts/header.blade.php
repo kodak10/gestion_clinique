@@ -491,7 +491,7 @@
                       <div class="dropdown-menu">
                         <div class="dropdown-menu-columns">
                           <div class="dropdown-menu-column">
-                            <a class="dropdown-item" href=""> Consultations </a>
+                            <a class="dropdown-item" href="{{ route('consultations.index') }}"> Consultations </a>
                             <a class="dropdown-item" href=""> Hospitalisations </a>
                             <a class="dropdown-item" href=""> Suivi Patient</a>
                             

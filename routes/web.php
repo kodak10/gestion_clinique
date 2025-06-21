@@ -52,6 +52,12 @@ Route::middleware(['auth',])->group(function () {
     Route::get('/patients/{patient}/consultations/create', [ConsultationController::class, 'create'])->name('consultations.create');
     Route::post('/patients/{patient}/consultations', [ConsultationController::class, 'store'])->name('consultations.store');
 
+    Route::get('/consultations', [ConsultationController::class, 'index'])->name('consultations.index');
+    Route::get('/consultations/{consultation}/edit', [ConsultationController::class, 'edit'])->name('consultations.edit');
+    Route::put('/consultations/{consultation}', [ConsultationController::class, 'update'])->name('consultations.update');
+
+
+
    Route::get('/patients/{patient}/view-pdf', [PatientController::class, 'viewPdf'])->name('patients.view-pdf');
 
 

@@ -196,7 +196,12 @@
             color: #7f8c8d;
             
         }
-
+        .photo img{
+            width: 150px !important;
+            height: 150px !important;
+            object-fit: cover;
+            border-radius: 5px;
+        }
         
     </style>
 </head>
@@ -220,7 +225,7 @@
             <div class="photo-dossier-container">
                <div class="info-grid">
                     <div class="info-row">
-                        <div class="info-item2">
+                        <div class="info-item2 photo">
                             @if($patient->photo && Storage::disk('public')->exists($patient->photo))
                                 <img src="{{ storage_path('app/public/'.$patient->photo) }}" style="width:100%;height:100%;object-fit:cover;">
                             @else

@@ -267,7 +267,7 @@
     </div>
 </div>
 
-<!-- Modal Profession pour l'édition -->
+<!-- Modal Profession -->
 <div class="modal modal-blur fade" id="modal-profession-edit" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -275,12 +275,12 @@
                 <h5 class="modal-title">Nouvelle Profession</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="profession-form-edit">
+            <form action="{{ route('professions.store') }}" method="POST" id="profession-form">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Nom de la profession</label>
-                        <input type="text" class="form-control" name="nom" id="profession-nom-edit" required>
+                        <input type="text" class="form-control" name="nom" id="profession-nom" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -292,7 +292,7 @@
     </div>
 </div>
 
-<!-- Modal Ethnie pour l'édition -->
+<!-- Modal Ethnie -->
 <div class="modal modal-blur fade" id="modal-ethnie-edit" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -300,12 +300,12 @@
                 <h5 class="modal-title">Nouvelle Ethnie</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="ethnie-form-edit">
+            <form action="{{ route('ethnies.store') }}" method="POST" id="ethnie-form">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Nom de l'ethnie</label>
-                        <input type="text" class="form-control" name="nom" id="ethnie-nom-edit" required>
+                        <input type="text" class="form-control" name="nom" id="ethnie-nom" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -318,66 +318,7 @@
 </div>
 @endsection
 @push('scripts')
-<script>
-$(document).ready(function() {
-    // Récupérer le token CSRF
-    const csrfToken = $('meta[name="csrf-token"]').attr('content');
 
-    // Gestion de l'ajout de profession (édition)
-    $('#profession-form-edit').submit(function(e) {
-        e.preventDefault();
-        
-        $.ajax({
-            url: '{{ route("professions.store") }}',
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken
-            },
-            data: $(this).serialize(),
-            success: function(response) {
-                $('#profession-select-edit').append(new Option(response.nom, response.id, true, true));
-                $('#modal-profession-edit').modal('hide');
-                $('#profession-nom-edit').val('');
-                toastr.success('Profession ajoutée avec succès');
-            },
-            error: function(xhr) {
-                if(xhr.status === 422) {
-                    toastr.error(xhr.responseJSON.message);
-                } else {
-                    toastr.error('Une erreur est survenue');
-                }
-            }
-        });
-    });
-
-    // Gestion de l'ajout d'ethnie (édition)
-    $('#ethnie-form-edit').submit(function(e) {
-        e.preventDefault();
-        
-        $.ajax({
-            url: '{{ route("ethnies.store") }}',
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken
-            },
-            data: $(this).serialize(),
-            success: function(response) {
-                $('#ethnie-select-edit').append(new Option(response.nom, response.id, true, true));
-                $('#modal-ethnie-edit').modal('hide');
-                $('#ethnie-nom-edit').val('');
-                toastr.success('Ethnie ajoutée avec succès');
-            },
-            error: function(xhr) {
-                if(xhr.status === 422) {
-                    toastr.error(xhr.responseJSON.message);
-                } else {
-                    toastr.error('Une erreur est survenue');
-                }
-            }
-        });
-    });
-});
-</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

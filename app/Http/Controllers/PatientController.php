@@ -310,11 +310,8 @@ public function viewPdf(Patient $patient)
         
         $ethnie = Ethnie::create($request->only('nom'));
         
-        return response()->json([
-            'success' => true,
-            'id' => $ethnie->id,
-            'nom' => $ethnie->nom
-        ]);
+        return redirect()->route('patients.create')->with('success', 'Ethnie créé avec succès');
+
     }
 
     public function storeProfession(Request $request)
@@ -323,11 +320,8 @@ public function viewPdf(Patient $patient)
         
         $profession = Profession::create($request->only('nom'));
         
-        return response()->json([
-            'success' => true,
-            'id' => $profession->id,
-            'nom' => $profession->nom
-        ]);
+        return redirect()->route('patients.create')->with('success', 'Professio créé avec succès');
+
     }
 
     
