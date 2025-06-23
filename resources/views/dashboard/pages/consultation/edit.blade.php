@@ -3,11 +3,11 @@
 @section('content')
 <div class="page-header d-print-none">
     <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <h2 class="page-title">Modifier Consultation</h2>
-            </div>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h2 class="page-title m-0">Modifier Consultation</h2>
+            <a href="javascript:history.back()" class="btn bg-gray-500">Retour</a>
         </div>
+
     </div>
 </div>
 

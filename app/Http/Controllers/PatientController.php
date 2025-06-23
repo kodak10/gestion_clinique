@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Assurance;
+use App\Models\Consultation;
 use App\Models\Ethnie;
+use App\Models\Hospitalisation;
 use App\Models\Patient;
 use App\Models\Profession;
+use App\Models\Reglement;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class PatientController extends Controller
 {
@@ -323,6 +326,28 @@ public function viewPdf(Patient $patient)
         return redirect()->route('patients.create')->with('success', 'Professio créé avec succès');
 
     }
+    public function show($id)
+{
+    $patient = Patient::findOrFail($id);
+    
+    $consultations = Consultation::with([
+            'patient',
+            'medecin',
+            'details.prestation',
+            'reglements.user'
+        ])
+        ->where('patient_id', $id)
+        ->orderBy('date_consultation', 'desc')
+        ->get();
+
+    $hospitalisations = $patient->hospitalisations()
+        ->with(['medecin', 'details.prestation'])
+        ->latest()
+        ->get();
+
+    return view('dashboard.pages.patients.show', compact('patient', 'consultations', 'hospitalisations'));
+}
+    
 
     
 }

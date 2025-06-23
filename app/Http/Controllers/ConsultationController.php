@@ -12,6 +12,7 @@ use App\Models\Specialite;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -234,10 +235,11 @@ public function edit(Consultation $consultation)
 
 public function update(Request $request, Consultation $consultation)
 {
-    $request->validate([
+    // Validation des données
+    $validatedData = $request->validate([
         'medecin_id' => 'required|exists:medecins,id',
         'specialite' => 'required',
-        'prestations' => 'required|array',
+        'prestations' => 'required|array|min:1',
         'prestations.*.prestation_id' => 'required|exists:prestations,id',
         'prestations.*.montant' => 'required|numeric|min:500',
         'prestations.*.quantite' => 'required|integer|min:1',
@@ -246,54 +248,81 @@ public function update(Request $request, Consultation $consultation)
         'methode_paiement' => 'required|in:cash,mobile_money,virement'
     ]);
 
-    // Calcul du total
+    // Calcul des montants
     $totalPrestations = collect($request->prestations)->sum(function($item) {
         return $item['montant'] * $item['quantite'];
     });
 
-    // Ticket modérateur (assurance)
     $tauxAssurance = $consultation->patient->assurance->taux ?? 0;
     $ticketModerateur = $totalPrestations * (1 - $tauxAssurance / 100);
-
-    // Montant à payer = ticket - réduction
     $montantAPayer = max($ticketModerateur - $request->reduction, 0);
 
-    // Vérification
+    // Vérification de cohérence
     if ($request->montant_paye > $montantAPayer) {
-        return back()->withErrors(['montant_paye' => 'Le montant payé ne peut pas dépasser le montant à payer.'])->withInput();
+        return back()->withErrors([
+            'montant_paye' => 'Le montant payé ne peut pas dépasser le montant à payer.'
+        ])->withInput();
     }
 
-    // Mise à jour de la consultation
-    $consultation->update([
-        'medecin_id' => $request->medecin_id,
-        'total' => $totalPrestations,
-        'ticket_moderateur' => $ticketModerateur,
-        'reduction' => $request->reduction,
-        'montant_a_paye' => $montantAPayer,
-        'montant_paye' => $request->montant_paye,
-        'reste_a_payer' => $montantAPayer - $request->montant_paye,
-        'methode_paiement' => $request->methode_paiement,
-    ]);
+    // Calcul de la différence avec les anciens règlements
+    $ancienTotalPaye = $consultation->reglements->sum('montant');
+    $difference = $request->montant_paye - $ancienTotalPaye;
 
-    // Mise à jour des prestations
-    $consultation->prestations()->detach();
-    foreach ($request->prestations as $prestation) {
-        $consultation->prestations()->attach($prestation['prestation_id'], [
-            'quantite' => $prestation['quantite'],
-            'montant' => $prestation['montant'],
-            'total' => $prestation['montant'] * $prestation['quantite']
+    // Transaction pour garantir l'intégrité des données
+    DB::transaction(function() use (
+        $request, 
+        $consultation, 
+        $totalPrestations,
+        $ticketModerateur,
+        $montantAPayer,
+        $difference
+    ) {
+        // Mise à jour de la consultation
+        $consultation->update([
+            'medecin_id' => $request->medecin_id,
+            'specialite' => $request->specialite,
+            'total' => $totalPrestations,
+            'ticket_moderateur' => $ticketModerateur,
+            'reduction' => $request->reduction,
+            'montant_a_paye' => $montantAPayer,
+            'montant_paye' => $request->montant_paye,
+            'reste_a_payer' => $montantAPayer - $request->montant_paye,
+            'methode_paiement' => $request->methode_paiement,
         ]);
-    }
 
-    // Mise à jour du règlement
-    $consultation->reglement->update([
-        'montant' => $request->montant_paye,
-        'methode_paiement' => $request->methode_paiement,
-    ]);
+        // Mise à jour des prestations
+        $consultation->prestations()->detach();
+        foreach ($request->prestations as $prestation) {
+            $consultation->prestations()->attach($prestation['prestation_id'], [
+                'quantite' => $prestation['quantite'],
+                'montant' => $prestation['montant'],
+                'total' => $prestation['montant'] * $prestation['quantite']
+            ]);
+        }
+
+        // Gestion des règlements
+        if (abs($difference) > 0) {
+            $consultation->reglements()->create([
+                'montant' => $difference,
+                'methode_paiement' => $request->methode_paiement,
+                'user_id' => auth()->id(),
+                'notes' => $difference > 0 
+                    ? 'Ajustement positif après modification' 
+                    : 'Ajustement négatif après modification'
+            ]);
+        } else {
+            // Mise à jour du dernier règlement si pas de différence
+            if ($consultation->reglements->isNotEmpty()) {
+                $consultation->reglements->last()->update([
+                    'methode_paiement' => $request->methode_paiement
+                ]);
+            }
+        }
+    });
 
     // Régénération du PDF
     $pdf = Pdf::loadView('dashboard.documents.recu_consultation', [
-        'consultation' => $consultation,
+        'consultation' => $consultation->fresh(), // Recharger les relations
         'patient' => $consultation->patient,
         'medecin' => $consultation->medecin,
         'prestations' => $consultation->prestations,
@@ -302,14 +331,23 @@ public function update(Request $request, Consultation $consultation)
         'user' => auth()->user(),
     ]);
 
-    Storage::disk('public')->put($consultation->pdf_path, $pdf->output());
+    $pdfPath = 'consultations/recu-' . $consultation->id . '-' . now()->format('YmdHis') . '.pdf';
+    Storage::disk('public')->put($pdfPath, $pdf->output());
 
-    return redirect()
-        ->route('consultations.index', $consultation->patient)
-        ->with([
-            'success' => 'Consultation mise à jour avec succès',
-            'pdf_url' => Storage::url($consultation->pdf_path)
-        ]);
+    // Mise à jour du chemin du PDF
+    $consultation->update(['pdf_path' => $pdfPath]);
+
+    // return redirect()
+    //     ->route('consultations.index', $consultation->patient)
+    //     ->with([
+    //         'success' => 'Consultation mise à jour avec succès',
+    //         'pdf_url' => Storage::url($pdfPath)
+    //     ]);
+    return back()->with([
+    'success' => 'Consultation mise à jour avec succès',
+    'pdf_url' => Storage::url($pdfPath)
+]);
+
 }
 
 }

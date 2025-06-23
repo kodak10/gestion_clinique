@@ -178,8 +178,7 @@
                                             <div class="dropdown">
                                                 <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">Actions</button>
                                                 <div class="dropdown-menu dropdown-menu-end">
-                                                    <a class="dropdown-item" href="{{ route('patients.edit', $reglement->id) }}">Réimprimer le reçu</a>
-                                                    <a class="dropdown-item" href="{{ route('consultations.create', $reglement->id) }}">Modifier</a>
+                                                    <a class="dropdown-item" href="{{ Storage::url($reglement->consultation->pdf_path) }}" target="_blank">Réimprimer le reçu</a>
                                                     <a class="dropdown-item detail-mouvement" href="#" 
                                                         data-bs-toggle="modal" 
                                                         data-bs-target="#modal-detail"

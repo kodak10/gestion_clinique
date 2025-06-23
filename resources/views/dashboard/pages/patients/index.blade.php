@@ -59,6 +59,8 @@
                                                     À Hospitaliser
                                                     </a>
 
+                                                    <a class="dropdown-item" href="{{ route('patients.show', $patient->id) }}">Suivi du patient</a>
+
                                                     
                                                 </div>
                                             </div>

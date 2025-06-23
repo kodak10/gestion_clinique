@@ -34,6 +34,17 @@ class Patient extends Model
         'date_naissance' => 'date',
     ];
 
+    public function consultations()
+{
+    return $this->hasMany(Consultation::class);
+}
+
+public function hospitalisations()
+{
+    return $this->hasMany(Hospitalisation::class);
+}
+
+
     public function profession()
     {
         return $this->belongsTo(Profession::class);

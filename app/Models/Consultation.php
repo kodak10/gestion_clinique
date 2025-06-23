@@ -53,7 +53,7 @@ class Consultation extends Model
 {
     return $this->hasMany(ConsultationDetail::class);
 }
-public function reglement()
+public function reglements()
 {
     return $this->hasOne(Reglement::class);
 }
