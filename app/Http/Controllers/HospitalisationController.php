@@ -10,6 +10,7 @@ use App\Models\DetailsFraisPharmacie;
 use App\Models\FraisHospitalisation;
 use App\Models\Hospitalisation;
 use App\Models\HospitalisationDetail;
+use App\Models\Medicament;
 use App\Models\Patient;
 use App\Models\Prestation;
 use App\Models\Reglement;
@@ -54,18 +55,17 @@ public function createPharmacie(Hospitalisation $hospitalisation)
     {
         $patient = $hospitalisation->patient;
 
-        // Récupérer les médicaments (category_id = 5 pour pharmacie)
-        $medicaments = CategoryFrais_Hospitalisation::with(['fraisHospitalisations' => function($query) {
-            $query->where('category_id', 5)->orderBy('libelle');
-        }])->where('id', 5)->get();
+        $medicaments = $hospitalisation->medicaments()
+            ->withPivot('quantite', 'prix_unitaire', 'taux', 'total')
+            ->get();
+            
+        $allMedicaments = Medicament::orderBy('nom')->get();
+        
+        return view('dashboard.pages.pharmacie.pharmacie_patient', compact(
+            'hospitalisation', 'medicaments', 'allMedicaments', 'patient'
+        ));
 
-        // Récupérer les détails existants
-        $details = HospitalisationDetail::with('fraisHospitalisation')
-                    ->where('hospitalisation_id', $hospitalisation->id)
-                    ->get();
-
-        return view('dashboard.pages.hospitalisations.pharmacie', 
-            compact('hospitalisation', 'patient', 'medicaments', 'details'));
+       
     }
 
 // public function createLaboratoire(Hospitalisation $hospitalisation)
@@ -220,28 +220,34 @@ public function createLaboratoire(Hospitalisation $hospitalisation)
 
     
 
-    // Récupérer les détails existants pour laboratoire
-    $detailsLaboratoire = HospitalisationDetail::with('fraisHospitalisation')
-                    ->where('hospitalisation_id', $hospitalisation->id)
-                    ->whereHas('fraisHospitalisation', function($query) {
-                        $query->where('category_id', 3);
-                    })
-                    ->get();
-
-    $detailsPharmacie = HospitalisationDetail::with('frais') // pas 'fraisHospitalisation'
+   $detailsLaboratoire = HospitalisationDetail::with('fraisHospitalisation')
     ->where('hospitalisation_id', $hospitalisation->id)
-    ->whereHas('frais', function($query) {
-        $query->where('category_id', 5); // 5 = ID de la catégorie Pharmacie
-    })
+    ->where('frais_hospitalisation_id', 1)
     ->get();
 
-    $autresFrais = CategoryFrais_Hospitalisation::with(['fraisHospitalisations' => function($query) {
-        $query->whereNotIn('category_id', [3, 5])->orderBy('libelle');
-    }])->whereNotIn('id', [3, 5])->get();
+
+    $detailsPharmacie = HospitalisationDetail::with('fraisHospitalisation')
+    ->where('hospitalisation_id', $hospitalisation->id)
+    ->where('frais_hospitalisation_id', 2)
+    ->get();
+
+    $autresDetails = HospitalisationDetail::with('fraisHospitalisation')
+    ->where('hospitalisation_id', $hospitalisation->id)
+    ->whereNotIn('frais_hospitalisation_id', [1, 2])
+    ->get();
+
+// Récupérer les frais disponibles non encore utilisés
+$utilises = $autresDetails->pluck('frais_hospitalisation_id')->toArray();
+$autresFrais = FraisHospitalisation::whereNotIn('id', array_merge([1, 2], $utilises))
+    ->orderBy('libelle')
+    ->get();
+
+    $taux_assurance = $hospitalisation->patient->taux_assurance ?? 0; // ou 100 par défaut si nécessaire
+
 
 
     return view('dashboard.pages.hospitalisations.create', 
-        compact('hospitalisation', 'patient', 'categorie_medecins', 'detailsLaboratoire', 'detailsPharmacie', 'autresFrais'));
+        compact('hospitalisation', 'patient', 'categorie_medecins', 'detailsLaboratoire', 'detailsPharmacie', 'autresFrais', 'taux_assurance'));
 }
 
 
@@ -358,6 +364,7 @@ public function storeFacture(Request $request, Hospitalisation $hospitalisation)
         'frais.*.frais_id' => 'required|exists:frais_hospitalisations,id',
         'frais.*.prix' => 'required|numeric|min:0',
         'frais.*.quantite' => 'required|integer|min:1',
+        'frais.*.taux' => 'required|integer|min:1',
         'frais.*.total' => 'required|numeric|min:0',
         'frais.*.medecin_id' => 'nullable|exists:medecins,id',
         'date_sortie' => 'required|date',
@@ -392,6 +399,7 @@ public function storeFacture(Request $request, Hospitalisation $hospitalisation)
                 'frais_hospitalisation_id' => $fraisItem['frais_id'],
                 'quantite' => $fraisItem['quantite'],
                 'prix_unitaire' => $fraisItem['prix'],
+                'taux' => $fraisItem['taux'],
                 'total' => $totalItem,
                 'updated_at' => now()
             ];
@@ -435,12 +443,12 @@ public function storeFacture(Request $request, Hospitalisation $hospitalisation)
         \Log::info('Règlement créé', ['reglement_id' => $reglement->id]);
 
         // 7. Si caution payée, l'enregistrer
-        if ($request->caution) {
-            Caution::updateOrCreate(
-                ['hospitalisation_id' => $hospitalisation->id],
-                ['montant' => $request->caution, 'date_versement' => now()]
-            );
-        }
+        // if ($request->caution) {
+        //     Caution::updateOrCreate(
+        //         ['hospitalisation_id' => $hospitalisation->id],
+        //         ['montant' => $request->caution, 'date_versement' => now()]
+        //     );
+        // }
 
         DB::commit();
         \Log::info('Transaction complétée avec succès');

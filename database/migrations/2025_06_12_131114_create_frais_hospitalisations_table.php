@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('category_frais__hospitalisations', function (Blueprint $table) {
+        Schema::create('frais_hospitalisations', function (Blueprint $table) {
             $table->id();
-            $table->string('nom')->unique();
+            $table->string('libelle');
+            $table->decimal('montant', 10, 2);
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }
@@ -23,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('frais_hospitalisations');
     }
 };

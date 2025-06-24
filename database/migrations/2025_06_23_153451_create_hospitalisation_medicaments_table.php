@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hospitalisation_details', function (Blueprint $table) {
+        Schema::create('hospitalisation_medicament', function (Blueprint $table) {
             $table->id();
             $table->foreignId('hospitalisation_id')->constrained();
-            $table->foreignId('frais_hospitalisation_id')->constrained();
+            $table->foreignId('medicament_id')->constrained();
+            $table->integer('quantite');
             $table->decimal('prix_unitaire', 10, 2);
-            $table->decimal('taux', 10, 2);
-            $table->integer('quantite')->default(1);
-            $table->decimal('reduction', 10, 2)->default(0);
+            $table->integer('taux')->default(100);
             $table->decimal('total', 10, 2);
             $table->timestamps();
         });
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('details_frais_pharmacies');
+        Schema::dropIfExists('hospitalisation_medicaments');
     }
 };

@@ -15,19 +15,19 @@ class HospitalisationDetail extends Model
         'quantite',
         'prix_unitaire',
         'reduction',
-
+        'taux',
         'total'
     ];
 
     
 
     public function fraisHospitalisation()
-{
-    return $this->belongsTo(FraisHospitalisation::class);
-}
-public function frais()
-{
-    return $this->belongsTo(FraisHospitalisation::class, 'frais_hospitalisation_id');
-}
+    {
+        return $this->belongsTo(FraisHospitalisation::class);
+    }
+    public function frais()
+    {
+        return $this->belongsTo(FraisHospitalisation::class, 'frais_hospitalisation_id');
+    }
 
 }

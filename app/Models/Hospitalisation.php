@@ -51,7 +51,7 @@ class Hospitalisation extends Model
     public function fraisPharmacie()
     {
         return $this->hasMany(HospitalisationDetail::class)->whereHas('frais', function($q) {
-            $q->where('category_id', 5); // ID de la catégorie Pharmacie
+            $q->where('category_id', 2); // ID de la catégorie Pharmacie
         });
     }
 

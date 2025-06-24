@@ -1,307 +1,324 @@
 @extends('dashboard.layouts.master')
 
 @section('content')
-
-
 <div class="page-body">
     <div class="container-xl">
-            <div class="card-body">
-                @if(session('swal_success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="fas fa-check-circle me-2"></i>
-                        {{ session('swal_success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-                @if(session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="fas fa-exclamation-circle me-2"></i>
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
+        <div class="card-body">
+            @if(session('swal_success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    {{ session('swal_success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
 
-                <form action="{{ route('hospitalisations.facture.store', $hospitalisation->id) }}" method="POST" id="examenForm">
-                    @csrf
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card mb-3">
-                                <div class="card-header">
-                                    <h3 class="card-title">Informations Patient</h3>
+            <form action="{{ route('hospitalisations.facture.store', $hospitalisation->id) }}" method="POST" id="examenForm">
+                @csrf
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h3 class="card-title">Informations Patient</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="col-lg-12">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nom & Prénoms</label>
+                                        <input type="text" class="form-control" value="{{ $patient->nom }} {{ $patient->prenoms }}" readonly>
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <div class="col-lg-12">
+                                <div class="row">
+                                    <div class="col-lg-6">
                                         <div class="mb-3">
-                                            <label class="form-label">Nom & Prénoms</label>
-                                            <input type="text" class="form-control" value="{{ $patient->nom }} {{ $patient->prenoms }}" readonly>
+                                            <label class="form-label">Assurance</label>
+                                            <input type="text" class="form-control" value="{{ $patient->assurance->name ?? 'Aucune' }}" readonly>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Assurance</label>
-                                                <input type="text" class="form-control" value="{{ $patient->assurance->name ?? 'Aucune' }}" readonly>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Taux Couverture</label>
-                                                <input type="text" class="form-control" id="assurance-taux" value="{{ $patient->assurance->taux ?? '0' }}%" readonly>
-                                            </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Taux Couverture</label>
+                                            <input type="text" class="form-control" id="assurance-taux" value="{{ $patient->taux_couverture ?? '0' }}%" readonly>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="card mb-3">
-                                <div class="card-header">
-                                    <h3 class="card-title">Medecin Traitant</h3>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Médecin</label>
-                                                <select class="form-control select2" id="medecin-select" name="medecin_id">
-                                                    <option value="">Sélectionner un Médecin</option>
-                                                    @foreach($categorie_medecins as $categorie_medecin)
-                                                        <optgroup label="{{ $categorie_medecin->nom }}">
-                                                            @foreach($categorie_medecin->medecins as $medecin)
-                                                                <option value="{{ $medecin->id }}" data-specialite="{{ $categorie_medecin->nom }}">
-                                                                    {{ $medecin->nom_complet }}
-                                                                </option>
-                                                            @endforeach
-                                                        </optgroup>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Spécialité</label>
-                                                <input type="text" class="form-control" id="specialite-input" name="specialite" readonly>
-                                            </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h3 class="card-title">Medecin Traitant</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Médecin</label>
+                                            <select class="form-control select2" id="medecin-select" name="medecin_id">
+                                                <option value="">Sélectionner un Médecin</option>
+                                                @foreach($categorie_medecins as $categorie_medecin)
+                                                    <optgroup label="{{ $categorie_medecin->nom }}">
+                                                        @foreach($categorie_medecin->medecins as $medecin)
+                                                            <option value="{{ $medecin->id }}" data-specialite="{{ $categorie_medecin->nom }}">
+                                                                {{ $medecin->nom_complet }}
+                                                            </option>
+                                                        @endforeach
+                                                    </optgroup>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-12">
-                            <div class="card mb-3">
-                                
-                                <div class="card-body">
-                                    <div class="row">
-                                        <!-- Date d'entrée -->
-                                        <div class="col-lg-3">
-                                            <div class="mb-3">
-                                                <label class="form-label">Date d’entrée</label>
-                                                <input type="datetime-local" class="form-control" name="date_entree" value="{{ old('date_entree', now()->format('Y-m-d\TH:i')) }}">
-                                            </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Spécialité</label>
+                                            <input type="text" class="form-control" id="specialite-input" name="specialite" readonly>
                                         </div>
-
-                                        <!-- Date de sortie -->
-                                        <div class="col-lg-3">
-                                            <div class="mb-3">
-                                                <label class="form-label">Date de sortie</label>
-                                                <input type="datetime-local" class="form-control" name="date_sortie" value="{{ old('date_sortie') }}">
-                                            </div>
-                                        </div>
-
-                                        <!-- Caution -->
-                                        <div class="col-lg-3">
-                                            <div class="mb-3">
-                                                <label class="form-label">Caution</label>
-                                                <input type="number" class="form-control" name="caution" placeholder="Montant versé" value="{{ old('caution', 0) }}">
-                                            </div>
-                                        </div>
-                                        <!-- payeur -->
-                                        <div class="col-lg-3">
-                                            <div class="mb-3">
-                                                <label class="form-label">Payeur</label>
-                                                <input type="text" class="form-control" name="payeur" placeholder="Nom de la personne" value="{{ old('payeur') }}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <!-- Colonne Laboratoire (catégorie 3) -->
-                        <div class="col-md-6">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h4 class="mb-3">Examens Laboratoire</h4>
-                                <a href="#" target="_blank" class="btn btn-sm btn-primary mb-3">
-                                    <i class="fas fa-print"></i> Imprimer
-                                </a>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th width="5%"></th>
-                                            <th>Examen</th>
-                                            <th>Prix unitaire</th>
-                                            <th>Quantité</th>
-                                            <th width="20%">Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($detailsLaboratoire as $examen)
-                                        <tr>
-                                            <td>
-                                                    <input type="checkbox" class="form-control" >
-                                                </td>
-                                            <td>{{ $examen->frais->libelle }}</td>
-                                            
-                                            <td>{{ number_format($examen->prix_unitaire, 0, ',', ' ') }}</td>
-                                            <td>{{ $examen->quantite }}</td>
-                                            <td>{{ number_format($examen->total, 0, ',', ' ') }}</td>
-                                            
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- Colonne Pharmacie (catégorie 6) -->
-                        <div class="col-md-6">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h4 class="mb-3">Pharmacie</h4>
-                                <a href="#" target="_blank" class="btn btn-sm btn-primary mb-3">
-                                    <i class="fas fa-print"></i> Imprimer
-                                </a>
-                            </div>                            <div class="table-responsive">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th width="5%"></th>
-                                            <th>Médicament</th>
-                                            <th>Prix unitaire</th>
-                                            <th>Quantité</th>
-                                            <th width="20%">Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($detailsPharmacie as $detail)
-                                            <tr>
-                                                <td>
-                                                    <input type="checkbox" class="form-control" >
-                                                </td>
-                                                <td>{{ $detail->frais->libelle }}</td>
-                                                <td>{{ $detail->quantite }}</td>
-                                                <td>{{ number_format($detail->prix_unitaire, 0, ',', ' ') }}</td>
-                                                <td>{{ number_format($detail->total, 0, ',', ' ') }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                    
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="col-md-12 mt-5">
-                            <div class="card mb-3">
-                                <div class="card-header">
-                                    <h3 class="card-title">Autres frais</h3>
-                                </div>
-                                <div class="card-body">
-                                    <div class="autres-repeater">
-                                        <!-- Changé 'autres' en 'frais' pour correspondre à la validation -->
-                                        <div data-repeater-list="frais">
-                                            @forelse($autresFrais as $detail)
-                                            <div data-repeater-item class="mb-3 border-bottom pb-3">
-                                                <div class="row align-items-end">
-                                                    <div class="col-md-5">
-                                                        <select class="form-select frais-select" name="frais_id" required>
-                                                            @foreach($autresFrais as $categorie)
-                                                                <optgroup label="{{ $categorie->libelle }}">
-                                                                    @foreach($categorie->fraisHospitalisations as $frais)
-                                                                        <option value="{{ $frais->id }}" data-prix="{{ $frais->montant }}"
-                                                                            @if($frais->id == $detail->frais_hospitalisation_id) selected @endif>
-                                                                            {{ $frais->libelle }}
-                                                                        </option>
-                                                                    @endforeach
-                                                                </optgroup>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <input type="number" class="form-control prix" name="prix" 
-                                                            value="{{ $detail->prix_unitaire }}" required>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <input type="number" class="form-control quantite" name="quantite" 
-                                                            value="{{ $detail->quantite }}" min="1" required>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <input type="number" class="form-control total" name="total" 
-                                                            value="{{ $detail->total }}" readonly>
-                                                    </div>
-                                                    <div class="col-md-1 text-center">
-                                                        <button type="button" data-repeater-delete class="btn btn-danger btn-sm">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            @empty
-                                            <div data-repeater-item class="mb-3 border-bottom pb-3">
-                                                <div class="row align-items-end">
-                                                    <div class="col-md-5">
-                                                        <select class="form-select frais-select" name="frais_id" required>
-                                                            @foreach($autresFrais as $categorie)
-                                                                <optgroup label="{{ $categorie->libelle }}">
-                                                                    @foreach($categorie->fraisHospitalisations as $frais)
-                                                                        <option value="{{ $frais->id }}" data-prix="{{ $frais->montant }}">
-                                                                            {{ $frais->libelle }}
-                                                                        </option>
-                                                                    @endforeach
-                                                                </optgroup>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <input type="number" class="form-control prix" name="prix" required>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <input type="number" class="form-control quantite" name="quantite" value="1" min="1" required>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <input type="number" class="form-control total" name="total" readonly>
-                                                    </div>
-                                                    <div class="col-md-1 text-center">
-                                                        <button type="button" data-repeater-delete class="btn btn-danger btn-sm">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            @endforelse
-                                        </div>
-
-                                        <button type="button" data-repeater-create class="btn bg-primary-subtle text-primary">
-                                            <span class="fs-4 me-1">+</span> Ajouter un autre frais
-                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-center mt-5">
-                                 <a href="{{ route('hospitalisations.index') }}" class="btn btn-secondary">
-                                    <i class="fas fa-arrow-left"></i> Retour
-                                </a>
-                                                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    <div class="col-md-12">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- Date d'entrée -->
+                                    <div class="col-lg-3">
+                                        <div class="mb-3">
+                                            <label class="form-label">Date d'entrée</label>
+                                            <input type="datetime-local" class="form-control" name="date_entree" value="{{ old('date_entree', now()->format('Y-m-d\TH:i')) }}">
+                                        </div>
+                                    </div>
 
+                                    <!-- Date de sortie -->
+                                    <div class="col-lg-3">
+                                        <div class="mb-3">
+                                            <label class="form-label">Date de sortie</label>
+                                            <input type="datetime-local" class="form-control" name="date_sortie" value="{{ old('date_sortie') }}">
+                                        </div>
+                                    </div>
+
+                                    <!-- Caution -->
+                                    <div class="col-lg-3">
+                                        <div class="mb-3">
+                                            <label class="form-label">Caution</label>
+                                            <input type="number" class="form-control" name="caution" placeholder="Montant versé" value="{{ old('caution', 0) }}">
+                                        </div>
+                                    </div>
+                                    <!-- payeur -->
+                                    <div class="col-lg-3">
+                                        <div class="mb-3">
+                                            <label class="form-label">Payeur</label>
+                                            <input type="text" class="form-control" name="payeur" placeholder="Nom de la personne" value="{{ old('payeur') }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    
-                </form>
-            </div>
+
+                    <!-- Colonne Laboratoire -->
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-3">Examens Laboratoire</h4>
+                            <div>
+                                <span class="badge bg-primary me-2" id="totalLaboratoire">
+                                    {{ number_format($detailsLaboratoire->sum('total'), 0, ',', ' ') }} XOF
+                                </span>
+                                <a href="#" target="_blank" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-print"></i> Imprimer
+                                </a>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Examen</th>
+                                        <th>Prix unitaire</th>
+                                        <th>Quantité</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($detailsLaboratoire as $examen)
+                                    <tr>
+                                        <td>{{ $examen->fraisHospitalisation->libelle }}</td>
+                                        <td>{{ number_format($examen->prix_unitaire, 0, ',', ' ') }}</td>
+                                        <td>{{ $examen->quantite }}</td>
+                                        <td>{{ number_format($examen->total, 0, ',', ' ') }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Colonne Pharmacie -->
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-3">Pharmacie</h4>
+                            <div>
+                                <span class="badge bg-primary me-2" id="totalPharmacie">
+                                    {{ number_format($detailsPharmacie->sum('total'), 0, ',', ' ') }} XOF
+                                </span>
+                                <a href="#" target="_blank" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-print"></i> Imprimer
+                                </a>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Médicament</th>
+                                        <th>Prix unitaire</th>
+                                        <th>Quantité</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($detailsPharmacie as $detail)
+                                        <tr>
+                                            <td>{{ $detail->fraisHospitalisation->libelle }}</td>
+                                            <td>{{ number_format($detail->prix_unitaire, 0, ',', ' ') }}</td>
+                                            <td>{{ $detail->quantite }}</td>
+                                            <td>{{ number_format($detail->total, 0, ',', ' ') }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                   
+                    <!-- Autres frais -->
+                    <div class="col-md-12 mt-5">
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h3 class="card-title">Frais d'hospitalisation</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="autres-repeater">
+                                    <div data-repeater-list="frais">
+                                        <!-- Frais fixes (non supprimables) -->
+                                        <div class="mb-3 border-bottom pb-3">
+                                            <div class="row align-items-end">
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Libellé</label>
+                                                    <input type="text" class="form-control" value="Pharmacie" readonly>
+                                                    <input type="hidden" name="frais[0][frais_id]" value="2">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Prix unitaire</label>
+                                                    <input type="number" class="form-control prix" name="frais[0][prix]" value="{{ $detailsPharmacie->first()->prix_unitaire ?? 0 }}" required readonly>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <label class="form-label">Quantité</label>
+                                                    <input type="number" class="form-control quantite" name="frais[0][quantite]" value="{{ $detailsPharmacie->first()->quantite ?? 1 }}" min="1" required readonly>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Taux (%)</label>
+                                                    <input type="number" class="form-control taux" name="frais[0][taux]" value="{{ $patient->taux_couverture }}" min="0" max="100" required>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Total</label>
+                                                    <input type="number" class="form-control total" name="frais[0][total]" value="{{ $detailsPharmacie->first()->total ?? 0 }}" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 border-bottom pb-3">
+                                            <div class="row align-items-end">
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Libellé</label>
+                                                    <input type="text" class="form-control" value="Laboratoire" readonly>
+                                                    <input type="hidden" name="frais[1][frais_id]" value="1" >
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Prix unitaire</label>
+                                                    <input type="number" class="form-control prix" name="frais[1][prix]" value="{{ $detailsLaboratoire->first()->prix_unitaire ?? 0 }}" required readonly>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <label class="form-label">Quantité</label>
+                                                    <input type="number" class="form-control quantite" name="frais[1][quantite]" value="{{ $detailsLaboratoire->first()->quantite ?? 1 }}" min="1" required readonly>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Taux (%)</label>
+                                                    <input type="number" class="form-control taux" name="frais[1][taux]" value="{{ $patient->taux_couverture }}" min="0" max="100" required>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Total</label>
+                                                    <input type="number" class="form-control total" name="frais[1][total]" value="{{ $detailsLaboratoire->first()->total ?? 0 }}" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Template vide pour ajout dynamique -->
+                                        <div data-repeater-item class="mb-3 border-bottom pb-3">
+                                            <div class="row align-items-end">
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Libellé</label>
+                                                    <select class="form-select frais-select" name="frais_id" required>
+                                                        <option value="" disabled selected>Choisir un frais</option>
+                                                        @foreach($autresFrais as $frais)
+                                                            <option value="{{ $frais->id }}" data-prix="{{ $frais->montant }}">
+                                                                {{ $frais->libelle }} ({{ number_format($frais->montant, 0, ',', ' ') }} XOF)
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Prix unitaire</label>
+                                                    <input type="number" class="form-control prix" name="prix" value="0" required>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <label class="form-label">Quantité</label>
+                                                    <input type="number" class="form-control quantite" name="quantite" value="1" min="1" required>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Taux (%)</label>
+                                                    <input type="number" class="form-control taux" name="taux" value="{{ $patient->taux_couverture }}" min="0" max="100" required>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Total</label>
+                                                    <input type="number" class="form-control total" name="total" value="0" readonly>
+                                                </div>
+                                                <div class="col-md-1 text-center">
+                                                    <button type="button" data-repeater-delete class="btn btn-danger btn-sm mt-4">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        
+                                    </div>
+
+                                    <button type="button" data-repeater-create class="btn bg-primary-subtle text-primary">
+                                        <span class="fs-4 me-1">+</span> Ajouter un autre frais
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-5">
+                    <a href="{{ route('hospitalisations.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Retour
+                    </a>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 @endsection
@@ -312,16 +329,21 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-<script>
-$(document).ready(function() {
-     const medecinSelect = document.getElementById('medecin-select');
-        const specialiteInput = document.getElementById('specialite-input');
 
-        medecinSelect.addEventListener('change', function () {
-            const selectedOption = this.options[this.selectedIndex];
-            const specialite = selectedOption.getAttribute('data-specialite');
-            specialiteInput.value = specialite || '';
-        });
+<script>
+    $(document).ready(function() {
+    // Initialisation Select2 pour les selects
+    $('.select2').select2({
+        width: '100%',
+        placeholder: "Sélectionner un élément"
+    });
+
+    // Gestion du médecin et spécialité
+    $('#medecin-select').on('change', function() {
+        const selectedOption = $(this).find('option:selected');
+        const specialite = selectedOption.data('specialite');
+        $('#specialite-input').val(specialite || '');
+    });
 
     // Initialisation du repeater pour les autres frais
     $('.autres-repeater').repeater({
@@ -351,16 +373,23 @@ $(document).ready(function() {
         }
     });
 
-    // Calcul du total pour une ligne
+    // Calcul du total pour une ligne avec taux
     function calculateRowTotal(row) {
         const prix = parseFloat(row.find('.prix').val()) || 0;
         const quantite = parseInt(row.find('.quantite').val()) || 0;
-        row.find('.total').val((prix * quantite).toFixed(0));
+        const taux = parseInt(row.find('.taux').val()) || 100;
+        const totalBrut = prix * quantite;
+        const totalNet = totalBrut * (taux / 100);
+        row.find('.total').val(totalNet.toFixed(0));
     }
 
-    // Écouteurs d'événements pour les champs prix et quantité
-    $(document).on('input', '.prix, .quantite', function() {
-        const row = $(this).closest('[data-repeater-item]');
+    // Écouteurs d'événements pour les champs prix, quantité et taux
+    $(document).on('input', '.prix, .quantite, .taux', function() {
+        let row = $(this).closest('[data-repeater-item]');
+        if (!row.length) {
+            // Pour les frais fixes (non répétables)
+            row = $(this).closest('.mb-3');
+        }
         calculateRowTotal(row);
         updateTotals();
     });
@@ -375,21 +404,46 @@ $(document).ready(function() {
         updateTotals();
     });
 
-    // Mise à jour des totaux
+    // Fonction pour mettre à jour les totaux
     function updateTotals() {
+        // Calcul du total pharmacie
+        const prixPharma = parseFloat($('[name="frais[0][prix]"]').val()) || 0;
+        const qtePharma = parseInt($('[name="frais[0][quantite]"]').val()) || 0;
+        const tauxPharma = parseInt($('[name="frais[0][taux]"]').val()) || 100;
+        const totalPharma = prixPharma * qtePharma * (tauxPharma / 100);
+        $('[name="frais[0][total]"]').val(totalPharma.toFixed(0));
+
+        // Calcul du total laboratoire
+        const prixLabo = parseFloat($('[name="frais[1][prix]"]').val()) || 0;
+        const qteLabo = parseInt($('[name="frais[1][quantite]"]').val()) || 0;
+        const tauxLabo = parseInt($('[name="frais[1][taux]"]').val()) || 100;
+        const totalLabo = prixLabo * qteLabo * (tauxLabo / 100);
+        $('[name="frais[1][total]"]').val(totalLabo.toFixed(0));
+
+        // Calcul du total autres frais
         let totalAutres = 0;
         $('.autres-repeater [data-repeater-item]').each(function() {
             totalAutres += parseFloat($(this).find('.total').val()) || 0;
         });
-        $('#totalAutres').text(totalAutres.toLocaleString('fr-FR') + ' XOF');
 
-        // Mettre à jour le total général si nécessaire
-        if ($('#totalGeneral').length) {
-            const totalLabo = parseCurrency($('#totalLaboratoire').text());
-            const totalPharma = parseCurrency($('#totalPharmacie').text());
-            const totalGeneral = totalLabo + totalPharma + totalAutres;
-            $('#totalGeneral').text(totalGeneral.toLocaleString('fr-FR') + ' XOF');
-        }
+        // Mise à jour des affichages
+        $('#totalPharmacie').text(formatCurrency(totalPharma));
+        $('#totalLaboratoire').text(formatCurrency(totalLabo));
+        $('#totalAutres').text(formatCurrency(totalAutres));
+
+        // Calcul du total général
+        const totalGeneral = totalPharma + totalLabo + totalAutres;
+        $('#totalGeneral').text(formatCurrency(totalGeneral));
+    }
+
+    // Fonction pour formater les montants
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('fr-FR', { 
+            style: 'currency', 
+            currency: 'XOF',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }).format(amount);
     }
 
     // Fonction pour parser les valeurs monétaires
@@ -398,10 +452,30 @@ $(document).ready(function() {
     }
 
     // Initialisation des valeurs pour les éléments existants
+    $('.mb-3:not([data-repeater-item])').each(function() {
+        calculateRowTotal($(this));
+    });
     $('.autres-repeater [data-repeater-item]').each(function() {
         calculateRowTotal($(this));
     });
     updateTotals();
+
+    // Gestion de la soumission du formulaire
+    $('#examenForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        // Validation supplémentaire si nécessaire
+        const dateEntree = new Date($('[name="date_entree"]').val());
+        const dateSortie = new Date($('[name="date_sortie"]').val());
+        
+        if (dateSortie && dateSortie < dateEntree) {
+            alert('La date de sortie ne peut pas être antérieure à la date d\'entrée');
+            return false;
+        }
+        
+        this.submit();
+    });
 });
 </script>
+
 @endpush

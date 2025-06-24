@@ -5,12 +5,7 @@
     <div class="container-xl">
         <div class="row g-2 align-items-center">
             <div class="col">
-                <h2 class="page-title">Pharmacie du patient : {{ $patient->nom }} {{ $patient->prenom }}</h2>
-            </div>
-            <div class="col-auto ms-auto">
-                <a href="{{ route('hospitalisations.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Retour
-                </a>
+                <h2 class="page-title">Nouvelle Consultation</h2>
             </div>
         </div>
     </div>
@@ -18,70 +13,84 @@
 
 <div class="page-body">
     <div class="container-xl">
-        <div class="col-md-12">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h3 class="card-title">Informations Patient</h3>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <!-- Nom & Prénoms -->
-                        <div class="col-lg-4">
-                            <div class="mb-3">
-                                <label class="form-label">Nom & Prénoms</label>
-                                <input type="text" class="form-control" value="{{ $patient->nom }} {{ $patient->prenoms }}" readonly>
-                            </div>
-                        </div>
-
-                        <!-- Assurance -->
-                        <div class="col-lg-4">
-                            <div class="mb-3">
-                                <label class="form-label">Assurance</label>
-                                <input type="text" class="form-control" value="{{ $patient->assurance->name ?? 'Aucune' }}" readonly>
-                            </div>
-                        </div>
-
-                        <!-- Taux Couverture -->
-                        <div class="col-lg-4">
-                            <div class="mb-3">
-                                <label class="form-label">Taux Couverture</label>
-                                <input type="text" class="form-control" id="assurance-taux" value="{{ $patient->assurance->taux ?? '0' }}%" readonly>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
-        </div>
-
-        <div class="card">
-            <div class="card-body">
-                @if(session('swal_success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="fas fa-check-circle me-2"></i>
-                        {{ session('swal_success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        @endif
+        <form id="consultation-form" action="{{ route('consultations.store', $patient) }}" method="POST">
+            @csrf
+            <input type="hidden" name="numero_recu" id="numero-recu">
+            <div class="row">
+                <!-- Carte Info Patient (Gauche) -->
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Informations Patient</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Nom & Prénoms</label>
+                                    <input type="text" class="form-control" value="{{ $patient->nom }} {{ $patient->prenoms }}" readonly>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Assurance</label>
+                                        <input type="text" class="form-control" value="{{ $patient->assurance->name ?? 'Aucune' }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Taux Couverture</label>
+                                        <input type="text" class="form-control" id="assurance-taux" value="{{ $patient->assurance->taux ?? '0' }}%" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                @endif
-                @if(session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="fas fa-exclamation-circle me-2"></i>
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
+                </div>
                 
+                <!-- Carte Medecin Traitant (Droite) -->
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Medecin Traitant</h3>
+                        </div>
+                        
+                    </div>
+                </div>
 
-                <form action="{{ route('hospitalisations.pharmacie.store', $hospitalisation->id) }}" method="POST" id="pharmacieForm">
-                    @csrf
-                    <div class="medicaments-repeater">
-                        <div data-repeater-list="medicaments">
-                            @forelse($details as $detail)
-                                <div data-repeater-item class="mb-3 border-bottom pb-3">
-                                    <input type="hidden" name="medicaments[{{ $loop->index }}][id]" value="{{ $detail->id }}">
-                                    <div class="row mt-2 align-items-end">
-                                        <div class="col-md-5">
-                                            <select class="form-select medicament-select" name="medicaments[{{ $loop->index }}][frais_id]" required>
+                <!-- Carte Prestations -->
+                <div class="col-md-12">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="prestations-repeater">
+                                <div data-repeater-list="prestations">
+                                    @if(old('prestations'))
+                                        @foreach(old('prestations') as $index => $prestation)
+                                            <div data-repeater-item class="mb-3 border-bottom pb-3">
+                                                <div class="row mt-2">
+                                                    <div class="col-md-5">
+                                                        {{-- <select class="form-control prestation-select @error('prestations.'.$index.'.prestation_id') is-invalid @enderror" name="prestation_id">
+                                                            <option value="">Sélectionner une prestation</option>
+                                                            @foreach($categories as $categorie)
+                                                                <optgroup label="{{ $categorie->nom }}">
+                                                                    @foreach($categorie->prestations as $prest)
+                                                                        <option value="{{ $prest->id }}" data-montant="{{ $prest->montant }}" {{ $prestation['prestation_id'] == $prest->id ? 'selected' : '' }}>
+                                                                            {{ $prest->libelle }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </optgroup>
+                                                            @endforeach
+                                                        </select> --}}
+                                                              <select class="form-select medicament-select" name="medicaments[{{ $loop->index }}][frais_id]" required>
                                                 @foreach($medicaments as $categorie)
                                                     <optgroup label="{{ $categorie->libelle }}">
                                                         @foreach($categorie->fraisHospitalisations as $med)
@@ -93,32 +102,38 @@
                                                     </optgroup>
                                                 @endforeach
                                             </select>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <input type="number" class="form-control prix" name="medicaments[{{ $loop->index }}][prix]" 
-                                                   value="{{ $detail->prix_unitaire }}" >
-                                        </div>
-                                        <div class="col-md-2">
-                                            <input type="number" class="form-control quantite" name="medicaments[{{ $loop->index }}][quantite]" 
-                                                   value="{{ $detail->quantite }}" min="1" required>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <input type="number" class="form-control total" name="medicaments[{{ $loop->index }}][total]" 
-                                                   value="{{ $detail->total }}" readonly>
-                                        </div>
-                                        <div class="col-md-1 text-center">
-                                            <button type="button" data-repeater-delete class="btn btn-danger btn-sm" title="Supprimer cette ligne">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            @empty
-                                <div data-repeater-item class="mb-3 border-bottom pb-3">
-                                    <div class="row mt-2 align-items-end">
-                                        <div class="col-md-5">
-                                            <label class="form-label">Médicament <span class="text-danger">*</span></label>
-                                            <select class="form-select medicament-select" name="medicaments[0][frais_id]" required>
+                                                        @error('prestations.'.$index.'.prestation_id')
+                                                            <div class="invalid-feedback">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <input type="number" class="form-control montant @error('prestations.'.$index.'.montant') is-invalid @enderror" name="montant" value="{{ $prestation['montant'] ?? 0 }}">
+                                                        @error('prestations.'.$index.'.montant')
+                                                            <div class="invalid-feedback">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <input type="number" class="form-control quantite @error('prestations.'.$index.'.quantite') is-invalid @enderror" name="quantite" min="1" value="{{ $prestation['quantite'] ?? 1 }}">
+                                                        @error('prestations.'.$index.'.quantite')
+                                                            <div class="invalid-feedback">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <input type="number" class="form-control total" name="total" value="{{ ($prestation['montant'] ?? 0) * ($prestation['quantite'] ?? 1) }}" readonly>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <button type="button" data-repeater-delete class="btn btn-danger btn-sm">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <div data-repeater-item class="mb-3 border-bottom pb-3">
+                                            <div class="row mt-2">
+                                                <div class="col-md-5">
+                                                    <select class="form-select medicament-select" name="medicaments[0][frais_id]" required>
                                                 @foreach($medicaments as $categorie)
                                                     <optgroup label="{{ $categorie->libelle }}">
                                                         @foreach($categorie->fraisHospitalisations as $med)
@@ -129,40 +144,152 @@
                                                     </optgroup>
                                                 @endforeach
                                             </select>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input type="number" class="form-control montant" name="montant" value="0">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input type="number" class="form-control quantite" name="quantite" min="1" value="1">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input type="number" class="form-control total" name="total" value="0" readonly>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <button type="button" data-repeater-delete class="btn btn-danger btn-sm">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col-md-2">
-                                            <label class="form-label">Prix unitaire (XOF)</label>
-                                            <input type="number" class="form-control prix" name="medicaments[0][prix]" readonly>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class="form-label">Quantité <span class="text-danger">*</span></label>
-                                            <input type="number" class="form-control quantite" name="medicaments[0][quantite]" value="1" min="1" required>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class="form-label">Total (XOF)</label>
-                                            <input type="number" class="form-control total" name="medicaments[0][total]" readonly>
-                                        </div>
-                                        <div class="col-md-1 text-center">
-                                            <button type="button" data-repeater-delete class="btn btn-danger btn-sm" title="Supprimer cette ligne">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
+                                    @endif
                                 </div>
-                            @endforelse
+                                
+                                <button type="button" data-repeater-create class="btn bg-primary-subtle text-primary">
+                                    <span class="fs-4 me-1">+</span>
+                                    Ajouter une autre prestation
+                                </button>
+                            </div>
                         </div>
-
-                        <button type="button" data-repeater-create class="btn bg-primary-subtle text-primary">
-                            <span class="fs-4 me-1">+</span> Ajouter un médicament
-                        </button>
                     </div>
-
-                    <div class="mt-4 text-end">
-                        <button type="submit" class="btn btn-primary">Enregistrer le point</button>
-                    </div>
-                </form>
+                </div>
             </div>
-        </div>
+
+            <!-- Carte Paiement -->
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Total Prestations</label>
+                                <input type="number" class="form-control" id="total-prestations" name="total" value="{{ old('total', 0) }}" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Ticket Modérateur</label>
+                                <input type="number" class="form-control" id="ticket-moderateur" name="ticket_moderateur" value="{{ old('ticket_moderateur', 0) }}" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Réduction</label>
+                                <input type="number" class="form-control @error('reduction') is-invalid @enderror" id="reduction" name="reduction" min="0" value="{{ old('reduction', 0) }}">
+                                @error('reduction')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">À Payer</label>
+                                <input type="number" class="form-control" id="a-payer" name="montant_a_paye" value="{{ old('montant_a_paye', 0) }}" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Montant Perçu <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control @error('montant_paye') is-invalid @enderror" id="payer" name="montant_paye" value="{{ old('montant_paye') }}" required>
+                                @error('montant_paye')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Méthodes de paiement -->
+            <div class="row mt-3">
+                <div class="col-lg-3">
+                    <div class="form-selectgroup form-selectgroup-boxes d-flex flex-column">
+                        <label class="form-selectgroup-item flex-fill">
+                            <input type="radio" name="methode_paiement" value="cash" class="form-selectgroup-input" {{ old('methode_paiement', 'cash') == 'cash' ? 'checked' : '' }}>
+                            <div class="form-selectgroup-label d-flex align-items-center p-3">
+                                <div class="me-3">
+                                    <span class="form-selectgroup-check"></span>
+                                </div>
+                                <div>
+                                    <span class="payment payment-provider-mastercard payment-xs me-2"></span>
+                                    <strong>Cash</strong>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="col-lg-5">
+                    <label class="form-selectgroup-item flex-fill">
+                        <input type="radio" name="methode_paiement" value="mobile_money" class="form-selectgroup-input" {{ old('methode_paiement') == 'mobile_money' ? 'checked' : '' }}>
+                        <div class="form-selectgroup-label d-flex align-items-center p-3">
+                            <div class="me-3">
+                                <span class="form-selectgroup-check"></span>
+                            </div>
+                            <div>
+                                <span class="payment payment-provider-visa payment-xs me-2"></span>
+                                <strong>Wave / Orange Money / Momo / Moov Money</strong>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+                <div class="col-lg-4">
+                    <label class="form-selectgroup-item flex-fill">
+                        <input type="radio" name="methode_paiement" value="virement" class="form-selectgroup-input" {{ old('methode_paiement') == 'virement' ? 'checked' : '' }}>
+                        <div class="form-selectgroup-label d-flex align-items-center p-3">
+                            <div class="me-3">
+                                <span class="form-selectgroup-check"></span>
+                            </div>
+                            <div>
+                                <span class="payment payment-provider-visa payment-xs me-2"></span>
+                                <strong>Virement</strong>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Bouton de soumission -->
+            <div class="row mt-3">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Enregistrer la consultation</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 @endsection
@@ -174,316 +301,171 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
-    $(document).ready(function() {
-    // Initialisation de Select2 pour les éléments existants
-    $('.medicament-select').select2({
-        width: '100%',
-        placeholder: "Sélectionner un médicament"
-    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('consultation-form');
+        const montantPerçuInput = document.getElementById('payer');
 
-    // Attacher les événements aux éléments existants
-    $('[data-repeater-item]').each(function() {
-        attachMedicamentEvents($(this));
-        updateFieldNames($(this));
-    });
+        form.addEventListener('submit', function (e) {
+            e.preventDefault(); // Bloquer la soumission
 
-    // Déclencher le changement initial
-    $('.medicament-select').each(function() {
-        $(this).trigger('change');
-    });
+            const montant = parseFloat(montantPerçuInput.value || 0).toFixed(0);
 
-    // Configuration du repeater
-    $('.medicaments-repeater').repeater({
-        initEmpty: false,
-        
-        show: function() {
-            $(this).slideDown(function() {
-                // Initialisation des valeurs
-                $(this).find('.prix').val(0);
-                $(this).find('.quantite').val(1);
-                $(this).find('.total').val(0);
-                
-                // Attacher les événements au nouvel élément
-                attachMedicamentEvents($(this));
-                
-                // Mettre à jour les noms des champs
-                updateFieldNames($(this));
-            });
-        },
-        
-        hide: function(deleteElement) {
             Swal.fire({
-                title: 'Confirmer la suppression',
-                text: "Êtes-vous sûr de vouloir supprimer ce médicament ?",
-                icon: 'warning',
+                title: 'Confirmation',
+                text: `Êtes-vous sûr de l'encaissement de ${Number(montant).toLocaleString('fr-FR')} FCFA ?`,
+                icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Oui, supprimer',
-                cancelButtonText: 'Annuler'
+                confirmButtonText: 'Oui, confirmer',
+                cancelButtonText: 'Annuler',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Détruire Select2 avant de supprimer l'élément
-                    $(this).find('.medicament-select').select2('destroy');
-                    $(this).slideUp(deleteElement);
+                    form.submit();
                 }
             });
-        },
-        
-        ready: function(setIndexes) {
-            $('[data-repeater-item]').each(function() {
-                attachMedicamentEvents($(this));
-                updateFieldNames($(this));
-            });
-
-            $('.medicament-select').each(function() {
-                $(this).trigger('change');
-            });
-        }
-    });
-
-    function updateFieldNames($item) {
-        var index = $item.index();
-        $item.find('[name]').each(function() {
-            var name = $(this).attr('name');
-            name = name.replace(/\[\d+\]/, '[' + index + ']');
-            $(this).attr('name', name);
-        });
-    }
-
-    function attachMedicamentEvents($container) {
-        // Gestion du select
-        const $select = $container.find('.medicament-select');
-        
-        // Détruire Select2 s'il est déjà initialisé
-        if ($select.hasClass('select2-hidden-accessible')) {
-            $select.select2('destroy');
-        }
-        
-        // Initialiser Select2
-        $select.select2({
-            width: '100%',
-            placeholder: "Sélectionner un médicament"
-        });
-        
-        // Événement change personnalisé pour Select2
-        $select.off('select2:select').on('select2:select', function(e) {
-            var prix = $(this).find(':selected').data('prix') || 0;
-            var $parent = $(this).closest('[data-repeater-item]');
-            $parent.find('.prix').val(prix);
-            calculateTotal($parent);
-        });
-        
-        // Déclencher le change pour mise à jour initiale
-        $select.trigger('change');
-        
-        // Gestion de la quantité
-        $container.find('.quantite').off('input').on('input', function() {
-            calculateTotal($(this).closest('[data-repeater-item]'));
-        });
-    }
-
-    function calculateTotal($item) {
-        var prix = parseFloat($item.find('.prix').val()) || 0;
-        var quantite = parseInt($item.find('.quantite').val()) || 0;
-        $item.find('.total').val((prix * quantite).toFixed(0));
-    }
-
-    $('#pharmacieForm').on('submit', function(e) {
-        e.preventDefault();
-        var isValid = true;
-
-        $('[data-repeater-item]').each(function() {
-            var $item = $(this);
-            var medicament = $item.find('.medicament-select').val();
-            var quantite = $item.find('.quantite').val();
-
-            $item.find('.is-invalid').removeClass('is-invalid');
-            if (!medicament) {
-                $item.find('.medicament-select').addClass('is-invalid');
-                isValid = false;
-            }
-            if (!quantite || quantite < 1) {
-                $item.find('.quantite').addClass('is-invalid');
-                isValid = false;
-            }
-        });
-
-        if (!isValid) {
-            Swal.fire('Erreur', 'Veuillez vérifier tous les champs obligatoires', 'error');
-            return;
-        }
-
-        Swal.fire({
-            title: 'Confirmer',
-            text: 'Enregistrer cette ordonnance ?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Oui, enregistrer',
-            cancelButtonText: 'Annuler'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                this.submit();
-            }
         });
     });
-});
 </script>
-{{-- <script>
+<script>
     $(document).ready(function() {
-    // Initialisation de Select2 pour les éléments existants
-    $('.medicament-select').select2({
-        width: '100%',
-        placeholder: "Sélectionner un médicament"
-    });
-
-    // Attacher les événements aux éléments existants
-    $('[data-repeater-item]').each(function() {
-        attachMedicamentEvents($(this));
-        updateFieldNames($(this));
-    });
-
-    // Déclencher le changement initial
-    $('.medicament-select').each(function() {
-        $(this).trigger('change');
-    });
-
-    // Configuration du repeater
-    $('.medicaments-repeater').repeater({
-        initEmpty: false,
+       
+$('#a-payer').data('last-value', parseFloat($('#a-payer').val()) || 0);
+        // Initialisation Select2
         
-        show: function() {
-            $(this).slideDown(function() {
-                // Initialisation des valeurs
-                $(this).find('.prix').val(0);
-                $(this).find('.quantite').val(1);
-                $(this).find('.total').val(0);
+        // $('.select2').select2({
+        //     width: '100%',
+        //     placeholder: "Sélectionner un Médecin"
+        // });
+
+        // Initialisation du répéteur avec gestion du recalcul
+        $('.prestations-repeater').repeater({
+            initEmpty: false,
+            isFirstItemUndeletable: true,
+            
+            show: function() {
+                $(this).slideDown(function() {
+                    // Initialisation Select2 pour la nouvelle ligne
+                    $(this).find('.prestation-select').select2({
+                        width: '100%',
+                        placeholder: "Sélectionner une prestation"
+                    });
+                    
+                    // Initialisation des valeurs par défaut
+                    $(this).find('.montant').val(0);
+                    $(this).find('.quantite').val(1);
+                    $(this).find('.total').val(0);
+                });
+            },
+            
+            hide: function(deleteElement) {
+                if ($('[data-repeater-item]').length > 1) {
+                    $(this).slideUp(deleteElement, function() {
+                        $(this).remove();
+                        recalculerTotauxGlobaux();
+                    });
+                }
+            },
+            
+            ready: function(setIndexes) {
+                $('.prestation-select').select2();
+                recalculerTotauxGlobaux();
                 
-                // Attacher les événements au nouvel élément
-                attachMedicamentEvents($(this));
+                $('[data-repeater-delete]').each(function() {
+                    if ($('[data-repeater-item]').length === 1) {
+                        $(this).hide();
+                    }
+                });
+            }
+        });
+
+        // Gestion des événements
+        $(document)
+            .on('change', '.prestation-select', function() {
+                const selected = $(this).find('option:selected');
+                const montant = selected.data('montant') || 0;
+                const ligne = $(this).closest('[data-repeater-item]');
                 
-                // Mettre à jour les noms des champs
-                updateFieldNames($(this));
-            });
-        },
-        
-        hide: function(deleteElement) {
-            Swal.fire({
-                title: 'Confirmer la suppression',
-                text: "Êtes-vous sûr de vouloir supprimer ce médicament ?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Oui, supprimer',
-                cancelButtonText: 'Annuler'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Détruire Select2 avant de supprimer l'élément
-                    $(this).find('.medicament-select').select2('destroy');
-                    $(this).slideUp(deleteElement);
+                ligne.find('.montant').val(montant);
+                calculerTotalLigne(ligne);
+            })
+            .on('input', '.montant, .quantite', function() {
+                const ligne = $(this).closest('[data-repeater-item]');
+                calculerTotalLigne(ligne);
+            })
+            .on('input', '#reduction, #a-payer, #payer', recalculerTotauxGlobaux)
+            .on('click', '[data-repeater-delete]', function() {
+                if ($('[data-repeater-item]').length === 2) {
+                    $('[data-repeater-delete]').hide();
+                }
+            })
+            .on('click', '[data-repeater-create]', function() {
+                if ($('[data-repeater-item]').length >= 1) {
+                    $('[data-repeater-delete]').show();
                 }
             });
-        },
-        
-        ready: function(setIndexes) {
+
+        // Fonction de calcul pour une ligne
+        function calculerTotalLigne(ligne) {
+            const qte = parseFloat(ligne.find('.quantite').val()) || 0;
+            const montant = parseFloat(ligne.find('.montant').val()) || 0;
+            const total = (qte * montant).toFixed(2);
+            
+            ligne.find('.total').val(total);
+            recalculerTotauxGlobaux();
+        }
+
+        // Fonction de recalcul global
+        // function recalculerTotauxGlobaux() {
+        //     let totalPrestations = 0;
+            
+        //     $('[data-repeater-item]').each(function() {
+        //         const total = parseFloat($(this).find('.total').val()) || 0;
+        //         totalPrestations += total;
+        //     });
+
+        //     const tauxAssurance = parseFloat($('#assurance-taux').val().replace('%', '')) || 0;
+        //     const ticketModerateur = totalPrestations * (1 - tauxAssurance / 100);
+            
+        //     const reduction = parseFloat($('#reduction').val()) || 0;
+        //     const montantAPayer = Math.max(0, ticketModerateur - reduction);
+            
+        //     $('#total-prestations').val(totalPrestations.toFixed(2));
+        //     $('#ticket-moderateur').val(ticketModerateur.toFixed(2));
+        //     $('#a-payer').val(montantAPayer.toFixed(2));
+        //     $('#payer').val(montantAPayer.toFixed(2));
+        // }
+
+        function recalculerTotauxGlobaux() {
+            let totalPrestations = 0;
+            
             $('[data-repeater-item]').each(function() {
-                attachMedicamentEvents($(this));
-                updateFieldNames($(this));
+                const total = parseFloat($(this).find('.total').val()) || 0;
+                totalPrestations += total;
             });
 
-            $('.medicament-select').each(function() {
-                $(this).trigger('change');
-            });
+            const tauxAssurance = parseFloat($('#assurance-taux').val().replace('%', '')) || 0;
+            const ticketModerateur = totalPrestations * (1 - tauxAssurance / 100);
+            
+            const reduction = parseFloat($('#reduction').val()) || 0;
+            const montantAPayer = Math.max(0, ticketModerateur - reduction);
+            
+            $('#total-prestations').val(totalPrestations.toFixed(2));
+            $('#ticket-moderateur').val(ticketModerateur.toFixed(2));
+            $('#a-payer').val(montantAPayer.toFixed(2));
+            
+            // Ne remplir que si le champ est vide ou si la valeur actuelle correspond au montant précédent
+            const payerActuel = parseFloat($('#payer').val()) || 0;
+            if (payerActuel === 0 || payerActuel === parseFloat($('#a-payer').data('last-value'))) {
+                $('#payer').val(montantAPayer.toFixed(2));
+            }
+            
+            // Stocker la nouvelle valeur pour comparaison future
+            $('#a-payer').data('last-value', montantAPayer.toFixed(2));
         }
+
+        // Initialisation des valeurs si old() existe
+        @if(old('prestations'))
+            recalculerTotauxGlobaux();
+        @endif
     });
-
-    function updateFieldNames($item) {
-        var index = $item.index();
-        $item.find('[name]').each(function() {
-            var name = $(this).attr('name');
-            name = name.replace(/\[\d+\]/, '[' + index + ']');
-            $(this).attr('name', name);
-        });
-    }
-
-    function attachMedicamentEvents($container) {
-        // Gestion du select
-        const $select = $container.find('.medicament-select');
-        
-        // Détruire Select2 s'il est déjà initialisé
-        if ($select.hasClass('select2-hidden-accessible')) {
-            $select.select2('destroy');
-        }
-        
-        // Initialiser Select2
-        $select.select2({
-            width: '100%',
-            placeholder: "Sélectionner un médicament"
-        });
-        
-        // Événement change personnalisé pour Select2
-        $select.off('select2:select').on('select2:select', function(e) {
-            var prix = $(this).find(':selected').data('prix') || 0;
-            var $parent = $(this).closest('[data-repeater-item]');
-            $parent.find('.prix').val(prix);
-            calculateTotal($parent);
-        });
-        
-        // Déclencher le change pour mise à jour initiale
-        $select.trigger('change');
-        
-        // Gestion de la quantité
-        $container.find('.quantite').off('input').on('input', function() {
-            calculateTotal($(this).closest('[data-repeater-item]'));
-        });
-    }
-
-    function calculateTotal($item) {
-        var prix = parseFloat($item.find('.prix').val()) || 0;
-        var quantite = parseInt($item.find('.quantite').val()) || 0;
-        $item.find('.total').val((prix * quantite).toFixed(0));
-    }
-
-    $('#pharmacieForm').on('submit', function(e) {
-        e.preventDefault();
-        var isValid = true;
-
-        $('[data-repeater-item]').each(function() {
-            var $item = $(this);
-            var medicament = $item.find('.medicament-select').val();
-            var quantite = $item.find('.quantite').val();
-
-            $item.find('.is-invalid').removeClass('is-invalid');
-            if (!medicament) {
-                $item.find('.medicament-select').addClass('is-invalid');
-                isValid = false;
-            }
-            if (!quantite || quantite < 1) {
-                $item.find('.quantite').addClass('is-invalid');
-                isValid = false;
-            }
-        });
-
-        if (!isValid) {
-            Swal.fire('Erreur', 'Veuillez vérifier tous les champs obligatoires', 'error');
-            return;
-        }
-
-        Swal.fire({
-            title: 'Confirmer',
-            text: 'Enregistrer cette ordonnance ?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Oui, enregistrer',
-            cancelButtonText: 'Annuler'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                this.submit();
-            }
-        });
-    });
-});
-</script> --}}
+</script>
 @endpush
-
