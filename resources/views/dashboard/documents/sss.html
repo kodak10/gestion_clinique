@@ -86,14 +86,14 @@
 
         .photo-dossier-container {
             display: flex;
-            justify-content: space-between; /* ou center */
+            justify-content:center; /* ou center */
             align-items: center;
-            gap: 20px;
-            margin: 20px 30px;
+            
+            
         }
 
 
-        .patient-photo {
+        /* .patient-photo {
             width: 120px;
             height: 150px;
             border: 2px solid #3498db;
@@ -105,15 +105,11 @@
             color: #7f8c8d;
             font-size: 12px;
             flex-shrink: 0;
-        }
+        } */
 
-        .patient-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        
 
-        .dossier-number {
+        /* .dossier-number {
             width: 200px;
             height: 50px !important;
             background-color: #e74c3c;
@@ -127,37 +123,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        .photo-dossier-container {
-            padding: 0 30px 20px;
-        }
+        } */
 
-        .patient-content {
-            padding: 0 30px 20px;
-        }
+       
         
-
-        .info-grid {
-            display: table;
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 10px;
-        }
-        .info-row {
-            display: table-row;
-        }
-        .info-item {
-            display: table-cell;
-            width: 50%;
-            vertical-align: top;
-            padding-bottom: 10px;
-        }
-        .info-item2 {
-            display: table-cell;
-            width: 33.33%;
-            vertical-align: top;
-            padding-bottom: 10px;
-        }
 
         .info-label {
             font-weight: bold;
@@ -237,33 +206,19 @@
             </div>
 
             <div class="photo-dossier-container">
-               <div class="info-grid">
-                    <div class="info-row">
-                        <div class="info-item2 photo">
+               <div class="">
                             @if($patient->photo && Storage::disk('public')->exists($patient->photo))
                                 <img src="{{ storage_path('app/public/'.$patient->photo) }}" style="width:100%;height:100%;object-fit:cover;">
                             @else
                                 Photo patient
                             @endif
                         </div>
-                        <div class="info-item2 dossier-number">
+                        <div class="dossier-number">
                            N°: {{ $patient->num_dossier }}
                         </div>
-                        <div class="info-item2" style="font-size: 12px; text-align:right;">
+                        <div class="">
                            Enregistré le: {{ $patient->created_at->format('d/m/Y') }}
                         </div>
-                    </div>
-
-                    {{-- <div class="patient-photo">
-                        
-                    </div>
-                    <div class="dossier-number">
-                        
-                    </div>
-                    <div class="dossier-number">
-                        
-                    </div> --}}
-               </div>
             </div>
 
             <div class="patient-content">

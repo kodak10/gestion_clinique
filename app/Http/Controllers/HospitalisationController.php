@@ -217,8 +217,6 @@ public function storePharmacie(Request $request, Hospitalisation $hospitalisatio
             'updated_at' => now()
         ]);
 
-        
-
         DB::commit();
 
         return redirect()->back()->with('success', 'Médicaments mis à jour avec succès');

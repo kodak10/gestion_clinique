@@ -43,6 +43,7 @@
             color: white;
             padding: 15px;
             border-bottom: 4px solid #3498db;
+            height: 150px;
         }
 
         .header img {
@@ -52,6 +53,7 @@
         }
 
         .header-text {
+            margin-top: 40px;
             flex: 1;
             text-align: center;
         }
@@ -81,19 +83,13 @@
             font-weight: bold;
             color: #003c58;
             padding: 10px 20px;
-            margin: 0px 50px 0px 50px;
+            margin: 0px 30px 0px 30px;
         }
 
-        .photo-dossier-container {
-            display: flex;
-            justify-content: space-between; /* ou center */
-            align-items: center;
-            gap: 20px;
-            margin: 20px 30px;
-        }
+        
 
 
-        .patient-photo {
+        /* .patient-photo {
             width: 120px;
             height: 150px;
             border: 2px solid #3498db;
@@ -105,15 +101,11 @@
             color: #7f8c8d;
             font-size: 12px;
             flex-shrink: 0;
-        }
+        } */
 
-        .patient-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        
 
-        .dossier-number {
+        /* .dossier-number {
             width: 200px;
             height: 50px !important;
             background-color: #e74c3c;
@@ -127,37 +119,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        .photo-dossier-container {
-            padding: 0 30px 20px;
-        }
+        } */
 
-        .patient-content {
-            padding: 0 30px 20px;
-        }
+       
         
-
-        .info-grid {
-            display: flex;
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 10px;
-        }
-        .info-row {
-            display: table-row;
-        }
-        .info-item {
-            display: table-cell;
-            width: 50%;
-            vertical-align: top;
-            padding-bottom: 10px;
-        }
-        .info-item2 {
-            display: table-cell;
-            width: 33.33%;
-            vertical-align: top;
-            padding-bottom: 10px;
-        }
 
         .info-label {
             font-weight: bold;
@@ -206,7 +171,7 @@
         }
         .img-position{
             position: absolute;
-            top: 10px;
+            top: 35px;
             left: 20px;
         }
         .img-position img{
@@ -236,108 +201,132 @@
                 <img src="assets/dist/img/logo.png" alt="Logo Clinique">
             </div>
 
-            <div class="photo-dossier-container">
-               <div class="info-grid">
-                    <div class="info-row">
-                        <div class="info-item2 photo">
-                            @if($patient->photo && Storage::disk('public')->exists($patient->photo))
-                                <img src="{{ storage_path('app/public/'.$patient->photo) }}" style="width:100%;height:100%;object-fit:cover;">
-                            @else
-                                Photo patient
-                            @endif
+            <div style="display: table; width: 100%; margin-bottom: 20px;">
+                <!-- Colonne Photo -->
+                <div style="display: table-cell; width: 33%; vertical-align: middle; text-align: center;">
+                    @if($patient->photo && Storage::disk('public')->exists($patient->photo))
+                        <img src="{{ storage_path('app/public/'.$patient->photo) }}" style="width: 120px; height: 120px; object-fit: cover; border: 2px solid #3498db;">
+                    @else
+                        <div style="width: 120px; height: 120px; border: 2px solid #3498db; display: flex; align-items: center; justify-content: center;">
+                            Photo patient
                         </div>
-                        <div class="info-item2 dossier-number">
-                           N°: {{ $patient->num_dossier }}
-                        </div>
-                        <div class="info-item2" style="font-size: 12px; text-align:right;">
-                           Enregistré le: {{ $patient->created_at->format('d/m/Y') }}
-                        </div>
-                    </div>
+                    @endif
+                </div>
 
-                    {{-- <div class="patient-photo">
-                        
+                <!-- Colonne Numéro -->
+                <div style="display: table-cell; width: 34%; vertical-align: middle; text-align: center;">
+                    <div style="width:80%; background-color: #e74c3c; color: white; padding: 10px; border-radius: 5px; font-weight: bold; display: inline-block;">
+                        N°: {{ $patient->num_dossier }}
                     </div>
-                    <div class="dossier-number">
-                        
-                    </div>
-                    <div class="dossier-number">
-                        
-                    </div> --}}
-               </div>
-            </div>
+                </div>
 
-            <div class="patient-content">
-                <div class="info-grid">
-                    <div class="info-row">
-                        <div class="info-item">
-                            <div class="info-label">NOM & PRÉNOMS</div>
-                            <div class="info-value">{{ $patient->nom }} {{ $patient->prenoms }}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">DATE DE NAISSANCE</div>
-                            <div class="info-value">
-                                {{ $patient->date_naissance->format('d/m/Y') }} 
-                                ({{ $patient->date_naissance->age }} ans)
-                            </div>
-                        </div>
+                <!-- Colonne Date -->
+                <div style="display: table-cell; width: 33%; vertical-align: middle; text-align: center;">
+                    <div style="font-size: 14px;">
+                        Enregistré le : {{ $patient->created_at->format('d/m/Y') }}
                     </div>
-                    <div class="info-row">
-                        <div class="info-item">
-                            <div class="info-label">SEXE</div>
-                            <div class="info-value">{{ $patient->sexe }}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">DOMICILE</div>
-                            <div class="info-value">{{ $patient->domicile }}</div>
-                        </div>
-                    </div>
-
-                    <div class="info-row">
-                        <div class="info-item">
-                            <div class="info-label">ETHNIE</div>
-                            <div class="info-value">{{ $patient->ethnie->nom ?? '' }}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">RELIGION</div>
-                            <div class="info-value">{{ $patient->religion ?? '' }}</div>
-                        </div>
-                    </div>
-
-                    <div class="info-row">
-                        <div class="info-item">
-                            <div class="info-label">CONTACT</div>
-                            <div class="info-value">{{ $patient->contact_patient }}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">PARENT PROCHE</div>
-                            <div class="info-value">{{ $patient->contact_urgence ?? '' }}</div>
-                        </div>
-                    </div>
-
-                    <div class="info-row">
-                        <div class="info-item">
-                            <div class="info-label">GROUPE RHÉSUS</div>
-                            <div class="info-value">{{ $patient->groupe_rhesus ?? '' }}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">ÉLECTROPHORÈSE</div>
-                            <div class="info-value">{{ $patient->electrophorese ?? ''}}</div>
-                        </div>
-                    </div>
-
-                    <div class="info-row">
-                        <div class="info-item">
-                            <div class="info-label">ASSURANCE</div>
-                            <div class="info-value">{{ $patient->assurance->name ?? 'Aucune' }}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">TAUX</div>
-                            <div class="info-value">{{ $patient->assurance->taux ?? '00' }}%</div>
-                        </div>
-                    </div>
-                    
                 </div>
             </div>
+
+
+
+
+
+            <div class="patient-content" style="margin-top: 25px;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                    <tr>
+                        <td style="width: 50%; vertical-align: top; padding: 12px 8px;">
+                            <strong>NOM & PRÉNOMS</strong><br>
+                            <div style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
+                                {{ $patient->nom }} {{ $patient->prenoms }}
+                            </div>
+                        </td>
+                        <td style="width: 50%; vertical-align: top; padding: 12px 8px;">
+                            <strong>DATE DE NAISSANCE</strong><br>
+                            <div style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
+                                {{ $patient->date_naissance->format('d/m/Y') }} ({{ $patient->date_naissance->age }} ans)
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding: 12px 8px;">
+                            <strong>SEXE</strong><br>
+                            <div style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
+                                {{ $patient->sexe }}
+                            </div>
+                        </td>
+                        <td style="padding: 12px 8px;">
+                            <strong>DOMICILE</strong><br>
+                            <div style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
+                                {{ $patient->domicile }}
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding: 12px 8px;">
+                            <strong>ETHNIE</strong><br>
+                            <div style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
+                                {{ $patient->ethnie->nom ?? '' }}
+                            </div>
+                        </td>
+                        <td style="padding: 12px 8px;">
+                            <strong>RELIGION</strong><br>
+                            <div style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
+                                {{ $patient->religion ?? '' }}
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding: 12px 8px;">
+                            <strong>CONTACT</strong><br>
+                            <div style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
+                                {{ $patient->contact_patient }}
+                            </div>
+                        </td>
+                        <td style="padding: 12px 8px;">
+                            <strong>PARENT PROCHE</strong><br>
+                            <div style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
+                                {{ $patient->contact_urgence ?? '' }}
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding: 12px 8px;">
+                            <strong>GROUPE RHÉSUS</strong><br>
+                            <div style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
+                                {{ $patient->groupe_rhesus ?? '' }}
+                            </div>
+                        </td>
+                        <td style="padding: 12px 8px;">
+                            <strong>ÉLECTROPHORÈSE</strong><br>
+                            <div style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
+                                {{ $patient->electrophorese ?? '' }}
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding: 12px 8px;">
+                            <strong>ASSURANCE</strong><br>
+                            <div style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
+                                {{ $patient->assurance->name ?? 'Aucune' }}
+                            </div>
+                        </td>
+                        <td style="padding: 12px 8px;">
+                            <strong>TAUX</strong><br>
+                            <div style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
+                                {{ $patient->assurance->taux ?? '00' }}%
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+
 
             <div class="footer">
                 &laquo; Crois seulement et tu verras la gloire de DIEU &raquo;
