@@ -4,14 +4,18 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles, LogsActivity, SoftDeletes;
+    
 
     /**
      * The attributes that are mass assignable.
@@ -60,5 +64,28 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+
+
+
+  // Méthode pour spécifier les options d'enregistrement des activités
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly($this->fillable) // Définit les attributs à loguer
+            ->useLogName('Utilisateur') // Utilise un nom personnalisé pour le log
+            ->dontSubmitEmptyLogs(); // Empêche l'enregistrement des logs vides
+    }
+
+    // Méthode pour manipuler l'activité en fonction du rôle
+    public function tapActivity(\Spatie\Activitylog\Contracts\Activity $activity, string $eventName)
+    {
+        if (auth()->check() && auth()->user()->hasRole('Developpeur')) {
+            // Exclut les Developpeurs des logs d'activité
+            $activity->causer_id = null;
+            $activity->causer_type = null;
+            $activity->description = null;
+        }
     }
 }

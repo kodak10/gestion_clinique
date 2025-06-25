@@ -10,6 +10,7 @@ use App\Http\Controllers\PrestationController;
 use App\Http\Controllers\ReglementController;
 use App\Http\Controllers\UtilisateurController;
 use App\Http\Controllers\DepenseController;
+use App\Http\Controllers\TracabiliteController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -69,9 +70,11 @@ Route::middleware(['auth',])->group(function () {
 
     Route::get('/hospitalisations/{hospitalisation}/pharmacie/create', [HospitalisationController::class, 'createPharmacie'])->name('hospitalisations.pharmacie.create');
     Route::post('/hospitalisations/{hospitalisation}/pharmacie', [HospitalisationController::class, 'storePharmacie'])->name('hospitalisations.pharmacie.store');
+    Route::delete('/hospitalisations/{hospitalisation}/pharmacie/{pivot}', [HospitalisationController::class, 'destroyMedicament'])->name('hospitalisations.pharmacie.destroy');
 
     Route::get('/hospitalisations/{hospitalisation}/laboratoire/create', [HospitalisationController::class, 'createLaboratoire'])->name('hospitalisations.laboratoire.create');
     Route::post('/hospitalisations/{hospitalisation}/laboratoire', [HospitalisationController::class, 'storeExamen'])->name('hospitalisations.laboratoire.store');
+    Route::delete('/hospitalisations/{hospitalisation}/laboratoire/{pivot}', [HospitalisationController::class, 'destroyMedicament'])->name('hospitalisations.laboratoire.destroy');
 
     Route::get('/comptabilite/journalcaisse', [ReglementController::class, 'journalCaisse'])->name('comptabilite.journalcaisse');
 
@@ -82,6 +85,12 @@ Route::middleware(['auth',])->group(function () {
 
     Route::resource('depenses', DepenseController::class);
     Route::post('category-depenses', [DepenseController::class, 'storeCategory'])->name('category-depenses.store');
+
+
+    Route::get('/profil', [UtilisateurController::class, 'editProfile'])->name('profile.edit');
+    Route::put('/profil', [UtilisateurController::class, 'updateProfile'])->name('profile.update');
+
+    Route::get('/tracabilite', [TracabiliteController::class, 'index'])->name('tracabilite.index');
 
 });
 

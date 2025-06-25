@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('telephone');
             $table->foreignId('specialite_id')->constrained()->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

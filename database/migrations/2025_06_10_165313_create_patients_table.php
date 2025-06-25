@@ -29,10 +29,11 @@ return new class extends Migration
             $table->string('matricule_assurance')->nullable();
             $table->string('contact_urgence')->nullable();
             $table->string('contact_patient');
-            $table->string('photo')->nullable();
+            $table->string('photo')->default('patients/patient.png');
             $table->string('pdf_path')->nullable();
             $table->string('envoye_par')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

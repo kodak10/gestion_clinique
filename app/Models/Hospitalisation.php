@@ -2,10 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Hospitalisation extends Model
 {
+    use HasFactory, LogsActivity, SoftDeletes;
+
     protected $fillable = [
         'patient_id',
         'user_id', 
@@ -56,8 +62,32 @@ class Hospitalisation extends Model
     }
 
     public function details()
-{
-    return $this->hasMany(HospitalisationDetail::class);
-}
+    {
+        return $this->hasMany(HospitalisationDetail::class);
+    }
+
+    public function medicaments()
+    {
+        return $this->belongsToMany(Medicament::class, 'hospitalisation_medicament')
+                   ->withPivot('quantite', 'prix_unitaire', 'total',)
+                   ->withTimestamps();
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly($this->fillable)
+            ->useLogName('Hospitalisations')
+            ->dontSubmitEmptyLogs();
+    }
+
+    public function tapActivity(\Spatie\Activitylog\Contracts\Activity $activity, string $eventName)
+    {
+        if (auth()->check() && auth()->user()->hasRole('Developpeur')) {
+            $activity->causer_id = null;
+            $activity->causer_type = null;
+            $activity->description = null;
+        }
+    }
 
 }

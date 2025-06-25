@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+
 class UtilisateurController extends Controller
 {
     public function index()
@@ -52,5 +54,39 @@ class UtilisateurController extends Controller
         $user->save();
 
         return redirect()->back()->with('success', 'Statut utilisateur mis à jour!');
+    }
+
+    public function editProfile()
+    {
+        $user = Auth::user();
+        return view('dashboard.pages.profil.index', compact('user'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'pseudo' => 'required|string|max:15|unique:users,pseudo,' . $user->id,
+            'phone_number' => 'required|string|unique:users,phone_number,' . $user->id,
+            'current_password' => 'nullable|required_with:new_password|string',
+            'new_password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        $user->name = $request->name;
+        $user->pseudo = $request->pseudo;
+        $user->phone_number = $request->phone_number;
+
+        if ($request->filled('new_password')) {
+            if (!Hash::check($request->current_password, $user->password)) {
+                return back()->with('error', 'Le mot de passe actuel est incorrect.');
+            }
+            $user->password = Hash::make($request->new_password);
+        }
+
+        $user->save();
+
+        return back()->with('success', 'Profil mis à jour avec succès.');
     }
 }

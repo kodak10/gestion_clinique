@@ -5,7 +5,7 @@
     <div class="container-xl">
         <div class="row g-2 align-items-center">
             <div class="col">
-                <h2 class="page-title">Nouvelle Consultation</h2>
+                <h2 class="page-title">Gestion des Médicaments</h2>
             </div>
         </div>
     </div>
@@ -22,31 +22,31 @@
                 </ul>
             </div>
         @endif
-        <form id="consultation-form" action="{{ route('consultations.store', $patient) }}" method="POST">
+
+        <form id="pharmacie-form" action="{{ route('hospitalisations.pharmacie.store', $hospitalisation->id) }}" method="POST">
             @csrf
-            <input type="hidden" name="numero_recu" id="numero-recu">
             <div class="row">
-                <!-- Carte Info Patient (Gauche) -->
-                <div class="col-md-6">
+                <!-- Section Informations Patient (inchangée) -->
+                <div class="col-md-12">
                     <div class="card mb-3">
                         <div class="card-header">
                             <h3 class="card-title">Informations Patient</h3>
                         </div>
                         <div class="card-body">
-                            <div class="col-lg-12">
-                                <div class="mb-3">
-                                    <label class="form-label">Nom & Prénoms</label>
-                                    <input type="text" class="form-control" value="{{ $patient->nom }} {{ $patient->prenoms }}" readonly>
-                                </div>
-                            </div>
                             <div class="row">
                                 <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nom & Prénoms</label>
+                                        <input type="text" class="form-control" value="{{ $patient->nom }} {{ $patient->prenoms }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
                                     <div class="mb-3">
                                         <label class="form-label">Assurance</label>
                                         <input type="text" class="form-control" value="{{ $patient->assurance->name ?? 'Aucune' }}" readonly>
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-3">
                                     <div class="mb-3">
                                         <label class="form-label">Taux Couverture</label>
                                         <input type="text" class="form-control" id="assurance-taux" value="{{ $patient->assurance->taux ?? '0' }}%" readonly>
@@ -56,237 +56,91 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- Carte Medecin Traitant (Droite) -->
-                <div class="col-md-6">
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h3 class="card-title">Medecin Traitant</h3>
-                        </div>
-                        
-                    </div>
-                </div>
 
-                <!-- Carte Prestations -->
+                <!-- Section Médicaments -->
                 <div class="col-md-12">
                     <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Médicaments prescrits</h3>
+                        </div>
                         <div class="card-body">
-                            <div class="prestations-repeater">
-                                <div data-repeater-list="prestations">
-                                    @if(old('prestations'))
-                                        @foreach(old('prestations') as $index => $prestation)
-                                            <div data-repeater-item class="mb-3 border-bottom pb-3">
-                                                <div class="row mt-2">
-                                                    <div class="col-md-5">
-                                                        {{-- <select class="form-control prestation-select @error('prestations.'.$index.'.prestation_id') is-invalid @enderror" name="prestation_id">
-                                                            <option value="">Sélectionner une prestation</option>
-                                                            @foreach($categories as $categorie)
-                                                                <optgroup label="{{ $categorie->nom }}">
-                                                                    @foreach($categorie->prestations as $prest)
-                                                                        <option value="{{ $prest->id }}" data-montant="{{ $prest->montant }}" {{ $prestation['prestation_id'] == $prest->id ? 'selected' : '' }}>
-                                                                            {{ $prest->libelle }}
-                                                                        </option>
-                                                                    @endforeach
-                                                                </optgroup>
-                                                            @endforeach
-                                                        </select> --}}
-                                                              <select class="form-select medicament-select" name="medicaments[{{ $loop->index }}][frais_id]" required>
-                                                @foreach($medicaments as $categorie)
-                                                    <optgroup label="{{ $categorie->libelle }}">
-                                                        @foreach($categorie->fraisHospitalisations as $med)
-                                                            <option value="{{ $med->id }}" data-prix="{{ $med->montant }}"
-                                                                @if($med->id == $detail->frais_hospitalisation_id) selected @endif>
-                                                                {{ $med->libelle }}
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="medicaments-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Médicament</th>
+                                            <th>Prix unitaire</th>
+                                            <th>Quantité</th>
+                                            <th>Total</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($medicamentsExistants as $index => $medicament)
+                                            <tr>
+                                                <td>
+                                                    <select class="form-select medicament-select" name="medicaments[{{ $index }}][medicament_id]" required>
+                                                        <option value="">Sélectionner un médicament</option>
+                                                        @foreach($allMedicaments as $med)
+                                                            <option value="{{ $med->id }}" data-prix="{{ $med->prix_vente }}"
+                                                                @if($med->id == $medicament->id) selected @endif>
+                                                                {{ $med->nom }}
                                                             </option>
                                                         @endforeach
-                                                    </optgroup>
-                                                @endforeach
-                                            </select>
-                                                        @error('prestations.'.$index.'.prestation_id')
-                                                            <div class="invalid-feedback">{{ $message }}</div>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <input type="number" class="form-control montant @error('prestations.'.$index.'.montant') is-invalid @enderror" name="montant" value="{{ $prestation['montant'] ?? 0 }}">
-                                                        @error('prestations.'.$index.'.montant')
-                                                            <div class="invalid-feedback">{{ $message }}</div>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <input type="number" class="form-control quantite @error('prestations.'.$index.'.quantite') is-invalid @enderror" name="quantite" min="1" value="{{ $prestation['quantite'] ?? 1 }}">
-                                                        @error('prestations.'.$index.'.quantite')
-                                                            <div class="invalid-feedback">{{ $message }}</div>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <input type="number" class="form-control total" name="total" value="{{ ($prestation['montant'] ?? 0) * ($prestation['quantite'] ?? 1) }}" readonly>
-                                                    </div>
-                                                    <div class="col-md-1">
-                                                        <button type="button" data-repeater-delete class="btn btn-danger btn-sm">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    @else
-                                        <div data-repeater-item class="mb-3 border-bottom pb-3">
-                                            <div class="row mt-2">
-                                                <div class="col-md-5">
-                                                    <select class="form-select medicament-select" name="medicaments[0][frais_id]" required>
-                                                @foreach($medicaments as $categorie)
-                                                    <optgroup label="{{ $categorie->libelle }}">
-                                                        @foreach($categorie->fraisHospitalisations as $med)
-                                                            <option value="{{ $med->id }}" data-prix="{{ $med->montant }}">
-                                                                {{ $med->libelle }} ({{ number_format($med->montant, 0, ',', ' ') }} XOF)
-                                                            </option>
-                                                        @endforeach
-                                                    </optgroup>
-                                                @endforeach
-                                            </select>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <input type="number" class="form-control montant" name="montant" value="0">
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <input type="number" class="form-control quantite" name="quantite" min="1" value="1">
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <input type="number" class="form-control total" name="total" value="0" readonly>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <button type="button" data-repeater-delete class="btn btn-danger btn-sm">
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control prix" name="medicaments[{{ $index }}][prix_unitaire]" 
+                                                        value="{{ $medicament->pivot->prix_unitaire }}" required>
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control quantite" name="medicaments[{{ $index }}][quantite]" 
+                                                        value="{{ $medicament->pivot->quantite }}" min="1" required>
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control total" 
+                                                        value="{{ $medicament->pivot->prix_unitaire * $medicament->pivot->quantite }}" readonly>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger btn-sm btn-supprimer">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                </div>
-                                
-                                <button type="button" data-repeater-create class="btn bg-primary-subtle text-primary">
-                                    <span class="fs-4 me-1">+</span>
-                                    Ajouter une autre prestation
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        <!-- Template pour nouvelle ligne (caché) -->
+                                        
+                                    </tbody>
+                                </table>
+                                <button type="button" id="btn-add-medicament" class="btn bg-primary-subtle text-primary mt-2">
+                                    <span class="fs-4 me-1">+</span> Ajouter un médicament
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Carte Paiement -->
-            <div class="row">
-                <div class="col-md-3">
+                <!-- Total général -->
+                <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="mb-3">
-                                <label class="form-label">Total Prestations</label>
-                                <input type="number" class="form-control" id="total-prestations" name="total" value="{{ old('total', 0) }}" readonly>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label class="form-label">Ticket Modérateur</label>
-                                <input type="number" class="form-control" id="ticket-moderateur" name="ticket_moderateur" value="{{ old('ticket_moderateur', 0) }}" readonly>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label class="form-label">Réduction</label>
-                                <input type="number" class="form-control @error('reduction') is-invalid @enderror" id="reduction" name="reduction" min="0" value="{{ old('reduction', 0) }}">
-                                @error('reduction')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label class="form-label">À Payer</label>
-                                <input type="number" class="form-control" id="a-payer" name="montant_a_paye" value="{{ old('montant_a_paye', 0) }}" readonly>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label class="form-label">Montant Perçu <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control @error('montant_paye') is-invalid @enderror" id="payer" name="montant_paye" value="{{ old('montant_paye') }}" required>
-                                @error('montant_paye')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                            <div class="row">
+                                <div class="col-md-3 offset-md-9">
+                                    <div class="mb-3">
+                                        <label class="form-label">Total Général</label>
+                                        <input type="number" class="form-control" id="total-general" value="{{ $medicamentsExistants->sum(function($item) { return $item->pivot->prix_unitaire * $item->pivot->quantite; }) }}" readonly>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Méthodes de paiement -->
-            <div class="row mt-3">
-                <div class="col-lg-3">
-                    <div class="form-selectgroup form-selectgroup-boxes d-flex flex-column">
-                        <label class="form-selectgroup-item flex-fill">
-                            <input type="radio" name="methode_paiement" value="cash" class="form-selectgroup-input" {{ old('methode_paiement', 'cash') == 'cash' ? 'checked' : '' }}>
-                            <div class="form-selectgroup-label d-flex align-items-center p-3">
-                                <div class="me-3">
-                                    <span class="form-selectgroup-check"></span>
-                                </div>
-                                <div>
-                                    <span class="payment payment-provider-mastercard payment-xs me-2"></span>
-                                    <strong>Cash</strong>
-                                </div>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="col-lg-5">
-                    <label class="form-selectgroup-item flex-fill">
-                        <input type="radio" name="methode_paiement" value="mobile_money" class="form-selectgroup-input" {{ old('methode_paiement') == 'mobile_money' ? 'checked' : '' }}>
-                        <div class="form-selectgroup-label d-flex align-items-center p-3">
-                            <div class="me-3">
-                                <span class="form-selectgroup-check"></span>
-                            </div>
-                            <div>
-                                <span class="payment payment-provider-visa payment-xs me-2"></span>
-                                <strong>Wave / Orange Money / Momo / Moov Money</strong>
-                            </div>
-                        </div>
-                    </label>
-                </div>
-                <div class="col-lg-4">
-                    <label class="form-selectgroup-item flex-fill">
-                        <input type="radio" name="methode_paiement" value="virement" class="form-selectgroup-input" {{ old('methode_paiement') == 'virement' ? 'checked' : '' }}>
-                        <div class="form-selectgroup-label d-flex align-items-center p-3">
-                            <div class="me-3">
-                                <span class="form-selectgroup-check"></span>
-                            </div>
-                            <div>
-                                <span class="payment payment-provider-visa payment-xs me-2"></span>
-                                <strong>Virement</strong>
-                            </div>
-                        </div>
-                    </label>
-                </div>
-            </div>
-            
             <!-- Bouton de soumission -->
             <div class="row mt-3">
                 <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Enregistrer la consultation</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
                 </div>
             </div>
         </form>
@@ -296,176 +150,142 @@
 
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.repeater/1.2.1/jquery.repeater.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('consultation-form');
-        const montantPerçuInput = document.getElementById('payer');
-
-        form.addEventListener('submit', function (e) {
-            e.preventDefault(); // Bloquer la soumission
-
-            const montant = parseFloat(montantPerçuInput.value || 0).toFixed(0);
-
-            Swal.fire({
-                title: 'Confirmation',
-                text: `Êtes-vous sûr de l'encaissement de ${Number(montant).toLocaleString('fr-FR')} FCFA ?`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Oui, confirmer',
-                cancelButtonText: 'Annuler',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
-            });
-        });
+$(document).ready(function() {
+    // Initialisation Select2
+    $('.medicament-select').select2({
+        width: '100%',
+        placeholder: "Sélectionner un médicament"
     });
-</script>
-<script>
-    $(document).ready(function() {
-       
-$('#a-payer').data('last-value', parseFloat($('#a-payer').val()) || 0);
-        // Initialisation Select2
+
+    // Compteur pour les nouveaux médicaments
+    let nouveauMedicamentCounter = {{ $medicamentsExistants->count() }};
+
+    // Ajouter un nouveau médicament
+    $('#btn-add-medicament').click(function() {
+        const newRow = $('#new-row-template').clone();
+        newRow.attr('id', '').show();
         
-        // $('.select2').select2({
-        //     width: '100%',
-        //     placeholder: "Sélectionner un Médecin"
-        // });
+        // Remplacer __INDEX__ par le compteur actuel
+        newRow.html(newRow.html().replace(/__INDEX__/g, nouveauMedicamentCounter));
+        
+        $('#medicaments-table tbody').append(newRow);
+        
+        // Initialiser Select2 pour le nouveau select
+        newRow.find('.medicament-select').select2({
+            width: '100%',
+            placeholder: "Sélectionner un médicament"
+        });
 
-        // Initialisation du répéteur avec gestion du recalcul
-        $('.prestations-repeater').repeater({
-            initEmpty: false,
-            isFirstItemUndeletable: true,
-            
-            show: function() {
-                $(this).slideDown(function() {
-                    // Initialisation Select2 pour la nouvelle ligne
-                    $(this).find('.prestation-select').select2({
-                        width: '100%',
-                        placeholder: "Sélectionner une prestation"
-                    });
-                    
-                    // Initialisation des valeurs par défaut
-                    $(this).find('.montant').val(0);
-                    $(this).find('.quantite').val(1);
-                    $(this).find('.total').val(0);
-                });
-            },
-            
-            hide: function(deleteElement) {
-                if ($('[data-repeater-item]').length > 1) {
-                    $(this).slideUp(deleteElement, function() {
-                        $(this).remove();
-                        recalculerTotauxGlobaux();
-                    });
-                }
-            },
-            
-            ready: function(setIndexes) {
-                $('.prestation-select').select2();
-                recalculerTotauxGlobaux();
-                
-                $('[data-repeater-delete]').each(function() {
-                    if ($('[data-repeater-item]').length === 1) {
-                        $(this).hide();
-                    }
+        // Déclencher le calcul du prix initial
+        newRow.find('.medicament-select').trigger('change');
+        
+        nouveauMedicamentCounter++;
+    });
+
+    // Supprimer un médicament
+    $(document).on('click', '.btn-supprimer', function() {
+        const row = $(this).closest('tr');
+        
+        Swal.fire({
+            title: 'Confirmation',
+            text: "Voulez-vous vraiment supprimer ce médicament?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Oui, supprimer',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                row.fadeOut(300, function() {
+                    row.remove();
+                    updateTotalGeneral();
                 });
             }
         });
-
-        // Gestion des événements
-        $(document)
-            .on('change', '.prestation-select', function() {
-                const selected = $(this).find('option:selected');
-                const montant = selected.data('montant') || 0;
-                const ligne = $(this).closest('[data-repeater-item]');
-                
-                ligne.find('.montant').val(montant);
-                calculerTotalLigne(ligne);
-            })
-            .on('input', '.montant, .quantite', function() {
-                const ligne = $(this).closest('[data-repeater-item]');
-                calculerTotalLigne(ligne);
-            })
-            .on('input', '#reduction, #a-payer, #payer', recalculerTotauxGlobaux)
-            .on('click', '[data-repeater-delete]', function() {
-                if ($('[data-repeater-item]').length === 2) {
-                    $('[data-repeater-delete]').hide();
-                }
-            })
-            .on('click', '[data-repeater-create]', function() {
-                if ($('[data-repeater-item]').length >= 1) {
-                    $('[data-repeater-delete]').show();
-                }
-            });
-
-        // Fonction de calcul pour une ligne
-        function calculerTotalLigne(ligne) {
-            const qte = parseFloat(ligne.find('.quantite').val()) || 0;
-            const montant = parseFloat(ligne.find('.montant').val()) || 0;
-            const total = (qte * montant).toFixed(2);
-            
-            ligne.find('.total').val(total);
-            recalculerTotauxGlobaux();
-        }
-
-        // Fonction de recalcul global
-        // function recalculerTotauxGlobaux() {
-        //     let totalPrestations = 0;
-            
-        //     $('[data-repeater-item]').each(function() {
-        //         const total = parseFloat($(this).find('.total').val()) || 0;
-        //         totalPrestations += total;
-        //     });
-
-        //     const tauxAssurance = parseFloat($('#assurance-taux').val().replace('%', '')) || 0;
-        //     const ticketModerateur = totalPrestations * (1 - tauxAssurance / 100);
-            
-        //     const reduction = parseFloat($('#reduction').val()) || 0;
-        //     const montantAPayer = Math.max(0, ticketModerateur - reduction);
-            
-        //     $('#total-prestations').val(totalPrestations.toFixed(2));
-        //     $('#ticket-moderateur').val(ticketModerateur.toFixed(2));
-        //     $('#a-payer').val(montantAPayer.toFixed(2));
-        //     $('#payer').val(montantAPayer.toFixed(2));
-        // }
-
-        function recalculerTotauxGlobaux() {
-            let totalPrestations = 0;
-            
-            $('[data-repeater-item]').each(function() {
-                const total = parseFloat($(this).find('.total').val()) || 0;
-                totalPrestations += total;
-            });
-
-            const tauxAssurance = parseFloat($('#assurance-taux').val().replace('%', '')) || 0;
-            const ticketModerateur = totalPrestations * (1 - tauxAssurance / 100);
-            
-            const reduction = parseFloat($('#reduction').val()) || 0;
-            const montantAPayer = Math.max(0, ticketModerateur - reduction);
-            
-            $('#total-prestations').val(totalPrestations.toFixed(2));
-            $('#ticket-moderateur').val(ticketModerateur.toFixed(2));
-            $('#a-payer').val(montantAPayer.toFixed(2));
-            
-            // Ne remplir que si le champ est vide ou si la valeur actuelle correspond au montant précédent
-            const payerActuel = parseFloat($('#payer').val()) || 0;
-            if (payerActuel === 0 || payerActuel === parseFloat($('#a-payer').data('last-value'))) {
-                $('#payer').val(montantAPayer.toFixed(2));
-            }
-            
-            // Stocker la nouvelle valeur pour comparaison future
-            $('#a-payer').data('last-value', montantAPayer.toFixed(2));
-        }
-
-        // Initialisation des valeurs si old() existe
-        @if(old('prestations'))
-            recalculerTotauxGlobaux();
-        @endif
     });
+
+    // Calcul du total pour une ligne
+    function calculateRowTotal(row) {
+        const prix = parseFloat(row.find('.prix').val()) || 0;
+        const quantite = parseInt(row.find('.quantite').val()) || 0;
+        const total = prix * quantite;
+        row.find('.total').val(total.toFixed(2));
+        return total;
+    }
+
+    // Mise à jour du total général
+    function updateTotalGeneral() {
+        let totalGeneral = 0;
+
+        $('#medicaments-table tbody tr:visible').each(function() {
+            if ($(this).attr('id') !== 'new-row-template') {
+                totalGeneral += calculateRowTotal($(this));
+            }
+        });
+
+        $('#total-general').val(totalGeneral.toFixed(2));
+    }
+
+    // Écouteurs d'événements
+    $(document)
+        .on('change', '.medicament-select', function() {
+            const selectedOption = $(this).find('option:selected');
+            const prix = selectedOption.data('prix') || 0;
+            const row = $(this).closest('tr');
+            row.find('.prix').val(prix);
+            calculateRowTotal(row);
+            updateTotalGeneral();
+        })
+        .on('input', '.prix, .quantite', function() {
+            const row = $(this).closest('tr');
+            calculateRowTotal(row);
+            updateTotalGeneral();
+        });
+
+    // Confirmation avant soumission
+    $('#pharmacie-form').on('submit', function(e) {
+        e.preventDefault();
+        
+        // Valider les champs requis
+        let isValid = true;
+        $('#medicaments-table tbody tr:visible').each(function() {
+            if ($(this).attr('id') !== 'new-row-template') {
+                const medicamentSelect = $(this).find('.medicament-select');
+                if (medicamentSelect.val() === '') {
+                    isValid = false;
+                    medicamentSelect.addClass('is-invalid');
+                } else {
+                    medicamentSelect.removeClass('is-invalid');
+                }
+            }
+        });
+        
+        if (!isValid) {
+            Swal.fire('Erreur', 'Veuillez sélectionner un médicament pour toutes les lignes', 'error');
+            return;
+        }
+        
+        Swal.fire({
+            title: 'Confirmation',
+            text: "Voulez-vous enregistrer ces modifications?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Oui, enregistrer',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Soumission normale du formulaire (pas en AJAX)
+                this.submit();
+            }
+        });
+    });
+
+    // Initialisation des valeurs
+    updateTotalGeneral();
+});
 </script>
 @endpush

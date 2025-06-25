@@ -27,6 +27,7 @@ return new class extends Migration
             $table->timestamp('date_entree')->useCurrent();
             $table->timestamp('date_sortie')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

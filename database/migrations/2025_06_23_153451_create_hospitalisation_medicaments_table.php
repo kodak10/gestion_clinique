@@ -17,9 +17,9 @@ return new class extends Migration
             $table->foreignId('medicament_id')->constrained();
             $table->integer('quantite');
             $table->decimal('prix_unitaire', 10, 2);
-            $table->integer('taux')->default(100);
             $table->decimal('total', 10, 2);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

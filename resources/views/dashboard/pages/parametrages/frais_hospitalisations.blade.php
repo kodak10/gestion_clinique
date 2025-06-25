@@ -10,7 +10,7 @@
             <div class="col">
                 <a href="#" class="btn btn-2 float-end mr-3" data-bs-toggle="modal" data-bs-target="#modal-report">Ajouter un Frais</a>
 
-                <a href="#" class="btn btn-2 float-end" data-bs-toggle="modal" data-bs-target="#modal-category">Ajouter Une Catégorie</a>
+                {{-- <a href="#" class="btn btn-2 float-end" data-bs-toggle="modal" data-bs-target="#modal-category">Ajouter Une Catégorie</a> --}}
             </div>
         </div>
     </div>
@@ -24,7 +24,7 @@
                   <table class="table" id="table">
                         <thead>
                             <tr>
-                                <th>Catégorie</th>
+                                
                                 <th>Libellé</th>
                                 <th>Montant</th>
                                 <th class="w-1"></th>
@@ -33,7 +33,7 @@
                         <tbody>
                             @foreach ($frais as $fraisItem)
                                 <tr>
-                                    <td>{{ optional($fraisItem->category)->nom ?? 'Non catégorisé' }}</td>
+                                    
 
                                     <td>{{ $fraisItem->libelle }}</td>
                                     <td>{{ number_format($fraisItem->montant, 0) }}</td>
@@ -62,7 +62,7 @@
                                                 @csrf @method('PUT')
                                                 <div class="modal-body">
                                                     <div class="row">
-                                                        <div class="col-lg-6">
+                                                        {{-- <div class="col-lg-6">
                                                             <div class="mb-3">
                                                                 <label class="form-label">Catégorie</label>
                                                                 <select class="form-select" name="category_id" required>
@@ -71,6 +71,12 @@
                                                                     @endforeach
                                                                 </select>
                                                             </div>
+                                                        </div> --}}
+                                                        <div class="col-lg-6">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Libellé</label>
+                                                                <input type="text" class="form-control" name="libelle" value="{{ $fraisItem->libelle }}" required>
+                                                            </div>
                                                         </div>
                                                         <div class="col-lg-6">
                                                             <div class="mb-3">
@@ -78,16 +84,10 @@
                                                                 <input type="number" step="0.01" class="form-control" name="montant" value="{{ $fraisItem->montant }}" required>
                                                             </div>
                                                         </div>
+                                                        
                                                     </div>
 
-                                                    <div class="row">
-                                                        <div class="col-lg-12">
-                                                        <div class="mb-3">
-                                                            <label class="form-label">Libellé</label>
-                                                            <input type="text" class="form-control" name="libelle" value="{{ $fraisItem->libelle }}" required>
-                                                        </div>
-                                                        </div>
-                                                    </div>
+                                                    
                                                     
                                                 </div>
                                                 <div class="modal-footer">
@@ -129,15 +129,10 @@
                     @endif
                     <div class="row">
                         <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label class="form-label">Catégorie</label>
-                                <select class="form-select @error('category_id') is-invalid @enderror" name="category_id" required>
-                                    <option value="">Sélectionnez une catégorie</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->nom }}</option>
-                                    @endforeach
-                                </select>
-                                @error('category_id')
+                           <div class="mb-3">
+                                <label class="form-label">Libellé</label>
+                                <input type="text" class="form-control @error('libelle') is-invalid @enderror" name="libelle" value="{{ old('libelle') }}" required>
+                                @error('libelle')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -152,17 +147,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="mb-3">
-                                <label class="form-label">Libellé</label>
-                                <input type="text" class="form-control @error('libelle') is-invalid @enderror" name="libelle" value="{{ old('libelle') }}" required>
-                                @error('libelle')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
+                    
                     
                     
                 </div>
@@ -175,7 +160,7 @@
     </div>
 </div>
 
-<div class="modal modal-blur fade" id="modal-category" tabindex="-1" role="dialog" aria-hidden="true">
+{{-- <div class="modal modal-blur fade" id="modal-category" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -217,7 +202,7 @@
             </form>
         </div>
     </div>
-</div>
+</div> --}}
 
 <!-- Script pour la suppression -->
 <script>

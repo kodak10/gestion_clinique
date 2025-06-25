@@ -20,6 +20,7 @@ return new class extends Migration
             $table->enum('methode_paiement', ['cash', 'mobile_money', 'virement']);
             $table->string('type')->default('entrée'); // ou 'sortie' si un jour tu fais aussi des dépenses
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

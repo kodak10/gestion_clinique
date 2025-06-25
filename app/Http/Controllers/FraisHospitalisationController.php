@@ -12,9 +12,9 @@ class FraisHospitalisationController extends Controller
 {
      public function index()
     {
-        $frais = FraisHospitalisation::with('category')->orderBy('libelle', 'asc')->get();
-        $categories = CategoryFrais_Hospitalisation::orderBy('nom', 'asc')->get();;
-        return view('dashboard.pages.parametrages.frais_hospitalisations', compact('frais', 'categories'));
+        $frais = FraisHospitalisation::orderBy('libelle', 'asc')->get();
+        //$categories = CategoryFrais__Hospitalisation::orderBy('nom', 'asc')->get();;
+        return view('dashboard.pages.parametrages.frais_hospitalisations', compact('frais'));
     }
 
     public function storeCategory(Request $request)
@@ -36,7 +36,7 @@ class FraisHospitalisationController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'category_id' => 'required|exists:category_frais__hospitalisations,id',
+            //'category_id' => 'required|exists:category_frais__hospitalisations,id',
             'libelle' => 'required|string|max:255',
             'montant' => 'required|numeric|min:0',
         ]);
@@ -50,7 +50,7 @@ class FraisHospitalisationController extends Controller
     public function update(Request $request, FraisHospitalisation $fraisHospitalisation)
     {
         $validated = $request->validate([
-            'category_id' => 'required|exists:category_frais__hospitalisations,id',
+            // 'category_id' => 'required|exists:category_frais__hospitalisations,id',
             'libelle' => 'required|string|max:255',
             'montant' => 'required|numeric|min:0',
             'description' => 'nullable|string'

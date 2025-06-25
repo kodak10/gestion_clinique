@@ -27,6 +27,7 @@ return new class extends Migration
             $table->date('date_consultation');
             $table->string('pdf_path')->nullable(); // Chemin du PDF généré
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

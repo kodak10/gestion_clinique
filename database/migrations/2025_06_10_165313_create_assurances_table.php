@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('siege')->nullable();
             $table->string('image');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

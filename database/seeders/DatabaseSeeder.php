@@ -45,6 +45,8 @@ class DatabaseSeeder extends Seeder
             CategoryPrestationsSeeder::class,
             PrestationSeeder::class,
             FraisHospitalisationSeeder::class,
+            MedicamentSeeder::class,
+            
             
         ]);
     }
