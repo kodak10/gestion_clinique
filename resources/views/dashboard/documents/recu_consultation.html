@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Reçu</title>
+    <title>Reçu de consultation</title>
     <style>
         @page {
             size: A4 landscape;
@@ -133,7 +133,6 @@
 </head>
 <body>
     <div class="container">
-
         <!-- Copie Bureau -->
         <div class="receipt">
             <div class="header">
@@ -144,28 +143,27 @@
                     </div>
                 </div>
                 <div class="meta">
-                    <div><strong>DATE:</strong> ________</div>
-                    <div><strong>RECU N°:</strong> _____________</div>
+                    <div><strong>DATE:</strong> {{ $date }}</div>
+                    <div><strong>RECU N°:</strong> {{ $numeroRecu }}</div>
                 </div>
             </div>
 
             <div class="field">
                 <label>NOM & PRENOMS</label>
-                <span style="display:block; border-bottom:1px solid #000; min-height:16px;"></span>
+                <span>{{ $patient->nom }} {{ $patient->prenoms }}</span>
             </div>
 
             <div class="inline-fields">
                 <div class="item">
                     <label>MEDECIN</label>
-                    <span></span>
+                    <span>{{ $medecin->nom_complet }}</span>
                 </div>
                 <div class="item">
                     <label>SPECIALITE</label>
-                    <span></span>
+                    <span>{{ $medecin->specialite->nom }}</span>
                 </div>
             </div>
             
-
             <div class="field">
                 <table>
                     <thead>
@@ -177,8 +175,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td></td><td></td><td></td><td></td></tr>
-                        <tr><td></td><td></td><td></td><td></td></tr>
+                        @foreach($prestations as $prestation)
+                        <tr>
+                            <td>{{ $prestation->libelle }}</td>
+                            <td>{{ number_format($prestation->pivot->montant, 0, ',', ' ') }}</td>
+                            <td>{{ $prestation->pivot->quantite }}</td>
+                            <td>{{ number_format($prestation->pivot->total, 0, ',', ' ') }}</td>
+                        </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -186,37 +190,45 @@
             <div class="inline-fields">
                 <div class="item">
                     <label>Total</label>
-                    <span></span>
+                    <span>{{ number_format($consultation->total, 0, ',', ' ') }} FCFA</span>
                 </div>
                 <div class="item">
                     <label>Ticket Modérateur</label>
-                    <span></span>
+                    <span>{{ number_format($consultation->ticket_moderateur, 0, ',', ' ') }} FCFA</span>
                 </div>
                 <div class="item">
                     <label>Réduction</label>
-                    <span></span>
+                    <span>{{ number_format($consultation->reduction, 0, ',', ' ') }} FCFA</span>
                 </div>
             </div>
 
             <div class="inline-fields">
                 <div class="item">
                     <label>Payé</label>
-                    <span></span>
+                    <span>{{ number_format($consultation->montant_paye, 0, ',', ' ') }} FCFA</span>
                 </div>
                 <div class="item">
                     <label>Reste à payer</label>
-                    <span></span>
+                    <span>{{ number_format($consultation->reste_a_payer, 0, ',', ' ') }} FCFA</span>
                 </div>
             </div>
 
             <div class="payment-methods">
                 <label>Mode de paiement:</label>
-                <span>□ Cash □ Mobile money □ Virement</span>
+                <span>
+                    @if($consultation->methode_paiement == 'cash')
+                    ☑ Cash □ Mobile money □ Virement
+                    @elseif($consultation->methode_paiement == 'mobile_money')
+                    □ Cash ☑ Mobile money □ Virement
+                    @else
+                    □ Cash □ Mobile money ☑ Virement
+                    @endif
+                </span>
             </div>
 
             <div class="footer">
                 <div>Encaisser par</div>
-                <div class="signature">Koffi Kouadio</div>
+                <div class="signature">{{ $user->name }}</div>
             </div>
         </div>
 
@@ -230,21 +242,21 @@
                     </div>
                 </div>
                 <div class="meta">
-                    <div><strong>DATE:</strong> ________</div>
-                    <div><strong>RECU N°:</strong> _____________</div>
+                    <div><strong>DATE:</strong> {{ $date }}</div>
+                    <div><strong>RECU N°:</strong> {{ $numeroRecu }}</div>
                 </div>
             </div>
 
             <div class="field">
                 <label>NOM & PRENOMS</label>
-                <span style="display:block; border-bottom:1px solid #000; min-height:16px;"></span>
+                <span>{{ $patient->nom }} {{ $patient->prenoms }}</span>
             </div>
 
             <div class="field">
                 <label>MEDECIN & SPÉCIALITÉ</label>
                 <div class="double-field">
-                    <div><span></span></div>
-                    <div><span></span></div>
+                    <div><span>{{ $medecin->nom_complet }}</span></div>
+                    <div><span>{{ $medecin->specialite->nom }}</span></div>
                 </div>
             </div>
 
@@ -259,8 +271,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td></td><td></td><td></td><td></td></tr>
-                        <tr><td></td><td></td><td></td><td></td></tr>
+                        @foreach($prestations as $prestation)
+                        <tr>
+                            <td>{{ $prestation->libelle }}</td>
+                            <td>{{ number_format($prestation->pivot->montant, 0, ',', ' ') }}</td>
+                            <td>{{ $prestation->pivot->quantite }}</td>
+                            <td>{{ number_format($prestation->pivot->total, 0, ',', ' ') }}</td>
+                        </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -268,40 +286,47 @@
             <div class="inline-fields">
                 <div class="item">
                     <label>Total</label>
-                    <span></span>
+                    <span>{{ number_format($consultation->total, 0, ',', ' ') }} FCFA</span>
                 </div>
                 <div class="item">
                     <label>Ticket Modérateur</label>
-                    <span></span>
+                    <span>{{ number_format($consultation->ticket_moderateur, 0, ',', ' ') }} FCFA</span>
                 </div>
                 <div class="item">
                     <label>Réduction</label>
-                    <span></span>
+                    <span>{{ number_format($consultation->reduction, 0, ',', ' ') }} FCFA</span>
                 </div>
             </div>
 
             <div class="inline-fields">
                 <div class="item">
                     <label>Payé</label>
-                    <span></span>
+                    <span>{{ number_format($consultation->montant_paye, 0, ',', ' ') }} FCFA</span>
                 </div>
                 <div class="item">
                     <label>Reste à payer</label>
-                    <span></span>
+                    <span>{{ number_format($consultation->reste_a_payer, 0, ',', ' ') }} FCFA</span>
                 </div>
             </div>
 
             <div class="payment-methods">
                 <label>Mode de paiement:</label>
-                <span>□ Cash □ Chèque □ Carte</span>
+                <span>
+                    @if($consultation->methode_paiement == 'cash')
+                    ☑ Cash □ Mobile money □ Virement
+                    @elseif($consultation->methode_paiement == 'mobile_money')
+                    □ Cash ☑ Mobile money □ Virement
+                    @else
+                    □ Cash □ Mobile money ☑ Virement
+                    @endif
+                </span>
             </div>
 
             <div class="footer">
                 <div>Encaisser par</div>
-                <div class="signature">Koffi Kouadio</div>
+                <div class="signature">{{ $user->name }}</div>
             </div>
         </div>
-
     </div>
 </body>
 </html>

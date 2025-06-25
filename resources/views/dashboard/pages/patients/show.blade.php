@@ -85,7 +85,7 @@
                                                             data-total="{{ number_format($consultation->total, 0, ',', ' ') }}"
                                                             data-reduction="{{ number_format($consultation->reduction, 0, ',', ' ') }}"
                                                             data-ticket="{{ number_format($consultation->montant_a_paye, 0, ',', ' ') }}"
-                                                            data-encaisser="{{ number_format($consultation->reglements->sum('montant'), 0, ',', ' ') }}"
+                                                            data-encaisser="{{ number_format($consultation->reglements->montant, 0, ',', ' ') }}"
                                                             data-prestations="{{ json_encode($consultation->details->map(function($item) {
                                                                 return [
                                                                     'libelle' => $item->prestation->libelle,
@@ -112,7 +112,7 @@
                                         <td>{{ $consultation->medecin->nom_complet }}</td>
                                         <td>{{ number_format($consultation->montant_a_paye, 0, ',', ' ') }} FCFA</td>
                                         <td>
-                                            {{ number_format($consultation->reglements->sum('montant'), 0, ',', ' ') }} FCFA
+                                            {{ number_format($consultation->reglements->montant, 0, ',', ' ') }} FCFA
                                         </td>
 
                                     </tr>

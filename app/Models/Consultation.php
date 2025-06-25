@@ -42,17 +42,17 @@ class Consultation extends Model
     }
 
 
-    protected static function boot()
-    {
-        parent::boot();
+    // protected static function boot()
+    // {
+    //     parent::boot();
 
-        static::creating(function ($consultation) {
-            // Génération du numéro de reçu (3 lettres + 3 chiffres)
-            $letters = substr(str_shuffle("ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 3);
-            $numbers = str_pad(Consultation::count() + 1, 3, '0', STR_PAD_LEFT);
-            $consultation->numero_recu = $letters . $numbers;
-        });
-    }
+    //     static::creating(function ($consultation) {
+    //         // Génération du numéro de reçu (3 lettres + 3 chiffres)
+    //         $letters = substr(str_shuffle("ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 3);
+    //         $numbers = str_pad(Consultation::count() + 1, 3, '0', STR_PAD_LEFT);
+    //         $consultation->numero_recu = $letters . $numbers;
+    //     });
+    // }
 
     public function user()
     {

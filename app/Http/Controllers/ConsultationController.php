@@ -108,7 +108,7 @@ public function store(Request $request, Patient $patient)
     ]);
 
     // Génération du numéro de reçu
-    $numeroRecu = 'REC-' . date('Ymd') . '-' . Str::upper(Str::random(6));
+    $numeroRecu = date('Ymd') . '-' . Str::upper(Str::random(6));
 
     // Calcul du total
     $totalPrestations = collect($request->prestations)->sum(function($item) {
@@ -132,7 +132,6 @@ public function store(Request $request, Patient $patient)
         'user_id' => auth()->id(),
         'patient_id' => $patient->id,
         'medecin_id' => $request->medecin_id,
-        'numero_recu' => $numeroRecu,
         'total' => $totalPrestations,
         'ticket_moderateur' => $ticketModerateur,
         'reduction' => $request->reduction,
@@ -141,6 +140,8 @@ public function store(Request $request, Patient $patient)
         'reste_a_payer' => $montantAPayer - $request->montant_paye,
         'methode_paiement' => $request->methode_paiement,
         'date_consultation' => now(),
+        'numero_recu' => $numeroRecu,
+
     ]);
 
     // Lier les prestations
@@ -169,7 +170,7 @@ public function store(Request $request, Patient $patient)
         'patient' => $patient,
         'medecin' => $medecin,
         'prestations' => $prestations,
-        'date' => now()->format('d/m/Y'),
+        'date' => $consultation->date_consultation->format('d/m/Y H:i'),
         'numeroRecu' => $numeroRecu,
         'user' => auth()->user(),
     ];
@@ -301,23 +302,42 @@ public function update(Request $request, Consultation $consultation)
         }
 
         // Gestion des règlements
-        if (abs($difference) > 0) {
-            $consultation->reglements()->create([
-                'montant' => $difference,
+        // if (abs($difference) > 0) {
+        //     $consultation->reglements()->create([
+        //         'montant' => $difference,
+        //         'methode_paiement' => $request->methode_paiement,
+        //         'user_id' => auth()->id(),
+        //         'notes' => $difference > 0 
+        //             ? 'Ajustement positif après modification' 
+        //             : 'Ajustement négatif après modification'
+        //     ]);
+        // } else {
+        //     // Mise à jour du dernier règlement si pas de différence
+        //     if ($consultation->reglements->isNotEmpty()) {
+        //         $consultation->reglements->last()->update([
+        //             'methode_paiement' => $request->methode_paiement
+        //         ]);
+        //     }
+        // }
+        $lastReglement = $consultation->reglements()->latest()->first();
+
+        if ($lastReglement) {
+            $lastReglement->update([
+                'montant' => $request->montant_paye,
                 'methode_paiement' => $request->methode_paiement,
+                'notes' => 'Montant ajusté après modification',
                 'user_id' => auth()->id(),
-                'notes' => $difference > 0 
-                    ? 'Ajustement positif après modification' 
-                    : 'Ajustement négatif après modification'
             ]);
         } else {
-            // Mise à jour du dernier règlement si pas de différence
-            if ($consultation->reglements->isNotEmpty()) {
-                $consultation->reglements->last()->update([
-                    'methode_paiement' => $request->methode_paiement
-                ]);
-            }
+            $consultation->reglements()->create([
+                'montant' => $request->montant_paye,
+                'methode_paiement' => $request->methode_paiement,
+                //'user_id' => auth()->id(),
+                'notes' => 'Premier règlement (ajusté)'
+            ]);
         }
+
+
     });
 
     // Régénération du PDF
@@ -326,10 +346,13 @@ public function update(Request $request, Consultation $consultation)
         'patient' => $consultation->patient,
         'medecin' => $consultation->medecin,
         'prestations' => $consultation->prestations,
-        'date' => now()->format('d/m/Y'),
+        'date' => $consultation->date_consultation->format('d/m/Y H:i'),
         'numeroRecu' => $consultation->numero_recu,
-        'user' => auth()->user(),
+        'user' => $consultation->user,
     ]);
+
+    
+    
 
     $pdfPath = 'consultations/recu-' . $consultation->id . '-' . now()->format('YmdHis') . '.pdf';
     Storage::disk('public')->put($pdfPath, $pdf->output());
@@ -337,16 +360,12 @@ public function update(Request $request, Consultation $consultation)
     // Mise à jour du chemin du PDF
     $consultation->update(['pdf_path' => $pdfPath]);
 
-    // return redirect()
-    //     ->route('consultations.index', $consultation->patient)
-    //     ->with([
-    //         'success' => 'Consultation mise à jour avec succès',
-    //         'pdf_url' => Storage::url($pdfPath)
-    //     ]);
+    
     return back()->with([
     'success' => 'Consultation mise à jour avec succès',
     'pdf_url' => Storage::url($pdfPath)
 ]);
+
 
 }
 

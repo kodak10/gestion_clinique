@@ -341,15 +341,15 @@ public function viewPdf(Patient $patient)
         ->get();
 
 
-        $consultations = Consultation::with([
-            'patient',
-            'medecin',
-            'details.frais',
+        // $consultations = Consultation::with([
+        //     'patient',
+        //     'medecin',
+        //     'details.frais',
             
-        ])
-        ->where('patient_id', $id)
-        ->orderBy('date_consultation', 'desc')
-        ->get();
+        // ])
+        // ->where('patient_id', $id)
+        // ->orderBy('date_consultation', 'desc')
+        // ->get();
 
     $hospitalisations = $patient->hospitalisations()
         ->with(['medecin', 'details.frais'])
