@@ -282,42 +282,100 @@ public function storePharmacie(Request $request, Hospitalisation $hospitalisatio
         }
     }
 
-    public function createFacture(Hospitalisation $hospitalisation)
-    {
-        $patient = $hospitalisation->patient;
-            $categorie_medecins = Specialite::with('medecins')->get();
+    // public function createFacture(Hospitalisation $hospitalisation)
+    // {
+    //     $patient = $hospitalisation->patient;
+    //         $categorie_medecins = Specialite::with('medecins')->get();
 
         
 
-        $detailsLaboratoire = HospitalisationDetail::with('fraisHospitalisation')
-            ->where('hospitalisation_id', $hospitalisation->id)
-            ->where('frais_hospitalisation_id', 1)
-            ->get();
+    //     $detailsLaboratoire = HospitalisationDetail::with('fraisHospitalisation')
+    //         ->where('hospitalisation_id', $hospitalisation->id)
+    //         ->where('frais_hospitalisation_id', 1)
+    //         ->get();
 
 
-            $detailsPharmacie = HospitalisationDetail::with('fraisHospitalisation')
-            ->where('hospitalisation_id', $hospitalisation->id)
-            ->where('frais_hospitalisation_id', 2)
-            ->get();
+    //         $detailsPharmacie = HospitalisationDetail::with('fraisHospitalisation')
+    //         ->where('hospitalisation_id', $hospitalisation->id)
+    //         ->where('frais_hospitalisation_id', 2)
+    //         ->get();
 
-            $autresDetails = HospitalisationDetail::with('fraisHospitalisation')
-            ->where('hospitalisation_id', $hospitalisation->id)
-            ->whereNotIn('frais_hospitalisation_id', [1, 2])
-            ->get();
+    //         $autresDetails = HospitalisationDetail::with('fraisHospitalisation')
+    //         ->where('hospitalisation_id', $hospitalisation->id)
+    //         ->whereNotIn('frais_hospitalisation_id', [1, 2])
+    //         ->get();
 
-        // Récupérer les frais disponibles non encore utilisés
-        $utilises = $autresDetails->pluck('frais_hospitalisation_id')->toArray();
-        $autresFrais = FraisHospitalisation::whereNotIn('id', array_merge([1, 2], $utilises))
+    //     // Récupérer les frais disponibles non encore utilisés
+    //     $utilises = $autresDetails->pluck('frais_hospitalisation_id')->toArray();
+    //     $autresFrais = FraisHospitalisation::whereNotIn('id', array_merge([1, 2], $utilises))
+    //     ->orderBy('libelle')
+    //     ->get();
+
+    //     $taux_assurance = $hospitalisation->patient->taux_assurance ?? 0; // ou 100 par défaut si nécessaire
+
+
+
+    //     return view('dashboard.pages.hospitalisations.create', 
+    //         compact('hospitalisation', 'patient', 'categorie_medecins', 'detailsLaboratoire', 'detailsPharmacie', 'autresFrais', 'taux_assurance'));
+    // }
+    public function createFacture(Hospitalisation $hospitalisation)
+{
+    $patient = $hospitalisation->patient;
+    $categorie_medecins = Specialite::with('medecins')->get();
+
+    // Formatage des dates pour la vue
+    $dateEntree = $hospitalisation->date_entree 
+        ? \Carbon\Carbon::parse($hospitalisation->date_entree)->format('Y-m-d\TH:i')
+        : now()->format('Y-m-d\TH:i');
+    
+    $dateSortie = $hospitalisation->date_sortie
+        ? \Carbon\Carbon::parse($hospitalisation->date_sortie)->format('Y-m-d\TH:i')
+        : null;
+
+    $detailsLaboratoire = HospitalisationDetail::with('fraisHospitalisation')
+        ->where('hospitalisation_id', $hospitalisation->id)
+        ->where('frais_hospitalisation_id', 1)
+        ->get();
+
+    $detailsPharmacie = HospitalisationDetail::with('fraisHospitalisation')
+        ->where('hospitalisation_id', $hospitalisation->id)
+        ->where('frais_hospitalisation_id', 2)
+        ->get();
+
+    $autresDetails = HospitalisationDetail::with('fraisHospitalisation')
+        ->where('hospitalisation_id', $hospitalisation->id)
+        ->whereNotIn('frais_hospitalisation_id', [1, 2])
+        ->get();
+
+    // Récupérer tous les frais existants (sauf 1 et 2)
+    $tousFrais = FraisHospitalisation::whereNotIn('id', [1, 2])
         ->orderBy('libelle')
         ->get();
 
-        $taux_assurance = $hospitalisation->patient->taux_assurance ?? 0; // ou 100 par défaut si nécessaire
+    // Récupérer les IDs des frais déjà utilisés
+    $utilises = $autresDetails->pluck('frais_hospitalisation_id')->unique()->toArray();
 
+    // Filtrer les frais disponibles (ceux qui ne sont pas encore utilisés)
+    $autresFrais = $tousFrais->reject(function ($frais) use ($utilises) {
+        return in_array($frais->id, $utilises);
+    });
 
+    $taux_assurance = $patient->taux_couverture ?? 0;
 
-        return view('dashboard.pages.hospitalisations.create', 
-            compact('hospitalisation', 'patient', 'categorie_medecins', 'detailsLaboratoire', 'detailsPharmacie', 'autresFrais', 'taux_assurance'));
-    }
+    return view('dashboard.pages.hospitalisations.create', compact(
+        'hospitalisation', 
+        'patient', 
+        'categorie_medecins', 
+        'detailsLaboratoire', 
+        'detailsPharmacie', 
+        'autresFrais',
+        'autresDetails',
+        'taux_assurance',
+        'dateEntree',
+        'dateSortie',
+        'tousFrais'
+    ));
+}
 
 
     // public function storeFacture(Request $request, Hospitalisation $hospitalisation)
@@ -438,7 +496,7 @@ public function storeFacture(Request $request, Hospitalisation $hospitalisation)
         'frais.*.frais_id' => 'required|exists:frais_hospitalisations,id',
         'frais.*.prix' => 'required|numeric|min:0',
         'frais.*.quantite' => 'required|integer|min:1',
-        'frais.*.taux' => 'required|integer|min:0',
+        'frais.*.taux' => 'required|numeric|min:0',
         'frais.*.total' => 'required|numeric|min:0',
         'medecin_id' => 'required|exists:medecins,id',
         'date_sortie' => 'required|date',
