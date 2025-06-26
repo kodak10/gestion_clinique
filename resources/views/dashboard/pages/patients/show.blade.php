@@ -51,9 +51,7 @@
                     <div class="tab-pane active show" id="consultations">
                         <div class="d-flex justify-content-between mb-3">
                             <h4>Historique des Consultations</h4>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#consultationModal">
-                                Nouvelle Consultation
-                            </button>
+                            
                         </div>
                         <div class="table-responsive">
                             <table class="table table-vcenter" id="consultations-table">
@@ -126,9 +124,7 @@
                     <div class="tab-pane" id="hospitalisations">
                         <div class="d-flex justify-content-between mb-3">
                             <h4>Historique des Hospitalisations</h4>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#hospitalisationModal">
-                                Nouvelle Hospitalisation
-                            </button>
+                            
                         </div>
                         <div class="table-responsive">
                             <table class="table table-vcenter" id="hospitalisations-table">
