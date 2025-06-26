@@ -66,6 +66,7 @@ class Hospitalisation extends Model
     {
         return $this->hasMany(HospitalisationDetail::class);
     }
+    
 
     public function medicaments()
     {

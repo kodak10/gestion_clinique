@@ -19,6 +19,20 @@
                 </div>
             @endif
 
+            @if ($errors->any())
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        <strong>Des erreurs ont été détectées :</strong>
+        <ul class="mt-2 mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
+
             <form action="{{ route('hospitalisations.facture.store', $hospitalisation->id) }}" method="POST" id="examenForm">
                 @csrf
                 <div class="row">
@@ -199,6 +213,7 @@
                                                     <label class="form-label">Libellé</label>
                                                     <input type="text" class="form-control" value="Laboratoire" readonly>
                                                     <input type="hidden" name="frais[1][frais_id]" value="1" >
+                                                    
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Prix unitaire</label>
