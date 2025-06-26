@@ -72,7 +72,7 @@ Route::middleware(['auth',])->group(function () {
     Route::post('/hospitalisations/{hospitalisation}/pharmacie', [HospitalisationController::class, 'storePharmacie'])->name('hospitalisations.pharmacie.store');
     Route::delete('/hospitalisations/{hospitalisation}/pharmacie/{pivot}', [HospitalisationController::class, 'destroyMedicament'])->name('hospitalisations.pharmacie.destroy');
 
-    Route::get('/hospitalisations/{hospitalisation}/laboratoire/create', [HospitalisationController::class, 'createLaboratoire'])->name('hospitalisations.laboratoire.create');
+    Route::get('/hospitalisations/{hospitalisation}/laboratoire/create', [HospitalisationController::class, 'createExamen'])->name('hospitalisations.laboratoire.create');
     Route::post('/hospitalisations/{hospitalisation}/laboratoire', [HospitalisationController::class, 'storeExamen'])->name('hospitalisations.laboratoire.store');
     Route::delete('/hospitalisations/{hospitalisation}/laboratoire/{pivot}', [HospitalisationController::class, 'destroyMedicament'])->name('hospitalisations.laboratoire.destroy');
 

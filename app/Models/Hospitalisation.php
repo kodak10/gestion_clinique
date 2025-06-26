@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Examen;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -70,6 +71,13 @@ class Hospitalisation extends Model
     {
         return $this->belongsToMany(Medicament::class, 'hospitalisation_medicament')
                    ->withPivot('quantite', 'prix_unitaire', 'total',)
+                   ->withTimestamps();
+    }
+
+    public function examens()
+    {
+        return $this->belongsToMany(Examen::class, 'hospitalisation_examen')
+                   ->withPivot('quantite', 'prix', 'total',)
                    ->withTimestamps();
     }
 

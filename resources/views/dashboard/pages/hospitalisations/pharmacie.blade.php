@@ -5,7 +5,7 @@
     <div class="container-xl">
         <div class="row g-2 align-items-center">
             <div class="col">
-                <h2 class="page-title">Nouvelle Consultation</h2>
+                <h2 class="page-title">Pharmacie</h2>
             </div>
         </div>
     </div>
@@ -22,144 +22,7 @@
                 </ul>
             </div>
         @endif
-        {{-- <form id="consultation-form" action="{{ route('hospitalisations.pharmacie.store', $hospitalisation->id) }}" method="POST">
-            @csrf
-            <input type="hidden" name="numero_recu" id="numero-recu">
-            <div class="row">
-                <!-- Section Informations Patient -->
-                <div class="col-md-12">
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h3 class="card-title">Informations Patient</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Nom & Prénoms</label>
-                                        <input type="text" class="form-control" value="{{ $patient->nom }} {{ $patient->prenoms }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3">
-                                    <div class="mb-3">
-                                        <label class="form-label">Assurance</label>
-                                        <input type="text" class="form-control" value="{{ $patient->assurance->name ?? 'Aucune' }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3">
-                                    <div class="mb-3">
-                                        <label class="form-label">Taux Couverture</label>
-                                        <input type="text" class="form-control" id="assurance-taux" value="{{ $patient->assurance->taux ?? '0' }}%" readonly>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                
-
-                <!-- Carte medicaments -->
-                <div class="col-md-12">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <div class="medicaments-repeater">
-                                <div data-repeater-list="medicaments">
-                                    @if(old('medicaments'))
-                                        @foreach(old('medicaments') as $index => $medicament)
-                                            <div data-repeater-item class="mb-3 border-bottom pb-3">
-                                                <div class="row mt-2">
-                                                    <div class="col-md-5">
-                                                        <select class="form-select medicament-select" name="medicament_id" required>
-                                                            <option value="">Sélectionner un médicament</option>
-                                                            @foreach($allMedicaments as $med)
-                                                                <option value="{{ $med->id }}" data-prix="{{ $med->prix_vente }}">
-                                                                    {{ $med->nom }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                        @error('medicaments.'.$index.'.medicament_id')
-                                                            <div class="invalid-feedback">{{ $message }}</div>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <input type="number" class="form-control montant @error('medicaments.'.$index.'.montant') is-invalid @enderror" name="montant" value="{{ $medicament['montant'] ?? 0 }}">
-                                                        @error('medicaments.'.$index.'.montant')
-                                                            <div class="invalid-feedback">{{ $message }}</div>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <input type="number" class="form-control quantite @error('medicaments.'.$index.'.quantite') is-invalid @enderror" name="quantite" min="1" value="{{ $medicament['quantite'] ?? 1 }}">
-                                                        @error('medicaments.'.$index.'.quantite')
-                                                            <div class="invalid-feedback">{{ $message }}</div>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <input type="number" class="form-control total" name="total" value="{{ ($medicament['montant'] ?? 0) * ($medicament['quantite'] ?? 1) }}" readonly>
-                                                    </div>
-                                                    <div class="col-md-1">
-                                                        <button type="button" data-repeater-delete class="btn btn-danger btn-sm">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    @else
-                                        <div data-repeater-item class="mb-3 border-bottom pb-3">
-                                            <div class="row mt-2">
-                                                <div class="col-md-5">
-                                                    <select class="form-select medicament-select" name="medicament_id" required>
-                                                        <option value="">Sélectionner un médicament</option>
-                                                        @foreach($allMedicaments as $med)
-                                                            <option value="{{ $med->id }}" data-prix="{{ $med->prix_vente }}">
-                                                                {{ $med->nom }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <input type="number" class="form-control montant" name="montant" value="0">
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <input type="number" class="form-control quantite" name="quantite" min="1" value="1">
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <input type="number" class="form-control total" name="total" value="0" readonly>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <button type="button" data-repeater-delete class="btn btn-danger btn-sm">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                </div>
-                                
-                                <button type="button" data-repeater-create class="btn bg-primary-subtle text-primary">
-                                    <span class="fs-4 me-1">+</span>
-                                    Ajouter une autre medicament
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                
-            </div>
-
-            
-
-          
-            
-            <!-- Bouton de soumission -->
-            <div class="row mt-3">
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Enregistrer la consultation</button>
-                </div>
-            </div>
-        </form> --}}
+        
         <form id="consultation-form" action="{{ route('hospitalisations.pharmacie.store', $hospitalisation->id) }}" method="POST">
     @csrf
     <input type="hidden" name="numero_recu" id="numero-recu">
