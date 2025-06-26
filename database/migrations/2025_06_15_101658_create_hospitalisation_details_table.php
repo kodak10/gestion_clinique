@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('hospitalisation_id')->constrained();
             $table->foreignId('frais_hospitalisation_id')->constrained();
             $table->decimal('prix_unitaire', 10, 2);
-            $table->decimal('taux', 10, 2);
+            $table->decimal('taux', 10, 2)->default(0);
             $table->integer('quantite')->default(1);
             $table->decimal('reduction', 10, 2)->default(0);
             $table->decimal('total', 10, 2);

@@ -138,28 +138,7 @@
                                 </a>
                             </div>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Examen</th>
-                                        <th>Prix unitaire</th>
-                                        <th>Quantité</th>
-                                        <th>Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($detailsLaboratoire as $examen)
-                                    <tr>
-                                        <td>{{ $examen->fraisHospitalisation->libelle }}</td>
-                                        <td>{{ number_format($examen->prix_unitaire, 0, ',', ' ') }}</td>
-                                        <td>{{ $examen->quantite }}</td>
-                                        <td>{{ number_format($examen->total, 0, ',', ' ') }}</td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                        
                     </div>
 
                     <!-- Colonne Pharmacie -->
@@ -175,28 +154,7 @@
                                 </a>
                             </div>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Médicament</th>
-                                        <th>Prix unitaire</th>
-                                        <th>Quantité</th>
-                                        <th>Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($detailsPharmacie as $detail)
-                                        <tr>
-                                            <td>{{ $detail->fraisHospitalisation->libelle }}</td>
-                                            <td>{{ number_format($detail->prix_unitaire, 0, ',', ' ') }}</td>
-                                            <td>{{ $detail->quantite }}</td>
-                                            <td>{{ number_format($detail->total, 0, ',', ' ') }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                        
                     </div>
                    
                     <!-- Autres frais -->

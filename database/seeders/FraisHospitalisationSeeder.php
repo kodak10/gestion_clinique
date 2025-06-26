@@ -17,23 +17,23 @@ class FraisHospitalisationSeeder extends Seeder
         $frais = [
 
             // Examens
-            ['libelle' => 'Examen', 'montant' => 3500, 'description' => 'Analyse complète de sang.'],
+            ['libelle' => 'Examen', 'montant' => 0],
             
             // Pharmacie
-            ['libelle' => 'Pharmacie', 'montant' => 1500, 'description' => 'Antidouleur et antipyrétique'],
+            ['libelle' => 'Pharmacie', 'montant' => 0],
 
             // Chambres
-            ['libelle' => 'Chambre Standard', 'montant' => 10000, 'description' => 'Chambre standard pour hospitalisation.'],
-            ['libelle' => 'Chambre VIP', 'montant' => 25000, 'description' => 'Chambre de luxe avec services exclusifs.'],
+            ['libelle' => 'Chambre Standard', 'montant' => 10000],
+            ['libelle' => 'Chambre VIP', 'montant' => 25000],
 
             // Repas
-            ['libelle' => 'Repas Standard', 'montant' => 2000, 'description' => 'Repas standard pour les patients.'],
-            ['libelle' => 'Repas Diététique', 'montant' => 3500, 'description' => 'Repas adaptés aux besoins diététiques.'],
+            ['libelle' => 'Repas Standard', 'montant' => 2000],
+            ['libelle' => 'Repas Diététique', 'montant' => 3500],
 
             
 
             // Visite
-            ['libelle' => 'Visite d\'un Ami', 'montant' => 1000, 'description' => 'Frais liés à la visite d\'un ami pendant l\'hospitalisation.'],
+            ['libelle' => 'Visite d\'un Ami', 'montant' => 1000],
 
             
         ];

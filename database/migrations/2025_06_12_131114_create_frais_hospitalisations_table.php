@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('libelle');
             $table->decimal('montant', 10, 2);
-            $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
