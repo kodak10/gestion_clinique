@@ -140,7 +140,9 @@ class HospitalisationController extends Controller
             $hospitalisation->medicaments()->attach($medicamentsData);
 
             // Mettre à jour hospitalisation_details
-            $hospitalisation->details()->update([
+            $hospitalisation->details()
+            ->where('frais_hospitalisation_id', 2)
+            ->update([
                 'hospitalisation_id' => $hospitalisation->id,
                 'frais_hospitalisation_id' => 2,
                 'quantite' => 1,
@@ -166,7 +168,7 @@ class HospitalisationController extends Controller
         $patient = $hospitalisation->patient;
 
         
-        $examensPrescrits = $hospitalisation->medicaments()->get();
+        $examensPrescrits = $hospitalisation->examens()->get();
 
 
         // Tous les médicaments disponibles
@@ -217,7 +219,9 @@ class HospitalisationController extends Controller
             $hospitalisation->examens()->attach($examensData);
 
             // Mettre à jour hospitalisation_details
-            $hospitalisation->details()->update([
+            $hospitalisation->details()
+            ->where('frais_hospitalisation_id', 1)
+            ->update([
                 'hospitalisation_id' => $hospitalisation->id,
                 'frais_hospitalisation_id' => 1,
                 'quantite' => 1,
@@ -294,6 +298,7 @@ class HospitalisationController extends Controller
             'caution' => 'nullable|numeric|min:0',
             'payeur' => 'nullable|string|max:255',
         ]);
+        // dd($request);
 
         try {
             DB::beginTransaction();
