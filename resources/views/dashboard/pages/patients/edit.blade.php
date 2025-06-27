@@ -14,7 +14,7 @@
 <div class="page-body">
     <div class="container-xl">
         <div class="card p-2">
-            <form action="{{ route('patients.update', $patient->id) }}" method="POST" class="form-loader" enctype="multipart/form-data">
+            <form action="{{ route('patients.update', $patient->id) }}" method="POST"  enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <input type="hidden" class="form-control" value="{{ old('num_dossier', $patient->num_dossier) }}" readonly>
@@ -258,7 +258,7 @@
 
             <!-- Formulaire caché pour supprimer la photo -->
             @if($patient->photo)
-                <form id="remove-photo" action="{{ route('patients.remove-photo', $patient->id) }}" method="POST" class="form-loader" style="display: none;">
+                <form id="remove-photo" action="{{ route('patients.remove-photo', $patient->id) }}" method="POST" style="display: none;">
                     @csrf
                     @method('DELETE')
                 </form>
@@ -275,7 +275,7 @@
                 <h5 class="modal-title">Nouvelle Profession</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('professions.store') }}" method="POST" id="profession-form" class="form-loader">
+            <form action="{{ route('professions.store') }}" method="POST" id="profession-form">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
@@ -300,7 +300,7 @@
                 <h5 class="modal-title">Nouvelle Ethnie</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('ethnies.store') }}" method="POST" id="ethnie-form" class="form-loader">
+            <form action="{{ route('ethnies.store') }}" method="POST" id="ethnie-form">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">

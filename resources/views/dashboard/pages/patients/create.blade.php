@@ -253,7 +253,7 @@
                 <h5 class="modal-title">Nouvelle Profession</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('professions.store') }}" method="POST" id="profession-form" class="form-loader">
+            <form action="{{ route('professions.store') }}" method="POST" id="profession-form">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
@@ -278,7 +278,7 @@
                 <h5 class="modal-title">Nouvelle Ethnie</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('ethnies.store') }}" method="POST" id="ethnie-form" class="form-loader">
+            <form action="{{ route('ethnies.store') }}" method="POST" id="ethnie-form">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
