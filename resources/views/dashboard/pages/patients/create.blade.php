@@ -14,7 +14,7 @@
 <div class="page-body">
     <div class="container-xl">
         <div class="card p-2">
-            <form action="{{ route('patients.store') }}" method="POST" enctype="multipart/form-data" id="create-patient-form">                
+            <form action="{{ route('patients.store') }}" method="POST" enctype="multipart/form-data" id="create-patient-form" >                
                 @csrf
                 <input type="hidden" class="form-control" value="{{ $provisionalNum }}" readonly>
                 <div class="modal-body">
@@ -69,7 +69,7 @@
                         <div class="col-lg-3">
                             <div class="mb-3">
                                 <label class="form-label">Contact <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('contact_patient') is-invalid @enderror" name="contact_patient" value="{{ old('contact_patient') }}">
+                                <input type="text" class="form-control @error('contact_patient') is-invalid @enderror" name="contact_patient" value="{{ old('contact_patient') }}" required>
                                 @error('contact_patient')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -253,7 +253,7 @@
                 <h5 class="modal-title">Nouvelle Profession</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('professions.store') }}" method="POST" id="profession-form">
+            <form action="{{ route('professions.store') }}" method="POST" id="profession-form" class="form-loader">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
@@ -278,7 +278,7 @@
                 <h5 class="modal-title">Nouvelle Ethnie</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('ethnies.store') }}" method="POST" id="ethnie-form">
+            <form action="{{ route('ethnies.store') }}" method="POST" id="ethnie-form" class="form-loader">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">

@@ -23,7 +23,7 @@
             </div>
         @endif
         
-        <form id="consultation-form" action="{{ route('hospitalisations.pharmacie.store', $hospitalisation->id) }}" method="POST">
+        <form id="consultation-form" action="{{ route('hospitalisations.pharmacie.store', $hospitalisation->id) }}" method="POST" class="form-loader">
     @csrf
     <input type="hidden" name="numero_recu" id="numero-recu">
 

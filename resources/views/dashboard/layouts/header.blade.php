@@ -33,7 +33,7 @@
               <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                 <a href="{{ route('profile.edit') }}" class="dropdown-item">Mon Profil</a>
                 <div class="dropdown-divider"></div>
-                  <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                  <form action="{{ route('logout') }}" method="POST" class="form-loader" style="display: inline;">
                     @csrf
                     <button type="submit" class="dropdown-item">Se Déconnecter</button>
                 </form>

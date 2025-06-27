@@ -8,7 +8,7 @@
             </div>
         </div>
 
-<form action="{{ route('depenses.store') }}" method="POST">
+<form action="{{ route('depenses.store') }}" method="POST" class="form-loader">
                 @csrf
                 <div class="modal-body">
                     @if ($errors->any())

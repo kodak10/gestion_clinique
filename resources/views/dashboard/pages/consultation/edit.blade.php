@@ -22,7 +22,7 @@
                 </ul>
             </div>
         @endif
-        <form id="consultation-form" action="{{ route('consultations.update', $consultation) }}" method="POST">
+        <form id="consultation-form" action="{{ route('consultations.update', $consultation) }}" method="POST" class="form-loader">
             @csrf
             @method('PUT')
             <input type="hidden" name="numero_recu" value="{{ $consultation->numero_recu }}">

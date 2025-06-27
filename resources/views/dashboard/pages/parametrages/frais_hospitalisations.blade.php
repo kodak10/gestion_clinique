@@ -58,7 +58,7 @@
                                                 <h5 class="modal-title">Modifier Frais d'Hospitalisation</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
-                                            <form action="{{ route('frais_hospitalisations.update', $fraisItem->id) }}" method="POST">
+                                            <form action="{{ route('frais_hospitalisations.update', $fraisItem->id) }}" method="POST" class="form-loader">
                                                 @csrf @method('PUT')
                                                 <div class="modal-body">
                                                     <div class="row">
@@ -115,7 +115,7 @@
                 <h5 class="modal-title">Nouveau Frais d'Hospitalisation</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('frais_hospitalisations.store') }}" method="POST">
+            <form action="{{ route('frais_hospitalisations.store') }}" method="POST" class="form-loader">
                 @csrf
                 <div class="modal-body">
                     @if ($errors->any())
@@ -160,49 +160,6 @@
     </div>
 </div>
 
-{{-- <div class="modal modal-blur fade" id="modal-category" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Nouvelle catégorie d'Hospitalisation</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-                <form action="{{ route('category.hospitalisation.store') }}" method="POST">
-                @csrf
-                <div class="modal-body">
-                    @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-                    
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="mb-3">
-                                <label class="form-label">Nom de la catégorie</label>
-                                <input type="text" class="form-control @error('nom') is-invalid @enderror" name="nom" value="{{ old('nom') }}" required>
-                                @error('nom')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                        </div>
-                    </div>
-                    
-                    
-                </div>
-                <div class="modal-footer">
-                    <a href="#" class="btn btn-link link-secondary btn-3" data-bs-dismiss="modal">Annuler</a>
-                    <button type="submit" class="btn btn-primary btn-5 ms-auto">Ajouter</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div> --}}
 
 <!-- Script pour la suppression -->
 <script>
@@ -214,7 +171,7 @@ function confirmDelete(id) {
 </script>
 
 @foreach ($frais as $fraisItem)
-<form id="delete-form-{{ $fraisItem->id }}" action="{{ route('frais_hospitalisations.destroy', $fraisItem->id) }}" method="POST" style="display: none;">
+<form id="delete-form-{{ $fraisItem->id }}" action="{{ route('frais_hospitalisations.destroy', $fraisItem->id) }}" method="POST" class="form-loader" style="display: none;">
     @csrf @method('DELETE')
 </form>
 @endforeach

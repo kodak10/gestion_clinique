@@ -82,7 +82,7 @@
                                                 <h5 class="modal-title">Modifier la dépense</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
-                                            <form action="{{ route('depenses.update', $depense->id) }}" method="POST">
+                                            <form action="{{ route('depenses.update', $depense->id) }}" method="POST" class="form-loader">
                                                 @csrf @method('PUT')
                                                 <div class="modal-body">
                                                     <div class="row">
@@ -172,7 +172,7 @@
                 <h5 class="modal-title">Nouvelle catégorie de dépense</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('category-depenses.store') }}" method="POST">
+            <form action="{{ route('category-depenses.store') }}" method="POST" class="form-loader">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
@@ -207,7 +207,7 @@
                 <h5 class="modal-title">Nouvelle dépense</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('depenses.store') }}" method="POST">
+            <form action="{{ route('depenses.store') }}" method="POST" class="form-loader">
                 @csrf
                 <div class="modal-body">
                     <div class="row">

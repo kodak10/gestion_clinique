@@ -10,7 +10,7 @@
     <div class="page-body">
         <div class="container-xl">
             <div class="card">
-                <form method="POST" action="{{ route('profile.update') }}">
+                <form method="POST" action="{{ route('profile.update') }}" class="form-loader">
                     @csrf
                     @method('PUT')
 

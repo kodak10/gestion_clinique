@@ -26,6 +26,20 @@
   </head>
 
   <body>
+
+    <!-- Form Preloader -->
+    <div id="form-preloader" style="display: none; position: fixed; top: 0; left: 0; z-index: 9999; width: 100vw; height: 100vh; background: white;" class="page page-center">
+      <div class="container container-slim py-4">
+        <div class="text-center">
+          <div class="text-secondary mb-3">Veuillez patienter...</div>
+          <div class="progress progress-sm">
+            <div class="progress-bar progress-bar-indeterminate"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
     
     <div class="page">
       
@@ -41,8 +55,53 @@
 
       </div>
     </div>
+
+    
+
+
    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+      $(function () {
+            $('.form-loader').on('submit', function () {
+                // Afficher le preloader
+                $('#form-preloader').show();
+
+                // Désactiver le bouton et afficher le spinner
+                const $btn = $('#submit-btn');
+                $btn.prop('disabled', true);
+                $('#spinner').removeClass('d-none');
+                $('.btn-text').text('Patientez...');
+            });
+        });
+    </script>
+   @if ($errors->any())
+  <script>
+    $(document).ready(function() {
+      $('#form-preloader').hide();
+      // Réactiver le bouton si nécessaire
+      $('#submit-btn').prop('disabled', false);
+      $('#spinner').addClass('d-none');
+      $('.btn-text').text('Soumettre');
+    });
+  </script>
+@endif
+
+    <script>
+  $(function () {
+    // Cible uniquement les liens du menu principal en ignorant les dropdowns
+    $('.navbar a.nav-link').not('.dropdown-menu a, .dropdown-toggle').on('click', function (e) {
+      const href = $(this).attr('href');
+
+      if (href && href !== '#' && !$(this).attr('target')) {
+        $('#form-preloader').fadeIn(100);
+      }
+    });
+  });
+</script>
+
+
 
     <script src="{{ asset('assets/libs/litepicker/dist/litepicker.js') }} " defer=""></script>
 

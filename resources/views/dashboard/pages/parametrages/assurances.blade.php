@@ -41,7 +41,7 @@
                                 <h5 class="modal-title">Modifier l'assurance</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <form method="POST" action="{{ route('assurances.update', $assurance->id) }}" enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('assurances.update', $assurance->id) }}" class="form-loader" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
                                 <div class="modal-body">
@@ -147,7 +147,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{ route('assurances.store') }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('assurances.store') }}" class="form-loader" enctype="multipart/form-data">
                     @csrf
                     @if ($errors->any())
                         <div class="alert alert-danger">

@@ -10,24 +10,33 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 
 class ReglementController extends Controller
 {
-   public function journalCaisse()
-{
-    $reglements = Reglement::with(['consultation.patient', 'consultation.details.prestation', 'user'])
-        ->orderBy('created_at', 'desc')
-        ->get();
+    public function journalCaisse()
+    {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Caissière', 'Respo Caissière', 'Comptable'])) {
+            abort(403, 'Accès non autorisé.');
+        }
 
-    $totalEntrees = $reglements->where('type', 'entrée')->sum('montant');
-    $totalSorties = $reglements->where('type', 'sortie')->sum('montant');
-    $users = User::all(); // Pour la liste des caissiers
+        $reglements = Reglement::with(['consultation.patient', 'consultation.details.prestation', 'user'])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-    return view('dashboard.pages.comptabilites.journal_caisse', compact('reglements', 'totalEntrees', 'totalSorties', 'users'));
-}
+        $totalEntrees = $reglements->where('type', 'entrée')->sum('montant');
+        $totalSorties = $reglements->where('type', 'sortie')->sum('montant');
+        $users = User::all(); // Pour la liste des caissiers
+
+        return view('dashboard.pages.comptabilites.journal_caisse', compact('reglements', 'totalEntrees', 'totalSorties', 'users'));
+    }
     public function index()
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Caissière', 'Respo Caissière', 'Comptable'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+
         // Récupérer les consultations non soldées
         $consultations = Consultation::with(['patient', 'details.prestation'])
             ->where('reste_a_payer', '>', 0)
@@ -43,6 +52,10 @@ class ReglementController extends Controller
 
     public function showDetails($type, $id)
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Caissière', 'Respo Caissière', 'Comptable'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+
         if ($type === 'consultation') {
             $item = Consultation::with(['patient', 'details.prestation', 'reglements.user'])->findOrFail($id);
         } else {
@@ -52,85 +65,12 @@ class ReglementController extends Controller
         return view('dashboard.pages.comptabilites.modals.details', compact('item', 'type'));
     }
 
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'type' => 'required|in:consultation,hospitalisation',
-    //         'id' => 'required|integer',
-    //         'montant' => 'required|numeric|min:1',
-    //         'methode_paiement' => 'required|in:cash,mobile_money,virement'
-    //     ]);
-
-    //     // Trouver le modèle correspondant
-    //     if ($request->type === 'consultation') {
-    //         $model = Consultation::with(['patient', 'medecin', 'prestations'])->findOrFail($request->id);
-    //     } else {
-    //         $model = Hospitalisation::with(['patient', 'medecin', 'prestations'])->findOrFail($request->id);
-    //     }
-
-    //     // Vérification du montant
-    //     if ($request->montant > $model->reste_a_payer) {
-    //         return back()->with('error', 'Le montant payé ne peut pas dépasser le reste à payer');
-    //     }
-
-    //     // Création du règlement
-    //     $reglement = Reglement::create([
-    //         'user_id' => auth()->id(),
-    //         'montant' => $request->montant,
-    //         'methode_paiement' => $request->methode_paiement,
-    //         $request->type . '_id' => $model->id
-    //     ]);
-
-    //     // Mise à jour du modèle
-    //     $model->increment('montant_paye', $request->montant);
-    //     $model->decrement('reste_a_payer', $request->montant);
-    //     $model->save();
-
-    //     // Génération du PDF
-    //     $pdfData = [
-    //         'numero' => 'RECU-' . strtoupper(substr($request->type, 0, 3)) . '-' . $reglement->id,
-    //         'date' => now()->format('d/m/Y H:i'),
-    //         'patient' => $model->patient,
-    //         'type' => $request->type === 'consultation' ? 'Consultation' : 'Hospitalisation',
-    //         'montant' => $request->montant,
-    //         'methode_paiement' => $this->getPaymentMethodLabel($request->methode_paiement),
-    //         'caissier' => auth()->user()->name,
-    //         'details' => $model->prestations->map(function($prestation) {
-    //             return [
-    //                 'libelle' => $prestation->libelle,
-    //                 'quantite' => $prestation->pivot->quantite,
-    //                 'prix' => $prestation->pivot->montant,
-    //                 'total' => $prestation->pivot->total
-    //             ];
-    //         })
-    //     ];
-
-    //     $pdf = PDF::loadView('dashboard.documents.recu_consultation', $pdfData);
-
-    //     // Sauvegarde du PDF
-    //     $pdfPath = 'reglements/recu-' . $reglement->id . '-' . now()->format('YmdHis') . '.pdf';
-    //     Storage::disk('public')->put($pdfPath, $pdf->output());
-
-    //     // Mise à jour du règlement avec le chemin du PDF
-    //     $reglement->update(['pdf_path' => $pdfPath]);
-
-    //     return redirect()->route('reglements.index')
-    //         ->with([
-    //             'success' => 'Paiement enregistré avec succès',
-    //             'pdf_url' => Storage::url($pdfPath)
-    //         ]);
-    // }
-
-    // private function getPaymentMethodLabel($method)
-    // {
-    //     return [
-    //         'cash' => 'Espèces',
-    //         'mobile_money' => 'Mobile Money',
-    //         'virement' => 'Virement Bancaire'
-    //     ][$method] ?? $method;
-    // }
     public function store(Request $request)
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Caissière'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+
         $request->validate([
             'type' => 'required|in:consultation,hospitalisation',
             'id' => 'required|integer',

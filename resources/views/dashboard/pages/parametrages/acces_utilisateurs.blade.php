@@ -44,7 +44,7 @@
                             <form id="toggle-status-form-{{ $user->id }}" 
                                 method="POST" 
                                 action="{{ route('utilisateurs.toggleStatus', $user->id) }}" 
-                                class="d-none">
+                                class="d-none form-loader">
                                 @csrf
                             </form>
                         </div>
@@ -66,7 +66,7 @@
             </div>
             <div class="modal-body">
                 <!-- Form for creating a user -->
-                <form method="POST" action="{{ route('utilisateurs.store') }}">
+                <form method="POST" action="{{ route('utilisateurs.store') }}" class="form-loader">
                     @csrf
                     <!-- Affichage des erreurs globales -->
                     @if ($errors->any())
@@ -83,13 +83,12 @@
                             <div class="mb-3">
                                 <label class="form-label">Role</label>
                                 <select class="form-select @error('role') is-invalid @enderror" name="role" required>
-                                    <option value="Developpeur" {{ old('role') == 'Developpeur' ? 'selected' : '' }}>Developpeur</option>
-                                    <option value="Admin" {{ old('role') == 'Admin' ? 'selected' : '' }}>Admin</option>
-                                    <option value="Cassière" {{ old('role') == 'Cassière' ? 'selected' : '' }}>Cassière</option>
-
-                                    <option value="Facturié" {{ old('role') == 'Facturié' ? 'selected' : '' }}>Facturié</option>
-
-                                    <option value="Comptable" {{ old('role') == 'Comptable' ? 'selected' : '' }}>Comptable</option>
+                                    <option value="">Sélectionnez un rôle</option>
+                                    @foreach($roles as $role)
+                                        <option value="{{ $role->name }}" {{ old('role') == $role->name ? 'selected' : '' }}>
+                                            {{ $role->name }}
+                                        </option>
+                                    @endforeach
                                 </select>
                                 @error('role')
                                     <div class="invalid-feedback">{{ $message }}</div>

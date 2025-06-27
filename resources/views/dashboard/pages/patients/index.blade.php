@@ -147,10 +147,13 @@
                 cancelButtonText: 'Annuler'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    
+
                     // Créer un formulaire virtuel et le soumettre
                     const form = document.createElement('form');
                     form.method = 'POST';
                     form.action = href;
+                    
                     
                     // Ajouter le token CSRF
                     const csrfToken = document.createElement('input');

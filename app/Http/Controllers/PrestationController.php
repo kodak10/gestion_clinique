@@ -5,11 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\CategoryPrestation;
 use App\Models\Prestation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PrestationController extends Controller
 {
     public function index()
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+
         $prestations = Prestation::with('categorie')->orderBy('libelle', 'asc')->get();
         $categories = CategoryPrestation::orderBy('nom', 'asc')->get();
         return view('dashboard.pages.parametrages.prestations', compact('prestations', 'categories'));
@@ -17,6 +22,10 @@ class PrestationController extends Controller
 
     public function store(Request $request)
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+
         $validated = $request->validate([
             'categorie_id' => 'required|exists:category_prestations,id',
             'libelle' => 'required|string|max:255',
@@ -30,6 +39,10 @@ class PrestationController extends Controller
 
     public function update(Request $request, Prestation $prestation)
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+
         $validated = $request->validate([
             'categorie_id' => 'required|exists:category_prestations,id',
             'libelle' => 'required|string|max:255',
@@ -43,6 +56,10 @@ class PrestationController extends Controller
 
     public function destroy(Prestation $prestation)
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+
         $prestation->delete();
         return redirect()->route('prestations.index')->with('success', 'Prestation supprimée');
     }

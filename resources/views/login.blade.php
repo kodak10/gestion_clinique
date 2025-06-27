@@ -25,6 +25,19 @@
     <!-- END CUSTOM FONT -->
   </head>
   <body class="d-flex flex-column bg-white">
+
+    <!-- Form Preloader -->
+    <div id="form-preloader" style="display: none; position: fixed; top: 0; left: 0; z-index: 9999; width: 100vw; height: 100vh; background: white;" class="page page-center">
+      <div class="container container-slim py-4">
+        <div class="text-center">
+          <div class="text-secondary mb-3">Veuillez patienter...</div>
+          <div class="progress progress-sm">
+            <div class="progress-bar progress-bar-indeterminate"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="row g-0 flex-fill">
       <div class="col-12 col-lg-6 col-xl-4 border-top-wide border-primary d-flex flex-column justify-content-center">
         <div class="container container-tight my-5 px-lg-5">
@@ -43,7 +56,7 @@
             </div>
           @endif
           
-          <form method="POST" action="{{ route('login') }}">
+          <form method="POST" action="{{ route('login') }}" class="form-loader">
             @csrf
             <div class="mb-3">
               <label class="form-label">Pseudo</label>
@@ -92,6 +105,8 @@
       </div>
     </div>
 
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
     <script src="{{ asset('assets/dist/js/tabler.min-2.js') }}" defer></script>
     <!-- END GLOBAL MANDATORY SCRIPTS -->
@@ -108,6 +123,21 @@
           passwordInput.type = 'password';
         }
       }
+    </script>
+
+    <script>
+      $(function () {
+            $('.form-loader').on('submit', function () {
+                // Afficher le preloader
+                $('#form-preloader').show();
+
+                // Désactiver le bouton et afficher le spinner
+                const $btn = $('#submit-btn');
+                $btn.prop('disabled', true);
+                $('#spinner').removeClass('d-none');
+                $('.btn-text').text('Patientez...');
+            });
+        });
     </script>
   </body>
 </html>

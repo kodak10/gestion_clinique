@@ -5,11 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\CategoryDepense;
 use App\Models\Depense;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DepenseController extends Controller
 {
     public function index()
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+
         $depenses = Depense::with('category')
             ->orderBy('date', 'desc')
             ->get();
@@ -21,12 +26,20 @@ class DepenseController extends Controller
 
     public function create()
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+
         $categories = CategoryDepense::all();
         return view('dashboard.pages.comptabilites.depenses.create', compact('categories'));
     }
 
     public function store(Request $request)
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+
         $validated = $request->validate([
             'category_depense_id' => 'nullable|exists:category_depenses,id',
             'numero_recu' => 'required|string|unique:depenses',
@@ -39,18 +52,25 @@ class DepenseController extends Controller
 
         Depense::create($validated);
 
-        return redirect()->route('depenses.index')
-            ->with('success', 'Dépense enregistrée avec succès.');
+        return redirect()->route('depenses.index')->with('success', 'Dépense enregistrée avec succès.');
     }
 
     public function edit(Depense $depense)
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+
         $categories = CategoryDepense::all();
         return view('dashboard.pages.comptabilites.depenses.edit', compact('depense', 'categories'));
     }
 
     public function update(Request $request, Depense $depense)
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+
         $validated = $request->validate([
             'category_depense_id' => 'nullable|exists:category_depenses,id',
             'numero_recu' => 'required|string|unique:depenses,numero_recu,'.$depense->id,
@@ -63,16 +83,14 @@ class DepenseController extends Controller
 
         $depense->update($validated);
 
-        return redirect()->route('depenses.index')
-            ->with('success', 'Dépense mise à jour avec succès.');
+        return redirect()->route('depenses.index')->with('success', 'Dépense mise à jour avec succès.');
     }
 
     public function destroy(Depense $depense)
     {
         $depense->delete();
 
-        return redirect()->route('depenses.index')
-            ->with('success', 'Dépense supprimée avec succès.');
+        return redirect()->route('depenses.index')->with('success', 'Dépense supprimée avec succès.');
     }
 
 
@@ -85,7 +103,6 @@ class DepenseController extends Controller
 
         CategoryDepense::create($validated);
 
-        return redirect()->route('depenses.index')
-            ->with('success', 'Catégorie créée avec succès.');
+        return redirect()->route('depenses.index')->with('success', 'Catégorie créée avec succès.');
     }
 }

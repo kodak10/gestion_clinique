@@ -32,7 +32,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('hospitalisations.facture.store', $hospitalisation->id) }}" method="POST" id="examenForm">
+            <form action="{{ route('hospitalisations.facture.store', $hospitalisation->id) }}" method="POST" id="examenForm" class="form-loader">
                 @csrf
                 <div class="row">
                     <div class="col-md-6">

@@ -55,7 +55,7 @@
                                                 <h5 class="modal-title">Modifier la Prestation</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
-                                            <form action="{{ route('prestations.update', $prestation->id) }}" method="POST">
+                                            <form action="{{ route('prestations.update', $prestation->id) }}" method="POST" class="form-loader">
                                                 @csrf @method('PUT')
                                                 <div class="modal-body">
                                                     <div class="row">
@@ -112,7 +112,7 @@
                 <h5 class="modal-title">Nouvelle Prestation</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('prestations.store') }}" method="POST">
+            <form action="{{ route('prestations.store') }}" method="POST" class="form-loader">
                 @csrf
                 <div class="modal-body">
                     @if ($errors->any())

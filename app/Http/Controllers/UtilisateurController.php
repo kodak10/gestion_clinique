@@ -14,12 +14,21 @@ class UtilisateurController extends Controller
 {
     public function index()
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+
+        $roles = Role::where('name', '!=', 'Developpeur')->get();
         $users = User::with('roles')->get();
-        return view('dashboard.pages.parametrages.acces_utilisateurs', compact('users'));
+        return view('dashboard.pages.parametrages.acces_utilisateurs', compact('users', 'roles'));
     }
 
     public function store(Request $request)
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'pseudo' => 'required|string|max:15|unique:users',
@@ -49,6 +58,10 @@ class UtilisateurController extends Controller
 
     public function toggleStatus($id)
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+        
         $user = User::findOrFail($id);
         $user->status = $user->status == 'Actif' ? 'Inactif' : 'Actif';
         $user->save();

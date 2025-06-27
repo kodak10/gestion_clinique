@@ -45,7 +45,7 @@
                             <div class="modal-header">
                                 <h5 class="modal-title">Modifier médecin</h5>
                             </div>
-                            <form method="POST" action="{{ route('medecins.update', $medecin->id) }}" enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('medecins.update', $medecin->id) }}" class="form-loader" enctype="multipart/form-data">
                                 @csrf @method('PUT')
                                 <div class="modal-body">
                                     <div class="row">
@@ -107,7 +107,7 @@
             <div class="modal-header">
                 <h5 class="modal-title">Ajouter un médecin</h5>
             </div>
-            <form method="POST" action="{{ route('medecins.store') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('medecins.store') }}" class="form-loader" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <div class="row">
