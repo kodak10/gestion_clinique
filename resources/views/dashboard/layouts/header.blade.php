@@ -5,7 +5,7 @@
           </button>
 
           <div class="navbar-brand navbar-brand-autodark">
-            <a href="/home" style="color: white;">CLINIQUE MEDICALE SILOE</a>
+            <a href="/home" style="color: white;">CLINIQUE SILOE CORPORATION</a>
           </div>
 
           <div class="mx-auto text-white fw-bold text-center d-none d-md-block">

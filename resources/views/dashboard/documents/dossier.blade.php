@@ -186,7 +186,7 @@
             <div class="header">
                 
                 <div class="header-text">
-                    <h1>CLINIQUE MEDICALE SILOE CORPORATION</h1>
+                    <h1>CLINIQUE SILOE CORPORATION</h1>
                     <p>23 BP 1613 ABIDJAN 23</p>
                     <p>Tel : (+225) 23 45 54 42 / 07 01 96 18 37 / 01 73 73 73 85</p>
                     <p>YOPOUGON SIDECI TERMINUS 42</p>

@@ -43,7 +43,7 @@
         <div class="container container-tight my-5 px-lg-5">
           <div class="text-center mb-4">
             <a href="/" class="navbar-brand navbar-brand-autodark">
-              CLINIQUE MEDICALE SILOE CORPORATION 
+              CLINIQUE SILOE CORPORATION 
             </a>
           </div>
           <h2 class="h3 text-center mb-3">Connectez-vous à votre compte</h2>
