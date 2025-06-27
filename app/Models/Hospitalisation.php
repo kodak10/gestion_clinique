@@ -24,6 +24,7 @@ class Hospitalisation extends Model
         'reste_a_payer',
         'date_entree',
         'date_sortie',
+        'facture_path'
         
     ];
     

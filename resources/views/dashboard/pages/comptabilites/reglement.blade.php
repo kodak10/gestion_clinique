@@ -67,7 +67,7 @@
                             @foreach($hospitalisations as $hospitalisation)
                             <tr>
                                 <td><span class="badge bg-orange-lt">Hospitalisation</span></td>
-                                <td><span class="text-primary">{{ $hospitalisation->patient->numero_dossier }}</span></td>
+                                <td><span class="text-primary">{{ $hospitalisation->patient->num_dossier }}</span></td>
                                 <td>{{ $hospitalisation->patient->nom }} {{ $hospitalisation->patient->prenoms }}</td>
                                 <td>
                                     @if($hospitalisation->patient->telephone)

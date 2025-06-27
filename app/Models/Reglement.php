@@ -13,6 +13,7 @@ class Reglement extends Model
     use HasFactory, LogsActivity, SoftDeletes;
     
     protected $fillable = [
+        'hospitalisation_id',
         'consultation_id',
         'user_id',
         'montant',

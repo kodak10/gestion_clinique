@@ -71,29 +71,6 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    {{-- <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Médecin</label>
-                                            <select class="form-control select2" id="medecin-select" name="medecin_id">
-                                                <option value="">Sélectionner un Médecin</option>
-                                                @foreach($categorie_medecins as $categorie_medecin)
-                                                    <optgroup label="{{ $categorie_medecin->nom }}">
-                                                        @foreach($categorie_medecin->medecins as $medecin)
-                                                            <option value="{{ $medecin->id }}" data-specialite="{{ $categorie_medecin->nom }}" {{ old('medecin_id') == $medecin->id ? 'selected' : '' }}>
-                                                                {{ $medecin->nom_complet }}
-                                                            </option>
-                                                        @endforeach
-                                                    </optgroup>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Spécialité</label>
-                                            <input type="text" class="form-control" id="specialite-input" name="specialite" value="{{ old('specialite') }}" readonly>
-                                        </div>
-                                    </div> --}}
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label class="form-label">Médecin</label>
@@ -112,13 +89,16 @@
                                                     </optgroup>
                                                 @endforeach
                                             </select>
+                                            @error('medecin_id')
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label class="form-label">Spécialité</label>
-                                            <input type="text" class="form-control" id="specialite-input" name="specialite" value="{{ old('specialite', $hospitalisation->medecin->specialite->nom) }}" readonly>
-                                            <input type="hidden" id="specialite-id" name="specialite_id" value="{{ old('specialite_id', $hospitalisation->medecin->specialite->nom) }}">
+                                            <input type="text" class="form-control" id="specialite-input" name="specialite" value="{{ old('specialite', $hospitalisation->medecin->specialite->nom ?? '') }}" readonly>
+                                            <input type="hidden" id="specialite-id" name="specialite_id" value="{{ old('specialite_id', $hospitalisation->medecin->specialite_id ?? '') }}">
                                         </div>
                                     </div>
                                 </div>
@@ -130,36 +110,44 @@
                         <div class="card mb-3">
                             <div class="card-body">
                                 <div class="row">
-                                    <!-- Date d'entrée -->
                                     <div class="col-lg-3">
                                         <div class="mb-3">
                                             <label class="form-label">Date d'entrée</label>
-                                            <input type="datetime-local" class="form-control" name="date_entree" 
+                                            <input type="datetime-local" class="form-control @error('date_entree') is-invalid @enderror" name="date_entree" 
                                                 value="{{ old('date_entree', $hospitalisation->date_entree ? (\Carbon\Carbon::parse($hospitalisation->date_entree)->format('Y-m-d\TH:i')) : now()->format('Y-m-d\TH:i')) }}">
+                                            @error('date_entree')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
 
-                                    <!-- Date de sortie -->
                                     <div class="col-lg-3">
                                         <div class="mb-3">
                                             <label class="form-label">Date de sortie</label>
-                                            <input type="datetime-local" class="form-control" name="date_sortie" 
+                                            <input type="datetime-local" class="form-control @error('date_sortie') is-invalid @enderror" name="date_sortie" 
                                                 value="{{ old('date_sortie', $hospitalisation->date_sortie ? \Carbon\Carbon::parse($hospitalisation->date_sortie)->format('Y-m-d\TH:i') : '') }}">
+                                            @error('date_sortie')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
 
-                                    <!-- Caution -->
                                     <div class="col-lg-3">
                                         <div class="mb-3">
                                             <label class="form-label">Caution</label>
-                                            <input type="number" class="form-control" name="caution" placeholder="Montant versé" value="{{ old('caution', $hospitalisation->caution ?? 0) }}">
+                                            <input type="number" class="form-control @error('caution') is-invalid @enderror" name="caution" placeholder="Montant versé" value="{{ old('caution', $hospitalisation->caution ?? 0) }}">
+                                            @error('caution')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
-                                    <!-- payeur -->
                                     <div class="col-lg-3">
                                         <div class="mb-3">
                                             <label class="form-label">Payeur</label>
-                                            <input type="text" class="form-control" name="payeur" placeholder="Nom de la personne" value="{{ old('payeur', $hospitalisation->payeur ?? '') }}">
+                                            <input type="text" class="form-control @error('payeur') is-invalid @enderror" name="payeur" placeholder="Nom de la personne" value="{{ old('payeur', $hospitalisation->payeur ?? '') }}">
+                                            @error('payeur')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
@@ -167,7 +155,6 @@
                         </div>
                     </div>
 
-                    <!-- Colonne Laboratoire -->
                     <div class="col-md-6">
                         <div class="d-flex justify-content-between align-items-center">
                             <h4 class="mb-3">Examens Laboratoire</h4>
@@ -180,10 +167,8 @@
                                 </a>
                             </div>
                         </div>
-                        
                     </div>
 
-                    <!-- Colonne Pharmacie -->
                     <div class="col-md-6">
                         <div class="d-flex justify-content-between align-items-center">
                             <h4 class="mb-3">Pharmacie</h4>
@@ -196,10 +181,8 @@
                                 </a>
                             </div>
                         </div>
-                        
                     </div>
                    
-                    <!-- Autres frais -->
                     <div class="col-md-12 mt-5">
                         <div class="card mb-3">
                             <div class="card-header">
@@ -208,7 +191,6 @@
                             <div class="card-body">
                                 <div class="autres-repeater">
                                     <div data-repeater-list="frais">
-                                        <!-- Frais fixes (non supprimables) -->
                                         <div class="mb-3 border-bottom pb-3">
                                             <div class="row align-items-end">
                                                 <div class="col-md-4">
@@ -261,7 +243,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- Autres frais existants -->
                                         @foreach($autresDetails as $index => $detail)
                                         <div data-repeater-item class="mb-3 border-bottom pb-3">
                                             <div class="row align-items-end">
@@ -296,7 +277,6 @@
                                         </div>
                                         @endforeach
 
-                                        <!-- Template vide pour ajout dynamique -->
                                         <div data-repeater-item class="mb-3 border-bottom pb-3">
                                             <div class="row align-items-end">
                                                 <div class="col-md-4">
@@ -344,11 +324,66 @@
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Total</label>
+                                    <input type="number" class="form-control" id="total-prestations" name="total" value="{{ old('total', 0) }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Ticket Modérateur</label>
+                                    <input type="number" class="form-control" id="ticket-moderateur" name="ticket_moderateur" value="{{ old('ticket_moderateur', 0) }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Réduction</label>
+                                    <div class="d-flex">
+                                        <input type="number" class="form-control mr-3 @error('reduction') is-invalid @enderror" id="reduction" name="reduction" min="0" value="{{ old('reduction', $hospitalisation->reduction ?? 0) }}">
+                                        <input type="text" class="form-control @error('reduction_par') is-invalid @enderror" id="reduction_par" name="reduction_par" value="{{ old('reduction_par', $hospitalisation->reduction_par ?? '') }}" placeholder="Accordé par">
+                                    </div>
+                                    @error('reduction')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                    @error('reduction_par')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">À Payer</label>
+                                    <input type="number" class="form-control" id="a-payer" name="montant_a_paye" value="{{ old('montant_a_paye', 0) }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="d-flex justify-content-between align-items-center mt-5">
                     <a href="{{ route('hospitalisations.index') }}" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Retour
                     </a>
-                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <span id="submitText">Enregistrer</span>
+                        <span id="submitSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -361,6 +396,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.repeater/1.2.1/jquery.repeater.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     $(document).ready(function() {
@@ -385,14 +421,10 @@
             initEmpty: false,
             show: function() {
                 $(this).slideDown(function() {
-                    // Initialiser Select2 pour le nouveau select
                     $(this).find('.frais-select').select2({
                         width: '100%',
                         placeholder: "Sélectionner un frais"
-                    });
-
-                    // Déclencher le changement pour calculer le total
-                    $(this).find('.frais-select').trigger('change');
+                    }).trigger('change');
                 });
             },
             // hide: function(deleteElement) {
@@ -409,6 +441,7 @@
             //         if (result.isConfirmed) {
             //             $(this).slideUp(deleteElement, function() {
             //                 updateTotals();
+            //                 updateCalculs();
             //                 Swal.fire(
             //                     'Supprimé!',
             //                     'Le frais a été supprimé.',
@@ -423,7 +456,6 @@
                 updateTotals();
             },
             ready: function(setIndexes) {
-                // Initialiser Select2 pour les éléments existants
                 $('.frais-select').select2({
                     width: '100%',
                     placeholder: "Sélectionner un frais"
@@ -440,27 +472,6 @@
             const totalNet = totalBrut * (taux / 100);
             row.find('.total').val(totalNet.toFixed(0));
         }
-
-        // Écouteurs d'événements pour les champs prix, quantité et taux
-        $(document).on('input', '.prix, .quantite, .taux', function() {
-            let row = $(this).closest('[data-repeater-item]');
-            if (!row.length) {
-                // Pour les frais fixes (non répétables)
-                row = $(this).closest('.mb-3');
-            }
-            calculateRowTotal(row);
-            updateTotals();
-        });
-
-        // Écouteur pour le changement de sélection des frais
-        $(document).on('change', '.frais-select', function() {
-            const selectedOption = $(this).find('option:selected');
-            const prix = selectedOption.data('prix') || 0;
-            const row = $(this).closest('[data-repeater-item]');
-            row.find('.prix').val(prix);
-            calculateRowTotal(row);
-            updateTotals();
-        });
 
         // Fonction pour mettre à jour les totaux
         function updateTotals() {
@@ -494,6 +505,44 @@
             $('#totalGeneral').text(formatCurrency(totalGeneral));
         }
 
+        // Fonction pour calculer et mettre à jour tous les montants
+        function updateCalculs() {
+            // 1. Calcul du total des prestations
+            let totalPrestations = 0;
+            
+            // Ajouter le total pharmacie
+            const prixPharma = parseFloat($('[name="frais[0][prix]"]').val()) || 0;
+            const qtePharma = parseInt($('[name="fris[0][quantite]"]').val()) || 0;
+            totalPrestations += prixPharma * qtePharma;
+            
+            // Ajouter le total laboratoire
+            const prixLabo = parseFloat($('[name="frais[1][prix]"]').val()) || 0;
+            const qteLabo = parseInt($('[name="frais[1][quantite]"]').val()) || 0;
+            totalPrestations += prixLabo * qteLabo;
+            
+            // Ajouter les autres frais
+            $('.autres-repeater [data-repeater-item]').each(function() {
+                const prix = parseFloat($(this).find('.prix').val()) || 0;
+                const quantite = parseInt($(this).find('.quantite').val()) || 0;
+                totalPrestations += prix * quantite;
+            });
+            
+            $('#total-prestations').val(totalPrestations.toFixed(2));
+            
+            // 2. Calcul du ticket modérateur (part non couverte par l'assurance)
+            const tauxAssurance = parseFloat("{{ $patient->taux_couverture ?? 0 }}") || 0;
+            const tauxNonCouvert = 100 - tauxAssurance;
+            const ticketModerateur = totalPrestations * (tauxNonCouvert / 100);
+            $('#ticket-moderateur').val(ticketModerateur.toFixed(2));
+            
+            // 3. Récupération de la réduction (saisie manuelle)
+            const reduction = parseFloat($('#reduction').val()) || 0;
+            
+            // 4. Calcul du montant à payer
+            const montantAPayer = totalPrestations - ticketModerateur - reduction;
+            $('#a-payer').val(Math.max(0, montantAPayer).toFixed(2)); // Éviter les valeurs négatives
+        }
+
         // Fonction pour formater les montants
         function formatCurrency(amount) {
             return new Intl.NumberFormat('fr-FR', { 
@@ -504,7 +553,42 @@
             }).format(amount);
         }
 
-        // Initialisation des valeurs pour les éléments existants
+        // Écouteurs d'événements pour les champs prix, quantité et taux
+        $(document).on('input', '.prix, .quantite, .taux, #reduction', function() {
+            let row = $(this).closest('[data-repeater-item]');
+            if (!row.length) {
+                row = $(this).closest('.mb-3');
+            }
+            calculateRowTotal(row);
+            updateTotals();
+            updateCalculs();
+        });
+
+        // Écouteur pour le changement de sélection des frais
+        $(document).on('change', '.frais-select', function() {
+            const selectedOption = $(this).find('option:selected');
+            const prix = selectedOption.data('prix') || 0;
+            const row = $(this).closest('[data-repeater-item]');
+            row.find('.prix').val(prix);
+            calculateRowTotal(row);
+            updateTotals();
+            updateCalculs();
+        });
+
+        // Validation de la réduction
+        $('#reduction').on('change', function() {
+            const reduction = parseFloat($(this).val()) || 0;
+            if (reduction > 0 && $('#reduction_par').val() === '') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur',
+                    text: 'Veuillez indiquer qui a accordé la réduction'
+                });
+                $(this).focus();
+            }
+        });
+
+        // Initialisation des valeurs
         $('.mb-3:not([data-repeater-item])').each(function() {
             calculateRowTotal($(this));
         });
@@ -512,21 +596,64 @@
             calculateRowTotal($(this));
         });
         updateTotals();
+        updateCalculs();
+
+        // Initialiser la spécialité si un médecin est déjà sélectionné
+        if ($('#medecin-select').val()) {
+            $('#medecin-select').trigger('change');
+        }
 
         // Gestion de la soumission du formulaire
         $('#examenForm').on('submit', function(e) {
-            e.preventDefault();
+            const submitBtn = $('#submitBtn');
+            const submitText = $('#submitText');
+            const submitSpinner = $('#submitSpinner');
             
-            // Validation supplémentaire si nécessaire
+            // Désactiver le bouton et afficher le spinner
+            submitBtn.prop('disabled', true);
+            submitText.text('Enregistrement...');
+            submitSpinner.removeClass('d-none');
+
+            // Validation de la réduction
+            const reduction = parseFloat($('#reduction').val()) || 0;
+            if (reduction > 0 && $('#reduction_par').val() === '') {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur',
+                    text: 'Veuillez indiquer qui a accordé la réduction'
+                });
+                
+                // Réactiver le bouton
+                submitBtn.prop('disabled', false);
+                submitText.text('Enregistrer');
+                submitSpinner.addClass('d-none');
+                
+                return false;
+            }
+
+            // Validation des dates
             const dateEntree = new Date($('[name="date_entree"]').val());
             const dateSortie = new Date($('[name="date_sortie"]').val());
             
             if (dateSortie && dateSortie < dateEntree) {
-                alert('La date de sortie ne peut pas être antérieure à la date d\'entrée');
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur',
+                    text: 'La date de sortie ne peut pas être antérieure à la date d\'entrée'
+                });
+                
+                // Réactiver le bouton
+                submitBtn.prop('disabled', false);
+                submitText.text('Enregistrer');
+                submitSpinner.addClass('d-none');
+                
                 return false;
             }
+
             
-            this.submit();
+            return true;
         });
     });
 </script>
