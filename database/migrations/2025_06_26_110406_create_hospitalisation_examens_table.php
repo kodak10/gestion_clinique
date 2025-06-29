@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('examen_id')->constrained();
             $table->integer('quantite');
             $table->decimal('prix', 10, 2);
+            $table->decimal('taux', 10, 2)->default(0);
             $table->decimal('total', 10, 2);
             $table->timestamps();
             $table->softDeletes();

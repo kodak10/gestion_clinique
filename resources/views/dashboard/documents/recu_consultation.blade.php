@@ -5,8 +5,8 @@
     <title>Reçu de consultation</title>
     <style>
         @page {
-            size: A4 landscape;
-            margin: 20px;
+            size: A4 portrait;
+            margin: 0px;
         }
 
         body {

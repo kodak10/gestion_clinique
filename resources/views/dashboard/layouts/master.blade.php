@@ -23,6 +23,11 @@
     
     @stack('styles')
 
+    <style>
+      #table-default{
+        min-height: 300px;
+      }
+    </style>
   </head>
 
   <body>

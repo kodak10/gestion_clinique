@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('total', 10, 2);
             $table->decimal('ticket_moderateur', 10, 2);
             $table->decimal('reduction', 10, 2)->default(0);
-            $table->decimal('montant_a_paye', 10, 2);
+            $table->string('reduction_par')->nullable();
 
             $table->decimal('reste_a_payer', 10, 2);
 

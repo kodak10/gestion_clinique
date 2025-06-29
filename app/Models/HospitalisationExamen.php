@@ -12,7 +12,7 @@ class HospitalisationExamen extends Model
 {
     use HasFactory, LogsActivity, SoftDeletes;
 
-    protected $fillable = ['hospitalisation_id', 'examen_id', 'quantite', 'prix', 'total'];
+    protected $fillable = ['hospitalisation_id', 'examen_id', 'quantite', 'prix','taux', 'total'];
 
     public function hospitalisation()
     {

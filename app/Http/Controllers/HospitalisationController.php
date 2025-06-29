@@ -212,20 +212,22 @@ class HospitalisationController extends Controller
             abort(403, 'Accès non autorisé.');
         }
 
+
         DB::beginTransaction();
         try {
-            // Supprimer tous les médicaments existants pour cette hospitalisation
+            // Supprimer tous les examens existants pour cette hospitalisation
             $hospitalisation->examens()->detach();
 
-            // Ajouter les médicaments mis à jour
+            // Ajouter les examens mis à jour
             $examensData = [];
             $totalExamen = 0;
 
-            // Traiter les médicaments existants modifiés
+            // Traiter les examens existants modifiés
             foreach ($request->examens ?? [] as $examen) {
                 $total = $examen['montant'] * $examen['quantite'];
                 $examensData[$examen['examen_id']] = [
                     'prix' => $examen['montant'],
+                    'taux' => $examen['taux'],
                     'quantite' => $examen['quantite'],
                     'total' => $total
                 ];
@@ -237,6 +239,7 @@ class HospitalisationController extends Controller
                 $total = $examen['montant'] * $examen['quantite'];
                 $examensData[$examen['examen_id']] = [
                     'prix' => $examen['montant'],
+                    'taux' => $examen['taux'],
                     'quantite' => $examen['quantite'],
                     'total' => $total
                 ];

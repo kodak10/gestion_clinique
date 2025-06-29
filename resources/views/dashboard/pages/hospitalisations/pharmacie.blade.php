@@ -171,7 +171,7 @@
 
         Swal.fire({
             title: 'Confirmation',
-            text: `Êtes-vous sûr de vouloir enregistrer cette consultation ?`,
+            text: `Êtes-vous sûr de vouloir enregistrer ce médicament ?`,
             icon: 'question',
             showCancelButton: true,
             confirmButtonText: 'Oui, enregistrer',

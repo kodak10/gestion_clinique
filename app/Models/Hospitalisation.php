@@ -20,6 +20,7 @@ class Hospitalisation extends Model
         'total',
         'ticket_moderateur',
         'reduction',
+        'reduction_par',
         'montant_a_paye',
         'reste_a_payer',
         'date_entree',

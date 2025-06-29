@@ -70,7 +70,7 @@
                             @foreach($examensPrescrits as $med)
                                 <div data-repeater-item class="mb-3 border-bottom pb-3">
                                     <div class="row mt-2">
-                                        <div class="col-md-5">
+                                        <div class="col-md-4">
                                             <select class="form-select examen-select" name="examen_id" required>
                                                 <option value="">Sélectionner un examen</option>
                                                 @foreach($allexamens as $option)
@@ -83,14 +83,19 @@
                                             </select>
                                         </div>
                                         <div class="col-md-2">
-                                            
                                             <input type="number" class="form-control montant" name="montant" value="{{ $med->pivot->prix }}">
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-1">
                                             <input type="number" class="form-control quantite" name="quantite" value="{{ $med->pivot->quantite }}">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <input type="number" class="form-control taux" name="taux" value="{{ $patient->assurance->taux ?? '0' }}" min="0" max="100">
                                         </div>
                                         <div class="col-md-2">
                                             <input type="number" class="form-control total" name="total" value="{{ $med->pivot->total }}" readonly>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <input type="number" class="form-control ticket-moderateur" name="ticket_moderateur" value="{{ $med->pivot->total * (1 - ($patient->assurance->taux ?? 0) / 100) }}" readonly>
                                         </div>
                                         <div class="col-md-1">
                                             <button type="button" data-repeater-delete class="btn btn-danger btn-sm">
@@ -105,7 +110,7 @@
                             @if($examensPrescrits->isEmpty())
                                 <div data-repeater-item class="mb-3 border-bottom pb-3">
                                     <div class="row mt-2">
-                                        <div class="col-md-5">
+                                        <div class="col-md-4">
                                             <select class="form-select examen-select" name="examen_id" required>
                                                 <option value="">Sélectionner un examen</option>
                                                 @foreach($allexamens as $med)
@@ -118,11 +123,17 @@
                                         <div class="col-md-2">
                                             <input type="number" class="form-control montant" name="montant" value="0">
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-1">
                                             <input type="number" class="form-control quantite" name="quantite" value="1" min="1">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <input type="number" class="form-control taux" name="taux" value="{{ $patient->assurance->taux ?? '0' }}" min="0" max="100">
                                         </div>
                                         <div class="col-md-2">
                                             <input type="number" class="form-control total" name="total" value="0" readonly>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <input type="number" class="form-control ticket-moderateur" name="ticket_moderateur" value="0" readonly>
                                         </div>
                                         <div class="col-md-1">
                                             <button type="button" data-repeater-delete class="btn btn-danger btn-sm">
@@ -172,7 +183,7 @@
 
         Swal.fire({
             title: 'Confirmation',
-            text: `Êtes-vous sûr de vouloir enregistrer cette consultation ?`,
+            text: `Êtes-vous sûr de vouloir enregistrer cet examen ?`,
             icon: 'question',
             showCancelButton: true,
             confirmButtonText: 'Oui, enregistrer',
@@ -189,14 +200,8 @@
 <script>
     $(document).ready(function() {
        
-$('#a-payer').data('last-value', parseFloat($('#a-payer').val()) || 0);
-        // Initialisation Select2
+        $('#a-payer').data('last-value', parseFloat($('#a-payer').val()) || 0);
         
-        // $('.select2').select2({
-        //     width: '100%',
-        //     placeholder: "Sélectionner un Médecin"
-        // });
-
         // Initialisation du répéteur avec gestion du recalcul
         $('.examens-repeater').repeater({
             initEmpty: false,
@@ -211,13 +216,15 @@ $('#a-payer').data('last-value', parseFloat($('#a-payer').val()) || 0);
                     });
                     
                     // Initialisation des valeurs par défaut
+                    const defaultTaux = $('#assurance-taux').val().replace('%', '');
                     $(this).find('.montant').val(0);
                     $(this).find('.quantite').val(1);
+                    $(this).find('.taux').val(defaultTaux);
                     $(this).find('.total').val(0);
+                    $(this).find('.ticket-moderateur').val(0);
                 });
             },
             
-           
             hide: function(deleteElement) {
                 const item = $(this); // L'élément à supprimer
 
@@ -238,7 +245,6 @@ $('#a-payer').data('last-value', parseFloat($('#a-payer').val()) || 0);
                 });
             },
 
-            
             ready: function(setIndexes) {
                 $('.examen-select').select2();
                 recalculerTotauxGlobaux();
@@ -255,14 +261,13 @@ $('#a-payer').data('last-value', parseFloat($('#a-payer').val()) || 0);
         $(document)
             .on('change', '.examen-select', function() {
                 const selected = $(this).find('option:selected');
-                //const montant = selected.data('montant') || 0;
                 const montant = selected.data('prix') || 0;
                 const ligne = $(this).closest('[data-repeater-item]');
                 
                 ligne.find('.montant').val(montant);
                 calculerTotalLigne(ligne);
             })
-            .on('input', '.montant, .quantite', function() {
+            .on('input', '.montant, .quantite, .taux', function() {
                 const ligne = $(this).closest('[data-repeater-item]');
                 calculerTotalLigne(ligne);
             })
@@ -282,49 +287,30 @@ $('#a-payer').data('last-value', parseFloat($('#a-payer').val()) || 0);
         function calculerTotalLigne(ligne) {
             const qte = parseFloat(ligne.find('.quantite').val()) || 0;
             const montant = parseFloat(ligne.find('.montant').val()) || 0;
+            const taux = parseFloat(ligne.find('.taux').val()) || 0;
+            
             const total = (qte * montant).toFixed(2);
+            const ticketModerateur = (total * (1 - taux / 100)).toFixed(2);
             
             ligne.find('.total').val(total);
+            ligne.find('.ticket-moderateur').val(ticketModerateur);
             recalculerTotauxGlobaux();
         }
 
-        // Fonction de recalcul global
-        // function recalculerTotauxGlobaux() {
-        //     let totalexamens = 0;
-            
-        //     $('[data-repeater-item]').each(function() {
-        //         const total = parseFloat($(this).find('.total').val()) || 0;
-        //         totalexamens += total;
-        //     });
-
-        //     const tauxAssurance = parseFloat($('#assurance-taux').val().replace('%', '')) || 0;
-        //     const ticketModerateur = totalexamens * (1 - tauxAssurance / 100);
-            
-        //     const reduction = parseFloat($('#reduction').val()) || 0;
-        //     const montantAPayer = Math.max(0, ticketModerateur - reduction);
-            
-        //     $('#total-examens').val(totalexamens.toFixed(2));
-        //     $('#ticket-moderateur').val(ticketModerateur.toFixed(2));
-        //     $('#a-payer').val(montantAPayer.toFixed(2));
-        //     $('#payer').val(montantAPayer.toFixed(2));
-        // }
-
         function recalculerTotauxGlobaux() {
-            let totalexamens = 0;
+            let totalExamens = 0;
+            let totalTicketModerateur = 0;
             
             $('[data-repeater-item]').each(function() {
-                const total = parseFloat($(this).find('.total').val()) || 0;
-                totalexamens += total;
+                totalExamens += parseFloat($(this).find('.total').val()) || 0;
+                totalTicketModerateur += parseFloat($(this).find('.ticket-moderateur').val()) || 0;
             });
 
-            const tauxAssurance = parseFloat($('#assurance-taux').val().replace('%', '')) || 0;
-            const ticketModerateur = totalexamens * (1 - tauxAssurance / 100);
-            
             const reduction = parseFloat($('#reduction').val()) || 0;
-            const montantAPayer = Math.max(0, ticketModerateur - reduction);
+            const montantAPayer = Math.max(0, totalTicketModerateur - reduction);
             
-            $('#total-examens').val(totalexamens.toFixed(2));
-            $('#ticket-moderateur').val(ticketModerateur.toFixed(2));
+            $('#total-examens').val(totalExamens.toFixed(2));
+            $('#ticket-moderateur-global').val(totalTicketModerateur.toFixed(2));
             $('#a-payer').val(montantAPayer.toFixed(2));
             
             // Ne remplir que si le champ est vide ou si la valeur actuelle correspond au montant précédent
