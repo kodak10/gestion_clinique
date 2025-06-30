@@ -22,18 +22,18 @@ class FraisHospitalisationSeeder extends Seeder
             // Pharmacie
             ['libelle' => 'Pharmacie', 'montant' => 0],
 
-            // Chambres
-            ['libelle' => 'Chambre Standard', 'montant' => 10000],
-            ['libelle' => 'Chambre VIP', 'montant' => 25000],
+            // // Chambres
+            // ['libelle' => 'Chambre Standard', 'montant' => 10000],
+            // ['libelle' => 'Chambre VIP', 'montant' => 25000],
 
-            // Repas
-            ['libelle' => 'Repas Standard', 'montant' => 2000],
-            ['libelle' => 'Repas Diététique', 'montant' => 3500],
+            // // Repas
+            // ['libelle' => 'Repas Standard', 'montant' => 2000],
+            // ['libelle' => 'Repas Diététique', 'montant' => 3500],
 
             
 
-            // Visite
-            ['libelle' => 'Visite d\'un Ami', 'montant' => 1000],
+            // // Visite
+            // ['libelle' => 'Visite d\'un Ami', 'montant' => 1000],
 
             
         ];

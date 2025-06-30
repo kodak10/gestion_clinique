@@ -46,6 +46,8 @@ Route::middleware(['auth',])->group(function () {
     Route::resource('prestations', PrestationController::class);
 
     Route::resource('patients', PatientController::class);
+    Route::get('/patients-data', [PatientController::class, 'patientsData'])->name('patients.data');
+
     Route::post('/patients/create/professions', [PatientController::class, 'storeProfession'])->name('professions.store');
     Route::post('/patients/create/ethnies', [PatientController::class, 'storeEthnie'])->name('ethnies.store');
 

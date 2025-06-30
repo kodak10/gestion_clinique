@@ -44,7 +44,7 @@ class FraisHospitalisationController extends Controller
         FraisHospitalisation::create($validated);
 
         return redirect()->route('frais_hospitalisations.index')
-            ->with('success', 'Frais d\'hospitalisation créé avec succès');
+            ->with('success', "Frais d'hospitalisation créé avec succès");
     }
 
     public function update(Request $request, FraisHospitalisation $fraisHospitalisation)
@@ -65,6 +65,6 @@ class FraisHospitalisationController extends Controller
     {
         $fraisHospitalisation->delete();
         return redirect()->route('frais_hospitalisations.index')
-            ->with('success', 'Frais d\'hospitalisation supprimé');
+            ->with('success', "Frais d'hospitalisation supprimé");
     }
 }

@@ -38,16 +38,16 @@ class DatabaseSeeder extends Seeder
         $admin->assignRole('Admin');
 
         $this->call([
-            SpecialiteSeeder::class,
-            MedecinSeeder::class,
-            AssuranceSeeder::class,
-            PatientSeeder::class,
-            SpecialiteSeeder::class,
-            CategoryPrestationsSeeder::class,
-            PrestationSeeder::class,
+            //SpecialiteSeeder::class,
+            //MedecinSeeder::class,
+            //AssuranceSeeder::class,
+            //PatientSeeder::class,
+            //SpecialiteSeeder::class,
+            //CategoryPrestationsSeeder::class,
+            //PrestationSeeder::class,
             FraisHospitalisationSeeder::class,
-            MedicamentSeeder::class,
-            ExamenSeeder::class,
+            //MedicamentSeeder::class,
+            //ExamenSeeder::class,
             
             
         ]);
