@@ -19,23 +19,23 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // Création des rôles
-        $roles = ['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'];
+        // $roles = ['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'];
         
-        foreach ($roles as $role) {
-            Role::create(['name' => $role]);
-        }
+        // foreach ($roles as $role) {
+        //     Role::create(['name' => $role]);
+        // }
 
-        // Création d'un admin par défaut
-        $admin = \App\Models\User::create([
-            'name' => 'Admin Parfait',
-            'pseudo' => 'Admin',
-            'email' => 'admin@example.com',
-            'phone_number' => '123456789',
-            'password' => bcrypt('password'),
-            'status' => 'Actif'
-        ]);
+        // // Création d'un admin par défaut
+        // $admin = \App\Models\User::create([
+        //     'name' => 'Admin Parfait',
+        //     'pseudo' => 'Admin',
+        //     'email' => 'admin@example.com',
+        //     'phone_number' => '123456789',
+        //     'password' => bcrypt('password'),
+        //     'status' => 'Actif'
+        // ]);
 
-        $admin->assignRole('Admin');
+        // $admin->assignRole('Admin');
 
         $this->call([
             //SpecialiteSeeder::class,
