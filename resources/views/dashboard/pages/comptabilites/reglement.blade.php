@@ -16,7 +16,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="factures-table" class="table table-vcenter table-mobile-md card-table">
+                    <table class="table" id="table-default">
                         <thead>
                             <tr>
                                 <th>Type</th>
@@ -180,6 +180,8 @@
 @endsection
 
 @push('scripts')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
 <script>
 $(document).ready(function() {
@@ -218,6 +220,23 @@ $(document).ready(function() {
         }).format(amount);
     }
 });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#table-default').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/French.json"
+            },
+            "paging": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "responsive": true,
+            "order": [[4, 'desc']] // Tri par montant restant
+        });
+
+    });
 </script>
 @endpush
 

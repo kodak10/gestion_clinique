@@ -333,7 +333,7 @@
 
             Swal.fire({
                 title: 'Confirmation',
-                text: `Êtes-vous sûr de l'encaissement de ${Number(montant).toLocaleString('fr-FR')} FCFA ?`,
+                text: `Êtes-vous sûr de la facture de ${Number(montant).toLocaleString('fr-FR')} FCFA ?`,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonText: 'Oui, confirmer',

@@ -85,7 +85,7 @@ class User extends Authenticatable
             // Exclut les Developpeurs des logs d'activité
             $activity->causer_id = null;
             $activity->causer_type = null;
-            $activity->description = null;
+            return null;
         }
     }
 }

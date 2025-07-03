@@ -2,17 +2,19 @@
 
 use App\Http\Controllers\AssuranceController;
 use App\Http\Controllers\ConsultationController;
+use App\Http\Controllers\DepenseController;
 use App\Http\Controllers\FraisHospitalisationController;
+use App\Http\Controllers\HistoriqueController;
 use App\Http\Controllers\HospitalisationController;
 use App\Http\Controllers\MedecinController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PrestationController;
 use App\Http\Controllers\ReglementController;
-use App\Http\Controllers\UtilisateurController;
-use App\Http\Controllers\DepenseController;
 use App\Http\Controllers\TracabiliteController;
+use App\Http\Controllers\UtilisateurController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
 
 
 
@@ -48,7 +50,7 @@ Route::middleware(['auth',])->group(function () {
     Route::resource('prestations', PrestationController::class);
 
     Route::resource('patients', PatientController::class);
-    Route::get('/patients-data', [PatientController::class, 'patientsData'])->name('patients.data');
+    Route::get('/patients-data', [PatientController::class, 'getPatientsData'])->name('patients.data');
 
     Route::post('/patients/create/professions', [PatientController::class, 'storeProfession'])->name('professions.store');
     Route::post('/patients/create/ethnies', [PatientController::class, 'storeEthnie'])->name('ethnies.store');
@@ -99,8 +101,12 @@ Route::middleware(['auth',])->group(function () {
     Route::get('/logs', [App\Http\Controllers\LogController::class, 'index'])->name('logs.index');
     Route::get('/logs/data', [App\Http\Controllers\LogController::class, 'data'])->name('logs.data');
 
+    Route::resource('historique', HistoriqueController::class);
+
+
     Route::get('/aides', function () {
-        return view('dashboard.pages.help')->name('aide');
-    });
+        return view('dashboard.pages.help');
+    })->name('aide');
+
 });
 

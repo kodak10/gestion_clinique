@@ -13,18 +13,78 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\Facades\DataTables;
 
 class PatientController extends Controller
 {
-    public function index()
+    // public function index()
+    // {
+    //     if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+    //         abort(403, 'Accès non autorisé.');
+    //     }
+
+    //     $patients = Patient::with('assurance')->orderBy('nom', 'asc')->get();
+    //     return view('dashboard.pages.patients.index', compact('patients'));
+    // }
+public function index()
     {
         if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
             abort(403, 'Accès non autorisé.');
         }
-
-        $patients = Patient::with('assurance')->orderBy('nom', 'asc')->get();
-        return view('dashboard.pages.patients.index', compact('patients'));
+        return view('dashboard.pages.patients.index');
     }
+
+    public function getPatientsData(Request $request)
+    {
+        $patients = Patient::select('id', 'num_dossier', 'nom', 'prenoms', 'date_naissance', 'contact_patient', 'contact_urgence', 'assurance_id')
+            ->with('assurance:id,name,taux');
+
+        return DataTables::eloquent($patients)
+            // Colonne Actions (boutons)
+            ->addColumn('actions', function($patient) {
+                $edit = route('patients.edit', $patient->id);
+                $pdf = route('patients.view-pdf', $patient->id);
+                $consult = route('consultations.create', $patient->id);
+                $hosp = route('hospitalisations.store.simple', ['patient' => $patient->id]);
+                $show = route('patients.show', $patient->id);
+
+                return '
+                <div class="btn-list flex-nowrap">
+                    <div class="dropdown">
+                        <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">Actions</button>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <a class="dropdown-item" href="'.$edit.'">Modifier</a>
+                            <a class="dropdown-item" href="'.$pdf.'" target="_blank">Ouvrir le dossier</a>
+                            <a class="dropdown-item" href="'.$consult.'">Consultation</a>
+                            <a class="dropdown-item" href="'.$hosp.'" onclick="return confirmHospitalisation(event)">À Hospitaliser</a>
+                            <a class="dropdown-item" href="'.$show.'">Suivi du patient</a>
+                        </div>
+                    </div>
+                </div>
+                ';
+            })
+            // Colonne Assurance
+            ->addColumn('assurance', function($patient) {
+                return $patient->assurance->name ?? 'Aucune';
+            })
+            // Colonne Taux
+            ->addColumn('taux', function($patient) {
+                return $patient->assurance->taux ?? '0';
+            })
+            // Dernier passage (à adapter selon ta logique)
+            ->addColumn('dernier_passage', function($patient) {
+                // Remplace par ta logique réelle si tu as cette info
+                return '';
+            })
+            // Solde non réglé (à adapter selon ta logique)
+            ->addColumn('solde_non_regle', function($patient) {
+                // Remplace par ta logique réelle si tu as cette info
+                return '';
+            })
+            ->rawColumns(['actions']) // Pour afficher le HTML des boutons
+            ->make(true);
+    }
+
 
     public function create()
     {
@@ -346,28 +406,44 @@ class PatientController extends Controller
         return redirect()->route('patients.create')->with('success', 'Professio créé avec succès');
 
     }
+//     public function show($id)
+// {
+//     $patient = Patient::with([
+//         'consultations' => function($query) {
+//             $query->orderBy('date_consultation', 'desc');
+//         },
+//         'hospitalisations' => function($query) {
+//             $query->with([
+//                 'details.fraisHospitalisation',
+//                 'medicaments',
+//                 'examens', 
+//                 'user',
+//                 'medecin'
+//             ])->orderBy('date_entree', 'desc');
+//         }
+//     ])->findOrFail($id);
+
+//     return view('dashboard.pages.patients.show', compact('patient'));
+// }
     public function show($id)
-    {
-        $patient = Patient::findOrFail($id);
-        
-        $consultations = Consultation::with([
-                'patient',
-                'medecin',
-                'details.prestation',
-                'reglements.user'
-            ])
-            ->where('patient_id', $id)
-            ->orderBy('date_consultation', 'desc')
-            ->get();
+{
+    $patient = Patient::with([
+        'consultations' => function($query) {
+            $query->with(['details.prestation', 'medecin', 'reglements.user'])
+                 ->orderBy('date_consultation', 'desc');
+        },
+        'hospitalisations' => function($query) {
+            $query->with([
+                'details.fraisHospitalisation',
+                'medicaments', 
+                'examens',
+                'user',
+                'medecin'
+            ])->orderBy('date_entree', 'desc');
+        }
+    ])->findOrFail($id);
 
-            $hospitalisations = $patient->hospitalisations()
-            ->with(['medecin', 'details.frais'])
-            ->latest()
-            ->get();
-
-        return view('dashboard.pages.patients.show', compact('patient', 'consultations', 'hospitalisations'));
-    }
-    
-
+    return view('dashboard.pages.patients.show', compact('patient'));
+}
     
 }

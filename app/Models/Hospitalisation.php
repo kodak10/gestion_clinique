@@ -84,6 +84,12 @@ class Hospitalisation extends Model
                    ->withTimestamps();
     }
 
+    protected $casts = [
+        'date_entree' => 'datetime',
+        'date_sortie' => 'datetime',
+    ];
+
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -97,7 +103,7 @@ class Hospitalisation extends Model
         if (auth()->check() && auth()->user()->hasRole('Developpeur')) {
             $activity->causer_id = null;
             $activity->causer_type = null;
-            $activity->description = null;
+            return null;
         }
     }
 

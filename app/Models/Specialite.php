@@ -34,7 +34,7 @@ class Specialite extends Model
         if (auth()->check() && auth()->user()->hasRole('Developpeur')) {
             $activity->causer_id = null;
             $activity->causer_type = null;
-            $activity->description = null;
+            return null;
         }
     }
     
