@@ -23,7 +23,7 @@ return new class extends Migration
             $table->decimal('montant_a_paye', 10, 2);
             $table->decimal('montant_paye', 10, 2);
             $table->decimal('reste_a_payer', 10, 2)->default(0);
-            $table->string('methode_paiement');
+            
             $table->date('date_consultation');
             $table->string('pdf_path')->nullable(); // Chemin du PDF généré
             $table->timestamps();

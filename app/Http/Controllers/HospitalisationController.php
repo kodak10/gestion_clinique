@@ -28,7 +28,7 @@ class HospitalisationController extends Controller
 
     public function index()
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Pharmacien'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -38,7 +38,7 @@ class HospitalisationController extends Controller
 
     public function storeSimple(Patient $patient)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -94,7 +94,7 @@ class HospitalisationController extends Controller
 
     public function createPharmacie(Hospitalisation $hospitalisation)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Laboratin', 'Receptionniste', 'Facturié', 'Comptable'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -114,7 +114,7 @@ class HospitalisationController extends Controller
     
     public function storePharmacie(Request $request, Hospitalisation $hospitalisation)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Pharmacien'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -188,7 +188,7 @@ class HospitalisationController extends Controller
     
     public function createExamen(Hospitalisation $hospitalisation)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Laboratin', 'Receptionniste', 'Facturié', 'Comptable'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -208,7 +208,7 @@ class HospitalisationController extends Controller
 
     public function storeExamen(Request $request, Hospitalisation $hospitalisation)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Laboratin', 'Receptionniste'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -276,7 +276,7 @@ class HospitalisationController extends Controller
     
     public function createFacture(Hospitalisation $hospitalisation)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Comptable'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -339,7 +339,7 @@ class HospitalisationController extends Controller
 
     public function storeFacture(Request $request, Hospitalisation $hospitalisation)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Comptable'])) {
             abort(403, 'Accès non autorisé.');
         }
 

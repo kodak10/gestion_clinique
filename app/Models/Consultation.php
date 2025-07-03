@@ -21,7 +21,7 @@ class Consultation extends Model
     protected $fillable = [
         'numero_recu','user_id', 'patient_id', 'medecin_id', 'total',
         'ticket_moderateur', 'reduction',  'montant_a_paye', 'montant_paye','reste_a_payer',
-        'methode_paiement', 'date_consultation','pdf_path',
+        'date_consultation','pdf_path',
     ];
 
     public function patient()
@@ -41,18 +41,6 @@ class Consultation extends Model
             ->withTimestamps();
     }
 
-
-    // protected static function boot()
-    // {
-    //     parent::boot();
-
-    //     static::creating(function ($consultation) {
-    //         // Génération du numéro de reçu (3 lettres + 3 chiffres)
-    //         $letters = substr(str_shuffle("ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 3);
-    //         $numbers = str_pad(Consultation::count() + 1, 3, '0', STR_PAD_LEFT);
-    //         $consultation->numero_recu = $letters . $numbers;
-    //     });
-    // }
 
     public function user()
     {
@@ -87,7 +75,7 @@ public function getActivitylogOptions(): LogOptions
         if (auth()->check() && auth()->user()->hasRole('Developpeur')) {
             $activity->causer_id = null;
             $activity->causer_type = null;
-            $activity->description = null; // Ou on peut return null ici
+            return null; // Ou on peut return null ici
         }
     }
 

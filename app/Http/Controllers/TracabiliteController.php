@@ -11,7 +11,7 @@ class TracabiliteController extends Controller
 {
     public function index()
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin'])) {
             abort(403, 'Accès non autorisé.');
         }
 

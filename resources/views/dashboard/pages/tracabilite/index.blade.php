@@ -28,11 +28,28 @@
                         @foreach($activities as $index => $activity)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
+                               
                                 <td>
-                                    <span class="badge bg-{{ $activity->event == 'updated' ? 'warning' : ($activity->event == 'created' ? 'success' : 'danger') }}">
-                                        {{ ucfirst($activity->event) }}
+                                    @php
+                                        $event = $activity->event;
+                                        $status = [
+                                            'created' => 'Création',
+                                            'updated' => 'Modification',
+                                            'deleted' => 'Suppression',
+                                        ];
+                                        $badgeClass = match($event) {
+                                            'created' => 'success',
+                                            'updated' => 'warning',
+                                            'deleted' => 'danger',
+                                            default => 'secondary',
+                                        };
+                                    @endphp
+
+                                    <span class="badge bg-{{ $badgeClass }}">
+                                        {{ $status[$event] ?? ucfirst($event) }}
                                     </span>
                                 </td>
+
                                 <td>{{ class_basename($activity->subject_type) }}</td>
                                 <td>{{ $activity->subject_id }}</td>
                                 <td>
@@ -44,13 +61,21 @@
                                     @if($activity->event == 'updated' && $activity->properties->has('old'))
                                         <ul class="list-unstyled mb-0">
                                             @foreach($activity->properties['old'] as $key => $value)
-                                                <li><strong>{{ $key }}:</strong> {{ $value }}</li>
+                                                <li>
+                                                    <strong>{{ $key }}:</strong>
+                                                    @if(is_array($value))
+                                                        <pre class="mb-0">{{ json_encode($value, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) }}</pre>
+                                                    @else
+                                                        {{ $value }}
+                                                    @endif
+                                                </li>
                                             @endforeach
                                         </ul>
                                     @else
                                         <em>N/A</em>
                                     @endif
                                 </td>
+
                                 <td>
                                     @if($activity->properties->has('attributes'))
                                         <ul class="list-unstyled mb-0">

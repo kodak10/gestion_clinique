@@ -11,7 +11,7 @@ class MedecinController extends Controller
 {
     public function index()
     {
-        $medecins = Medecin::with('specialite')->get();
+        $medecins = Medecin::with('specialite')->orderBy('name')->get();
         $specialites = Specialite::orderBy('nom', 'asc')->get();
         return view('dashboard.pages.parametrages.medecins', compact('medecins', 'specialites'));
     }

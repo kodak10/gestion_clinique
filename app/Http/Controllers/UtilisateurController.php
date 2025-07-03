@@ -14,12 +14,14 @@ class UtilisateurController extends Controller
 {
     public function index()
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin'])) {
             abort(403, 'Accès non autorisé.');
         }
 
-        $roles = Role::where('name', '!=', 'Developpeur')->get();
-        $users = User::with('roles')->get();
+        $users = User::with('roles')->orderBy('name')->get();
+
+        $roles = Role::all();
+        
         return view('dashboard.pages.parametrages.acces_utilisateurs', compact('users', 'roles'));
     }
 
@@ -33,7 +35,8 @@ class UtilisateurController extends Controller
             'name' => 'required|string|max:255',
             'pseudo' => 'required|string|max:15|unique:users',
             'phone_number' => 'required|string|unique:users',
-            'role' => 'required|string',
+            'roles' => 'required|array',
+            'roles.*' => 'string|exists:roles,name'
         ]);
 
         if ($validator->fails()) {
@@ -46,27 +49,53 @@ class UtilisateurController extends Controller
             'name' => $request->name,
             'pseudo' => $request->pseudo,
             'phone_number' => $request->phone_number,
-            'password' => Hash::make('password'), // Mot de passe par défaut
+            'password' => Hash::make('password'),
             'status' => 'Actif'
         ]);
 
-        $user->assignRole($request->role);
+        $user->syncRoles($request->roles);
 
         return redirect()->route('utilisateurs.index')
             ->with('success', 'Utilisateur créé avec succès!');
     }
 
-    public function toggleStatus($id)
+    public function update(Request $request, $id)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin'])) {
             abort(403, 'Accès non autorisé.');
         }
-        
+
+        $user = User::findOrFail($id);
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'roles' => 'required|array',
+            'roles.*' => 'string|exists:roles,name'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $user->update([
+            'name' => $request->name,
+        ]);
+
+        $user->syncRoles($request->roles);
+
+        return redirect()->route('utilisateurs.index')
+            ->with('success', 'Utilisateur mis à jour avec succès!');
+    }
+
+    public function toggleStatus($id)
+    {
         $user = User::findOrFail($id);
         $user->status = $user->status == 'Actif' ? 'Inactif' : 'Actif';
         $user->save();
 
-        return redirect()->back()->with('success', 'Statut utilisateur mis à jour!');
+        return back()->with('success', 'Statut utilisateur mis à jour');
     }
 
     public function editProfile()

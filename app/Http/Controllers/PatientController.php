@@ -26,23 +26,6 @@ class PatientController extends Controller
         return view('dashboard.pages.patients.index', compact('patients'));
     }
 
-    // public function index()
-    // {
-    //     if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
-    //         abort(403, 'Accès non autorisé.');
-    //     }
-
-    //     return view('dashboard.pages.patients.index');
-    // }
-
-    // public function patientsData(Request $request)
-    // {
-    //     return datatables()->eloquent(
-    //         Patient::with('assurance')->select('patients.*')
-    //     )->toJson();
-    // }
-
-
     public function create()
     {
         if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
@@ -63,7 +46,7 @@ class PatientController extends Controller
 
     public function store(Request $request)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Receptionniste'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -185,7 +168,7 @@ class PatientController extends Controller
 
     public function edit(Patient $patient)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Receptionniste', 'Facturié'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -199,7 +182,7 @@ class PatientController extends Controller
 
     public function update(Request $request, Patient $patient)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Receptionniste', 'Facturié'])) {
             abort(403, 'Accès non autorisé.');
         }
 

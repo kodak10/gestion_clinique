@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // Création des rôles
-        $roles = ['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'];
+        $roles = ['Developpeur', 'Admin','Manager', 'Comptable','Facturié', 'Respo Caissière', 'Caissière', 'Receptionniste', 'Pharmacien'];
         
         foreach ($roles as $role) {
             Role::create(['name' => $role]);

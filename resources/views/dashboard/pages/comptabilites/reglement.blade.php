@@ -35,14 +35,15 @@
                                 <td><span class="text-primary">{{ $consultation->numero_recu }}</span></td>
                                 <td>{{ $consultation->patient->nom }} {{ $consultation->patient->prenoms }}</td>
                                 <td>
-                                    @if($consultation->patient->telephone)
-                                        <a href="tel:{{ $consultation->patient->telephone }}">{{ $consultation->patient->telephone }}</a>
+                                    @if($consultation->patient->contact_patient)
+                                        <a href="tel:{{ $consultation->patient->contact_patient }}">{{ $consultation->patient->contact_patient }}</a>
                                     @else
                                         N/A
                                     @endif
                                 </td>
                                 <td><span class="text-danger fw-bold">{{ number_format($consultation->reste_a_payer, 0, ',', ' ') }} FCFA</span></td>
-                                <td></td>
+                                <td>{{ $consultation->created_at }}</td>
+                                
                                 <td>
                                     <div class="btn-list flex-nowrap">
                                         <button class="btn btn-sm btn-info" 
@@ -77,7 +78,7 @@
                                     @endif
                                 </td>
                                 <td><span class="text-danger fw-bold">{{ number_format($hospitalisation->reste_a_payer, 0, ',', ' ') }} FCFA</span></td>
-                                <td></td>
+                                <td>{{ $hospitalisation->created_at }}</td>
                                 <td>
                                     <div class="btn-list flex-nowrap">
                                         <button class="btn btn-sm btn-info" 

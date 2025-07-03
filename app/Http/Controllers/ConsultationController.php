@@ -30,9 +30,11 @@ class ConsultationController extends Controller
         return view('dashboard.pages.consultation.create', compact('patient', 'categories', 'categorie_medecins'));
     }
 
+
     public function store(Request $request, Patient $patient)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        // Vérification des permissions de base
+        if (!Auth::user()->hasAnyRole(['Receptionniste', 'Caissière', 'Developpeur'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -68,7 +70,12 @@ class ConsultationController extends Controller
             return back()->withErrors(['montant_paye' => 'Le montant payé ne peut pas dépasser le montant à payer.'])->withInput();
         }
 
-        // Enregistrement
+        // Déterminer les valeurs selon le rôle
+        $isCaissiere = Auth::user()->hasRole('Caissière');
+        $montantPaye = $isCaissiere ? $request->montant_paye : 0;
+        $resteAPayer = $montantAPayer - $montantPaye;
+
+        // Enregistrement de la consultation
         $consultation = Consultation::create([
             'user_id' => auth()->id(),
             'patient_id' => $patient->id,
@@ -77,12 +84,11 @@ class ConsultationController extends Controller
             'ticket_moderateur' => $ticketModerateur,
             'reduction' => $request->reduction,
             'montant_a_paye' => $montantAPayer,
-            'montant_paye' => $request->montant_paye,
-            'reste_a_payer' => $montantAPayer - $request->montant_paye,
-            'methode_paiement' => $request->methode_paiement,
+            'montant_paye' => $montantPaye,
+            'reste_a_payer' => $resteAPayer,
             'date_consultation' => now(),
             'numero_recu' => $numeroRecu,
-
+            'statut_paiement' => $isCaissiere && $resteAPayer == 0 ? 'payé' : ($isCaissiere ? 'partiel' : 'non_payé')
         ]);
 
         // Lier les prestations
@@ -94,13 +100,17 @@ class ConsultationController extends Controller
             ]);
         }
 
-        Reglement::create([
-            'consultation_id' => $consultation->id,
-            'user_id' => auth()->id(),
-            'montant' => $request->montant_paye,
-            'methode_paiement' => $request->methode_paiement,
-            'type' => 'entrée',
-        ]);
+        // Enregistrement dans reglements SEULEMENT si l'utilisateur a le rôle "Caissière"
+        if ($isCaissiere && $montantPaye > 0) {
+            Reglement::create([
+                'consultation_id' => $consultation->id,
+                'user_id' => auth()->id(),
+                'montant' => $montantPaye,
+                'methode_paiement' => $request->methode_paiement,
+                'type' => 'entrée',
+                'date_reglement' => now(),
+            ]);
+        }
 
         // Génération du PDF
         $medecin = Medecin::find($request->medecin_id);
@@ -116,31 +126,30 @@ class ConsultationController extends Controller
             'user' => auth()->user(),
         ];
 
-        $pdf = Pdf::loadView('dashboard.documents.recu_consultation', $data);
+        // $pdf = Pdf::loadView('dashboard.documents.recu_consultation', $data);
 
-        // Création du dossier si inexistant
-        $directory = 'consultations/'.$consultation->id;
-        if (!Storage::exists($directory)) {
-            Storage::makeDirectory($directory);
-        }
+        // // Création du dossier si inexistant
+        // $directory = 'consultations/'.$consultation->id;
+        // if (!Storage::exists($directory)) {
+        //     Storage::makeDirectory($directory);
+        // }
 
-        // Chemin du fichier PDF
-        $filename = 'recu-consultation-'.$numeroRecu.'.pdf';
-        $path = $directory.'/'.$filename;
+        // // Chemin du fichier PDF
+        // $filename = 'recu-consultation-'.$numeroRecu.'.pdf';
+        // $path = $directory.'/'.$filename;
 
-        // Enregistrement du PDF
-        
-        Storage::disk('public')->put($path, $pdf->output());
+        // // Enregistrement du PDF
+        // Storage::disk('public')->put($path, $pdf->output());
 
-        $consultation->update([
-            'pdf_path' => $path
-        ]);
+        // $consultation->update([
+        //     'pdf_path' => $path
+        // ]);
 
         return redirect()
             ->route('patients.index', $patient)
             ->with([
                 'success' => 'Consultation créée avec succès',
-                'pdf_url' => Storage::url($path)
+                //'pdf_url' => Storage::url($path)
             ]);
     }
 
@@ -156,7 +165,7 @@ class ConsultationController extends Controller
 
     public function edit(Consultation $consultation)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -185,7 +194,7 @@ class ConsultationController extends Controller
 
     public function update(Request $request, Consultation $consultation)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière'])) {
             abort(403, 'Accès non autorisé.');
         }
 

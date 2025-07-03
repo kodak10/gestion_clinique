@@ -11,7 +11,7 @@ class DepenseController extends Controller
 {
     public function index()
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Comptable'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -26,7 +26,7 @@ class DepenseController extends Controller
 
     public function create()
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Comptable'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -36,7 +36,7 @@ class DepenseController extends Controller
 
     public function store(Request $request)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Comptable'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -57,7 +57,7 @@ class DepenseController extends Controller
 
     public function edit(Depense $depense)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Comptable'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -67,7 +67,7 @@ class DepenseController extends Controller
 
     public function update(Request $request, Depense $depense)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Comptable'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -88,6 +88,10 @@ class DepenseController extends Controller
 
     public function destroy(Depense $depense)
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Comptable'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+
         $depense->delete();
 
         return redirect()->route('depenses.index')->with('success', 'Dépense supprimée avec succès.');
@@ -96,6 +100,10 @@ class DepenseController extends Controller
 
     public function storeCategory(Request $request)
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Comptable'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+        
         $validated = $request->validate([
             'nom' => 'required|string|max:255|unique:category_depenses',
             'description' => 'nullable|string'

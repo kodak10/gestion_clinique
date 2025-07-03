@@ -33,8 +33,10 @@ Route::middleware(['auth',])->group(function () {
         return view('dashboard.pages.index');
     });
 
-    Route::get('/utilisateurs', [UtilisateurController::class, 'index'])->name('utilisateurs.index');
-    Route::post('/utilisateurs', [UtilisateurController::class, 'store'])->name('utilisateurs.store');
+    Route::resource('utilisateurs', UtilisateurController::class);
+
+    // Route::get('/utilisateurs', [UtilisateurController::class, 'index'])->name('utilisateurs.index');
+    // Route::post('/utilisateurs', [UtilisateurController::class, 'store'])->name('utilisateurs.store');
     Route::post('/utilisateurs/{id}/toggle-status', [UtilisateurController::class, 'toggleStatus'])->name('utilisateurs.toggleStatus');
 
     Route::resource('assurances', AssuranceController::class);
@@ -94,5 +96,11 @@ Route::middleware(['auth',])->group(function () {
 
     Route::get('/tracabilite', [TracabiliteController::class, 'index'])->name('tracabilite.index');
 
+    Route::get('/logs', [App\Http\Controllers\LogController::class, 'index'])->name('logs.index');
+    Route::get('/logs/data', [App\Http\Controllers\LogController::class, 'data'])->name('logs.data');
+
+    Route::get('/aides', function () {
+        return view('dashboard.pages.help')->name('aide');
+    });
 });
 

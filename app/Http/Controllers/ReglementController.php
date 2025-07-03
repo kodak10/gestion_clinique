@@ -33,7 +33,7 @@ class ReglementController extends Controller
     }
     public function index()
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Caissière', 'Respo Caissière', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Caissière', 'Comptable'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -52,7 +52,7 @@ class ReglementController extends Controller
 
     public function showDetails($type, $id)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Caissière', 'Respo Caissière', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Caissière', 'Comptable'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -67,7 +67,7 @@ class ReglementController extends Controller
 
     public function store(Request $request)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Caissière'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Caissière', 'Comptable'])) {
             abort(403, 'Accès non autorisé.');
         }
 
