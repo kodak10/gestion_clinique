@@ -8,29 +8,43 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class ConsultationDetail extends Model
+class Rdv extends Model
 {
     use HasFactory, LogsActivity, SoftDeletes;
-    
-    protected $table = 'consultation_details';
-    
-    protected $fillable = ['consultation_id', 'prestation_id', 'quantite','taux', 'montant', 'total'];
 
-    public function consultation()
+    protected $fillable = [
+        'patient_id',
+        'medecin_id',
+        'specialite_id',
+        'date_heure',
+        'statut',
+        'motif'
+    ];
+
+    protected $casts = [
+        'date_heure' => 'datetime'
+    ];
+
+    public function patient()
     {
-        return $this->belongsTo(Consultation::class);
+        return $this->belongsTo(Patient::class);
     }
 
-    public function prestation()
+    public function medecin()
     {
-        return $this->belongsTo(Prestation::class);
+        return $this->belongsTo(Medecin::class);
+    }
+
+    public function specialite()
+    {
+        return $this->belongsTo(Specialite::class);
     }
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->logOnly($this->fillable)
-            ->useLogName('Details de Consultation')
+            ->useLogName('Règlements')
             ->dontSubmitEmptyLogs();
     }
 

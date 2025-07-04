@@ -7,7 +7,6 @@
             <h2 class="page-title m-0">Modifier Consultation</h2>
             <a href="javascript:history.back()" class="btn bg-gray-500">Retour</a>
         </div>
-
     </div>
 </div>
 
@@ -50,7 +49,7 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label class="form-label">Taux Couverture</label>
-                                        <input type="text" class="form-control" id="assurance-taux" value="{{ $patient->assurance->taux ?? '0' }}%" readonly>
+                                        <input type="text" class="form-control" id="assurance-taux" value="{{ $patient->taux_couverture ?? '0' }}%" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -90,10 +89,10 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label class="form-label">Spécialité</label>
-                                        <input type="text" class="form-control @error('specialite_id') is-invalid @enderror" 
+                                        <input type="text" class="form-control @error('specialite') is-invalid @enderror" 
                                             id="specialite-input" name="specialite" 
                                             value="{{ $consultation->medecin->specialite->nom }}" readonly>
-                                        @error('specialite_id')
+                                        @error('specialite')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -112,7 +111,7 @@
                                     @foreach($prestationsExistantes as $index => $prestation)
                                         <div data-repeater-item class="mb-3 border-bottom pb-3">
                                             <div class="row mt-2">
-                                                <div class="col-md-5">
+                                                <div class="col-md-3">
                                                     <select class="form-control prestation-select @error('prestations.'.$index.'.prestation_id') is-invalid @enderror" name="prestation_id">
                                                         <option value="">Sélectionner une prestation</option>
                                                         @foreach($categories as $categorie)
@@ -142,6 +141,13 @@
                                                     <input type="number" class="form-control quantite @error('prestations.'.$index.'.quantite') is-invalid @enderror" 
                                                         name="quantite" min="1" value="{{ $prestation['quantite'] }}">
                                                     @error('prestations.'.$index.'.quantite')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input type="number" class="form-control taux @error('prestations.'.$index.'.taux') is-invalid @enderror" 
+                                                        name="taux" value="{{ $prestation['taux'] }}">
+                                                    @error('prestations.'.$index.'.taux')
                                                         <div class="invalid-feedback">{{ $message }}</div>
                                                     @enderror
                                                 </div>
@@ -306,178 +312,145 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('consultation-form');
-        const montantPerçuInput = document.getElementById('payer');
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('consultation-form');
+    const montantPerçuInput = document.getElementById('payer');
 
-        form.addEventListener('submit', function (e) {
-            e.preventDefault(); // Bloquer la soumission
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const montant = parseFloat(montantPerçuInput.value || 0).toFixed(0);
 
-            const montant = parseFloat(montantPerçuInput.value || 0).toFixed(0);
-
-            Swal.fire({
-                title: 'Confirmation',
-                text: `Êtes-vous sûr de l'encaissement de ${Number(montant).toLocaleString('fr-FR')} FCFA ?`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Oui, confirmer',
-                cancelButtonText: 'Annuler',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
-            });
+        Swal.fire({
+            title: 'Confirmation',
+            text: `Êtes-vous sûr de l'encaissement de ${Number(montant).toLocaleString('fr-FR')} FCFA ?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Oui, confirmer',
+            cancelButtonText: 'Annuler',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
         });
     });
+});
 </script>
+
 <script>
-    $(document).ready(function() {
-        const medecinSelect = document.getElementById('medecin-select');
-        const specialiteInput = document.getElementById('specialite-input');
+$(document).ready(function() {
+    const medecinSelect = document.getElementById('medecin-select');
+    const specialiteInput = document.getElementById('specialite-input');
 
-        medecinSelect.addEventListener('change', function () {
-            const selectedOption = this.options[this.selectedIndex];
-            const specialite = selectedOption.getAttribute('data-specialite');
-            specialiteInput.value = specialite || '';
-        });
-$('#a-payer').data('last-value', parseFloat($('#a-payer').val()) || 0);
-        // Initialisation Select2
-        
-        // $('.select2').select2({
-        //     width: '100%',
-        //     placeholder: "Sélectionner un Médecin"
-        // });
-
-        // Initialisation du répéteur avec gestion du recalcul
-        $('.prestations-repeater').repeater({
-            initEmpty: false,
-            isFirstItemUndeletable: true,
-            
-            show: function() {
-                $(this).slideDown(function() {
-                    // Initialisation Select2 pour la nouvelle ligne
-                    $(this).find('.prestation-select').select2({
-                        width: '100%',
-                        placeholder: "Sélectionner une prestation"
-                    });
-                    
-                    // Initialisation des valeurs par défaut
-                    $(this).find('.montant').val(0);
-                    $(this).find('.quantite').val(1);
-                    $(this).find('.total').val(0);
-                });
-            },
-            
-            hide: function(deleteElement) {
-                if ($('[data-repeater-item]').length > 1) {
-                    $(this).slideUp(deleteElement, function() {
-                        $(this).remove();
-                        recalculerTotauxGlobaux();
-                    });
-                }
-            },
-            
-            ready: function(setIndexes) {
-                $('.prestation-select').select2();
-                recalculerTotauxGlobaux();
-                
-                $('[data-repeater-delete]').each(function() {
-                    if ($('[data-repeater-item]').length === 1) {
-                        $(this).hide();
-                    }
-                });
-            }
-        });
-
-        // Gestion des événements
-        $(document)
-            .on('change', '.prestation-select', function() {
-                const selected = $(this).find('option:selected');
-                const montant = selected.data('montant') || 0;
-                const ligne = $(this).closest('[data-repeater-item]');
-                
-                ligne.find('.montant').val(montant);
-                calculerTotalLigne(ligne);
-            })
-            .on('input', '.montant, .quantite', function() {
-                const ligne = $(this).closest('[data-repeater-item]');
-                calculerTotalLigne(ligne);
-            })
-            .on('input', '#reduction, #a-payer, #payer', recalculerTotauxGlobaux)
-            .on('click', '[data-repeater-delete]', function() {
-                if ($('[data-repeater-item]').length === 2) {
-                    $('[data-repeater-delete]').hide();
-                }
-            })
-            .on('click', '[data-repeater-create]', function() {
-                if ($('[data-repeater-item]').length >= 1) {
-                    $('[data-repeater-delete]').show();
-                }
-            });
-
-        // Fonction de calcul pour une ligne
-        function calculerTotalLigne(ligne) {
-            const qte = parseFloat(ligne.find('.quantite').val()) || 0;
-            const montant = parseFloat(ligne.find('.montant').val()) || 0;
-            const total = (qte * montant).toFixed(2);
-            
-            ligne.find('.total').val(total);
-            recalculerTotauxGlobaux();
-        }
-
-        // Fonction de recalcul global
-        // function recalculerTotauxGlobaux() {
-        //     let totalPrestations = 0;
-            
-        //     $('[data-repeater-item]').each(function() {
-        //         const total = parseFloat($(this).find('.total').val()) || 0;
-        //         totalPrestations += total;
-        //     });
-
-        //     const tauxAssurance = parseFloat($('#assurance-taux').val().replace('%', '')) || 0;
-        //     const ticketModerateur = totalPrestations * (1 - tauxAssurance / 100);
-            
-        //     const reduction = parseFloat($('#reduction').val()) || 0;
-        //     const montantAPayer = Math.max(0, ticketModerateur - reduction);
-            
-        //     $('#total-prestations').val(totalPrestations.toFixed(2));
-        //     $('#ticket-moderateur').val(ticketModerateur.toFixed(2));
-        //     $('#a-payer').val(montantAPayer.toFixed(2));
-        //     $('#payer').val(montantAPayer.toFixed(2));
-        // }
-
-        function recalculerTotauxGlobaux() {
-            let totalPrestations = 0;
-            
-            $('[data-repeater-item]').each(function() {
-                const total = parseFloat($(this).find('.total').val()) || 0;
-                totalPrestations += total;
-            });
-
-            const tauxAssurance = parseFloat($('#assurance-taux').val().replace('%', '')) || 0;
-            const ticketModerateur = totalPrestations * (1 - tauxAssurance / 100);
-            
-            const reduction = parseFloat($('#reduction').val()) || 0;
-            const montantAPayer = Math.max(0, ticketModerateur - reduction);
-            
-            $('#total-prestations').val(totalPrestations.toFixed(2));
-            $('#ticket-moderateur').val(ticketModerateur.toFixed(2));
-            $('#a-payer').val(montantAPayer.toFixed(2));
-            
-            // Ne remplir que si le champ est vide ou si la valeur actuelle correspond au montant précédent
-            const payerActuel = parseFloat($('#payer').val()) || 0;
-            if (payerActuel === 0 || payerActuel === parseFloat($('#a-payer').data('last-value'))) {
-                $('#payer').val(montantAPayer.toFixed(2));
-            }
-            
-            // Stocker la nouvelle valeur pour comparaison future
-            $('#a-payer').data('last-value', montantAPayer.toFixed(2));
-        }
-
-        // Initialisation des valeurs si old() existe
-        @if(old('prestations'))
-            recalculerTotauxGlobaux();
-        @endif
+    medecinSelect.addEventListener('change', function () {
+        const selectedOption = this.options[this.selectedIndex];
+        const specialite = selectedOption.getAttribute('data-specialite');
+        specialiteInput.value = specialite || '';
     });
+
+    $('#a-payer').data('last-value', parseFloat($('#a-payer').val()) || 0);
+
+    $('.prestations-repeater').repeater({
+        initEmpty: false,
+        isFirstItemUndeletable: true,
+        show: function() {
+            $(this).slideDown(function() {
+                $(this).find('.prestation-select').select2({
+                    width: '100%',
+                    placeholder: "Sélectionner une prestation"
+                });
+                $(this).find('.montant').val(0);
+                $(this).find('.quantite').val(1);
+                $(this).find('.taux').val(0);
+                $(this).find('.total').val(0);
+            });
+        },
+        hide: function(deleteElement) {
+            if ($('[data-repeater-item]').length > 1) {
+                $(this).slideUp(deleteElement, function() {
+                    $(this).remove();
+                    recalculerTotauxGlobaux();
+                });
+            }
+        },
+        ready: function(setIndexes) {
+            $('.prestation-select').select2();
+            recalculerTotauxGlobaux();
+            $('[data-repeater-delete]').each(function() {
+                if ($('[data-repeater-item]').length === 1) {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+
+    // Gestion des événements
+    $(document)
+        .on('change', '.prestation-select', function() {
+            const selected = $(this).find('option:selected');
+            const montant = selected.data('montant') || 0;
+            const ligne = $(this).closest('[data-repeater-item]');
+            ligne.find('.montant').val(montant);
+            calculerTotalLigne(ligne);
+        })
+        .on('input', '.montant, .quantite, .taux', function() {
+            const ligne = $(this).closest('[data-repeater-item]');
+            calculerTotalLigne(ligne);
+        })
+        .on('input', '#reduction, #a-payer, #payer', recalculerTotauxGlobaux)
+        .on('click', '[data-repeater-delete]', function() {
+            if ($('[data-repeater-item]').length === 2) {
+                $('[data-repeater-delete]').hide();
+            }
+        })
+        .on('click', '[data-repeater-create]', function() {
+            if ($('[data-repeater-item]').length >= 1) {
+                $('[data-repeater-delete]').show();
+            }
+        });
+
+    // Fonction de calcul pour une ligne : TOTAL AVEC TAUX
+    function calculerTotalLigne(ligne) {
+        const qte = parseFloat(ligne.find('.quantite').val()) || 0;
+        const montant = parseFloat(ligne.find('.montant').val()) || 0;
+        const taux = parseFloat(ligne.find('.taux').val()) || 0;
+
+        // Le total de la ligne tient compte du taux
+        const totalAvecTaux = (qte * montant * (1 - taux / 100)).toFixed(2);
+
+        ligne.find('.total').val(totalAvecTaux);
+        recalculerTotauxGlobaux();
+    }
+
+    // Fonction de recalcul global
+    function recalculerTotauxGlobaux() {
+        let totalPrestations = 0;
+        let ticketModerateur = 0;
+
+        $('[data-repeater-item]').each(function() {
+            // On additionne les totaux déjà calculés (qui sont déjà avec taux)
+            const total = parseFloat($(this).find('.total').val()) || 0;
+            totalPrestations += total;
+        });
+
+        ticketModerateur = totalPrestations;
+
+        const reduction = parseFloat($('#reduction').val()) || 0;
+        const montantAPayer = Math.max(0, ticketModerateur - reduction);
+
+        $('#total-prestations').val(totalPrestations.toFixed(2));
+        $('#ticket-moderateur').val(ticketModerateur.toFixed(2));
+        $('#a-payer').val(montantAPayer.toFixed(2));
+
+        const payerActuel = parseFloat($('#payer').val()) || 0;
+        if (payerActuel === 0 || payerActuel === parseFloat($('#a-payer').data('last-value'))) {
+            $('#payer').val(montantAPayer.toFixed(2));
+        }
+        $('#a-payer').data('last-value', montantAPayer.toFixed(2));
+    }
+
+    @if(old('prestations'))
+        recalculerTotauxGlobaux();
+    @endif
+});
 </script>
 @endpush

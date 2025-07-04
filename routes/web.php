@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccueilController;
 use App\Http\Controllers\AssuranceController;
 use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\DepenseController;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\Route;
 
 
 
+
 Route::get('/', function () {
     return view('login');
 });
@@ -31,9 +33,12 @@ Auth::routes(['register' => false]); // Désactive l'inscription si nécessaire
 //Route::middleware(['auth', 'user.status'])->group(function () {
 Route::middleware(['auth',])->group(function () {
 
-    Route::get('/home', function () {
-        return view('dashboard.pages.index');
-    });
+    
+    Route::get('/home', [AccueilController::class, 'home'])->name('home');
+    Route::post('/', [AccueilController::class, 'storeRdv'])->name('store.rdv');
+    // Route::get('/home', [AccueilController::class, 'updateRdv'])->name('update.rdv');
+    // Route::get('/home', [AccueilController::class, 'destroyRdv'])->name('destroy.rdv');
+
 
     Route::resource('utilisateurs', UtilisateurController::class);
 
@@ -98,8 +103,8 @@ Route::middleware(['auth',])->group(function () {
 
     Route::get('/tracabilite', [TracabiliteController::class, 'index'])->name('tracabilite.index');
 
-    Route::get('/logs', [App\Http\Controllers\LogController::class, 'index'])->name('logs.index');
-    Route::get('/logs/data', [App\Http\Controllers\LogController::class, 'data'])->name('logs.data');
+    // Route::get('/logs', [LogController::class, 'index'])->name('logs.index');
+    // Route::get('/logs/data', [LogController::class, 'data'])->name('logs.data');
 
     Route::resource('historique', HistoriqueController::class);
 

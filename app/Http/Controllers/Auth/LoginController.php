@@ -115,4 +115,9 @@ class LoginController extends Controller
                 'pseudo' => __('auth.failed'),
             ]);
     }
+
+    public function showLoginForm()
+    {
+        return view('login');
+    }
 }

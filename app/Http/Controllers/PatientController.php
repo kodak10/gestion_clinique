@@ -71,6 +71,10 @@ public function index()
             ->addColumn('taux', function($patient) {
                 return $patient->assurance->taux ?? '0';
             })
+            // Ajoute ce bloc pour formater la date de naissance
+            ->editColumn('date_naissance', function($patient) {
+                return $patient->date_naissance ? \Carbon\Carbon::parse($patient->date_naissance)->format('d/m/Y') : '';
+            })
             // Dernier passage (à adapter selon ta logique)
             ->addColumn('dernier_passage', function($patient) {
                 // Remplace par ta logique réelle si tu as cette info
@@ -148,6 +152,21 @@ public function index()
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'envoye_par' => 'nullable|string|max:255',
         ]);
+
+        // Vérification de l'existence d'un patient avec même nom, prénoms et date de naissance
+        $doublon = Patient::where('nom', $validated['nom'])
+            ->where('prenoms', $validated['prenoms'])
+            ->where('date_naissance', $validated['date_naissance'])
+            ->first();
+
+        if ($doublon) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors([
+                    'nom' => 'Un patient avec le même nom, prénoms et date de naissance existe déjà.',
+                ]);
+        }
 
         $validated['num_dossier'] = $this->generateFinalDossierNumber();
 

@@ -31,6 +31,131 @@ class ConsultationController extends Controller
     }
 
 
+    // public function store(Request $request, Patient $patient)
+    // {
+    //     // Vérification des permissions de base
+    //     if (!Auth::user()->hasAnyRole(['Receptionniste', 'Caissière', 'Developpeur'])) {
+    //         abort(403, 'Accès non autorisé.');
+    //     }
+
+    //     $request->validate([
+    //         'medecin_id' => 'required|exists:medecins,id',
+    //         'specialite' => 'required',
+    //         'prestations' => 'required|array',
+    //         'prestations.*.prestation_id' => 'required|exists:prestations,id',
+    //         'prestations.*.montant' => 'required|numeric|min:500',
+    //         'prestations.*.quantite' => 'required|integer|min:1',
+    //         'reduction' => 'required|numeric|min:0',
+    //         'montant_paye' => 'required|numeric|min:0',
+    //         'methode_paiement' => 'required|in:cash,mobile_money,virement'
+    //     ]);
+
+    //     // Génération du numéro de reçu
+    //     $numeroRecu = date('Ymd') . '-' . Str::upper(Str::random(6));
+
+    //     // Calcul du total
+    //     $totalPrestations = collect($request->prestations)->sum(function($item) {
+    //         return $item['montant'] * $item['quantite'];
+    //     });
+
+    //     // Ticket modérateur (assurance)
+    //     $tauxAssurance = $patient-> ?? 0;
+    //     $ticketModerateur = $totalPrestations * (1 - $tauxAssurance / 100);
+
+    //     // Montant à payer = ticket - réduction
+    //     $montantAPayer = max($ticketModerateur - $request->reduction, 0);
+
+    //     dd([
+    //         'montant_a_payer' => $montantAPayer,
+    //         'montant_paye' => $request->montant_paye
+    //     ]);
+    //     // Vérification
+    //     if ($request->montant_paye > $montantAPayer) {
+    //         return back()->withErrors(['montant_paye' => 'Le montant payé ne peut pas dépasser le montant à payer.'])->withInput();
+    //     }
+
+    //     // Déterminer les valeurs selon le rôle
+    //     $isCaissiere = Auth::user()->hasRole('Caissière');
+    //     $montantPaye = $isCaissiere ? $request->montant_paye : 0;
+    //     $resteAPayer = $montantAPayer - $montantPaye;
+
+    //     // Enregistrement de la consultation
+    //     $consultation = Consultation::create([
+    //         'user_id' => auth()->id(),
+    //         'patient_id' => $patient->id,
+    //         'medecin_id' => $request->medecin_id,
+    //         'total' => $totalPrestations,
+    //         'ticket_moderateur' => $ticketModerateur,
+    //         'reduction' => $request->reduction,
+    //         'montant_a_paye' => $montantAPayer,
+    //         'montant_paye' => $montantPaye,
+    //         'reste_a_payer' => $resteAPayer,
+    //         'date_consultation' => now(),
+    //         'numero_recu' => $numeroRecu,
+    //         'statut_paiement' => $isCaissiere && $resteAPayer == 0 ? 'payé' : ($isCaissiere ? 'partiel' : 'non_payé')
+    //     ]);
+
+    //     // Lier les prestations
+    //     foreach ($request->prestations as $prestation) {
+    //         $consultation->prestations()->attach($prestation['prestation_id'], [
+    //             'quantite' => $prestation['quantite'],
+    //             'montant' => $prestation['montant'],
+    //             'total' => $prestation['montant'] * $prestation['quantite']
+    //         ]);
+    //     }
+
+    //     // Enregistrement dans reglements SEULEMENT si l'utilisateur a le rôle "Caissière"
+    //     if ($isCaissiere && $montantPaye > 0) {
+    //         Reglement::create([
+    //             'consultation_id' => $consultation->id,
+    //             'user_id' => auth()->id(),
+    //             'montant' => $montantPaye,
+    //             'methode_paiement' => $request->methode_paiement,
+    //             'type' => 'entrée',
+    //             'date_reglement' => now(),
+    //         ]);
+    //     }
+
+    //     // Génération du PDF
+    //     $medecin = Medecin::find($request->medecin_id);
+    //     $prestations = $consultation->prestations;
+
+    //     $data = [
+    //         'consultation' => $consultation,
+    //         'patient' => $patient,
+    //         'medecin' => $medecin,
+    //         'prestations' => $prestations,
+    //         'date' => $consultation->date_consultation->format('d/m/Y H:i'),
+    //         'numeroRecu' => $numeroRecu,
+    //         'user' => auth()->user(),
+    //     ];
+
+    //     // $pdf = Pdf::loadView('dashboard.documents.recu_consultation', $data);
+
+    //     // // Création du dossier si inexistant
+    //     // $directory = 'consultations/'.$consultation->id;
+    //     // if (!Storage::exists($directory)) {
+    //     //     Storage::makeDirectory($directory);
+    //     // }
+
+    //     // // Chemin du fichier PDF
+    //     // $filename = 'recu-consultation-'.$numeroRecu.'.pdf';
+    //     // $path = $directory.'/'.$filename;
+
+    //     // // Enregistrement du PDF
+    //     // Storage::disk('public')->put($path, $pdf->output());
+
+    //     // $consultation->update([
+    //     //     'pdf_path' => $path
+    //     // ]);
+
+    //     return redirect()
+    //         ->route('patients.index', $patient)
+    //         ->with([
+    //             'success' => 'Consultation créée avec succès',
+    //             //'pdf_url' => Storage::url($path)
+    //         ]);
+    // }
     public function store(Request $request, Patient $patient)
     {
         // Vérification des permissions de base
@@ -38,6 +163,7 @@ class ConsultationController extends Controller
             abort(403, 'Accès non autorisé.');
         }
 
+        // Validation du formulaire, y compris le taux pour chaque prestation
         $request->validate([
             'medecin_id' => 'required|exists:medecins,id',
             'specialite' => 'required',
@@ -45,6 +171,7 @@ class ConsultationController extends Controller
             'prestations.*.prestation_id' => 'required|exists:prestations,id',
             'prestations.*.montant' => 'required|numeric|min:500',
             'prestations.*.quantite' => 'required|integer|min:1',
+            'prestations.*.taux' => 'required|numeric|min:0|max:100',
             'reduction' => 'required|numeric|min:0',
             'montant_paye' => 'required|numeric|min:0',
             'methode_paiement' => 'required|in:cash,mobile_money,virement'
@@ -53,20 +180,22 @@ class ConsultationController extends Controller
         // Génération du numéro de reçu
         $numeroRecu = date('Ymd') . '-' . Str::upper(Str::random(6));
 
-        // Calcul du total
-        $totalPrestations = collect($request->prestations)->sum(function($item) {
-            return $item['montant'] * $item['quantite'];
-        });
+        // Calcul du total et du ticket modérateur selon le taux de chaque prestation
+        $totalPrestations = 0;
+        $totalTicketModerateur = 0;
 
-        // Ticket modérateur (assurance)
-        $tauxAssurance = $patient->assurance->taux ?? 0;
-        $ticketModerateur = $totalPrestations * (1 - $tauxAssurance / 100);
+        foreach ($request->prestations as $prestation) {
+            $ligneTotal = $prestation['montant'] * $prestation['quantite'];
+            $totalPrestations += $ligneTotal;
+            $taux = isset($prestation['taux']) ? floatval($prestation['taux']) : 0;
+            $totalTicketModerateur += $ligneTotal * (1 - $taux / 100);
+        }
 
-        // Montant à payer = ticket - réduction
-        $montantAPayer = max($ticketModerateur - $request->reduction, 0);
+        // Montant à payer = ticket modérateur - réduction
+        $montantAPayer = max($totalTicketModerateur - $request->reduction, 0);
 
-        // Vérification
-        if ($request->montant_paye > $montantAPayer) {
+        // Vérification du montant payé (arrondi pour éviter les bugs de flottants)
+        if (round($request->montant_paye, 2) > round($montantAPayer, 2)) {
             return back()->withErrors(['montant_paye' => 'Le montant payé ne peut pas dépasser le montant à payer.'])->withInput();
         }
 
@@ -81,21 +210,21 @@ class ConsultationController extends Controller
             'patient_id' => $patient->id,
             'medecin_id' => $request->medecin_id,
             'total' => $totalPrestations,
-            'ticket_moderateur' => $ticketModerateur,
+            'ticket_moderateur' => $totalTicketModerateur,
             'reduction' => $request->reduction,
             'montant_a_paye' => $montantAPayer,
             'montant_paye' => $montantPaye,
             'reste_a_payer' => $resteAPayer,
             'date_consultation' => now(),
             'numero_recu' => $numeroRecu,
-            'statut_paiement' => $isCaissiere && $resteAPayer == 0 ? 'payé' : ($isCaissiere ? 'partiel' : 'non_payé')
         ]);
 
-        // Lier les prestations
+        // Lier les prestations avec le taux dans la table pivot
         foreach ($request->prestations as $prestation) {
             $consultation->prestations()->attach($prestation['prestation_id'], [
                 'quantite' => $prestation['quantite'],
                 'montant' => $prestation['montant'],
+                'taux' => $prestation['taux'],
                 'total' => $prestation['montant'] * $prestation['quantite']
             ]);
         }
@@ -112,35 +241,26 @@ class ConsultationController extends Controller
             ]);
         }
 
-        // Génération du PDF
-        $medecin = Medecin::find($request->medecin_id);
-        $prestations = $consultation->prestations;
-
-        $data = [
-            'consultation' => $consultation,
-            'patient' => $patient,
-            'medecin' => $medecin,
-            'prestations' => $prestations,
-            'date' => $consultation->date_consultation->format('d/m/Y H:i'),
-            'numeroRecu' => $numeroRecu,
-            'user' => auth()->user(),
-        ];
-
+        // Génération du PDF (décommenter si besoin)
+        // $medecin = Medecin::find($request->medecin_id);
+        // $prestations = $consultation->prestations;
+        // $data = [
+        //     'consultation' => $consultation,
+        //     'patient' => $patient,
+        //     'medecin' => $medecin,
+        //     'prestations' => $prestations,
+        //     'date' => $consultation->date_consultation->format('d/m/Y H:i'),
+        //     'numeroRecu' => $numeroRecu,
+        //     'user' => auth()->user(),
+        // ];
         // $pdf = Pdf::loadView('dashboard.documents.recu_consultation', $data);
-
-        // // Création du dossier si inexistant
         // $directory = 'consultations/'.$consultation->id;
         // if (!Storage::exists($directory)) {
         //     Storage::makeDirectory($directory);
         // }
-
-        // // Chemin du fichier PDF
         // $filename = 'recu-consultation-'.$numeroRecu.'.pdf';
         // $path = $directory.'/'.$filename;
-
-        // // Enregistrement du PDF
         // Storage::disk('public')->put($path, $pdf->output());
-
         // $consultation->update([
         //     'pdf_path' => $path
         // ]);
@@ -149,7 +269,7 @@ class ConsultationController extends Controller
             ->route('patients.index', $patient)
             ->with([
                 'success' => 'Consultation créée avec succès',
-                //'pdf_url' => Storage::url($path)
+                // 'pdf_url' => Storage::url($path)
             ]);
     }
 
@@ -178,10 +298,13 @@ class ConsultationController extends Controller
             return [
                 'prestation_id' => $prestation->id,
                 'montant' => $prestation->pivot->montant,
+                'taux' => $prestation->pivot->taux,
                 'quantite' => $prestation->pivot->quantite,
                 'total' => $prestation->pivot->total
             ];
         })->toArray();
+
+        //dd($prestationsExistantes);
 
         return view('dashboard.pages.consultation.edit', compact(
             'consultation',
@@ -220,12 +343,19 @@ class ConsultationController extends Controller
         $ticketModerateur = $totalPrestations * (1 - $tauxAssurance / 100);
         $montantAPayer = max($ticketModerateur - $request->reduction, 0);
 
+        dd([
+    'ticket moderateur' => $ticketModerateur,
+    'montant_a_paye' => $montantAPayer,
+    'paye' => $request->montant_paye,
+    
+]);
+
+
         // Vérification de cohérence
-        if ($request->montant_paye > $montantAPayer) {
-            return back()->withErrors([
-                'montant_paye' => 'Le montant payé ne peut pas dépasser le montant à payer.'
-            ])->withInput();
+        if (round($request->montant_paye, 2) > round($montantAPayer, 2)) {
+            return back()->withErrors(['montant_paye' => 'Le montant payé ne peut pas dépasser le montant à payer.'])->withInput();
         }
+
 
         // Calcul de la différence avec les anciens règlements
         $ancienTotalPaye = $consultation->reglements->sum('montant');
