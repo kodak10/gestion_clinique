@@ -44,24 +44,97 @@
                                 <td><span class="text-danger fw-bold">{{ number_format($consultation->reste_a_payer, 0, ',', ' ') }} FCFA</span></td>
                                 <td>{{ $consultation->created_at }}</td>
                                 
-                                <td>
+                              
+                                {{-- <td>
                                     <div class="btn-list flex-nowrap">
-                                        <button class="btn btn-sm btn-info" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#details-modal"
-                                            data-url="{{ route('reglements.details', ['type' => 'consultation', 'id' => $consultation->id]) }}">
-                                            Détails
-                                        </button>
-                                        <button class="btn btn-sm btn-success" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#paiement-modal"
-                                            data-type="consultation"
-                                            data-id="{{ $consultation->id }}"
-                                            data-montant="{{ $consultation->reste_a_payer }}">
-                                            Payer
-                                        </button>
+                                        <div class="dropdown">
+                                            <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">Actions</button>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                @if($consultation->pdf_path)
+                                                    <a class="dropdown-item" href="{{ Storage::url($consultation->pdf_path) }}" target="_blank">
+                                                        Réimprimer le reçu
+                                                    </a>
+                                                @endif
+                                                
+                                                <!-- Bouton Détails -->
+                                                <button class="dropdown-item" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#details-modal"
+                                                    data-url="{{ route('reglements.details', [
+                                                        'type' => $reglement->consultation_id ? 'consultation' : 'hospitalisation',
+                                                        'id' => $reglement->consultation_id ?? $reglement->hospitalisation_id
+                                                    ]) }}">
+                                                    Détails
+                                                </button>
+
+                                                <!-- Bouton Payer (si reste à payer) -->
+                                                @if(($reglement->consultation && $reglement->consultation->reste_a_payer > 0) || 
+                                                    ($reglement->hospitalisation && $reglement->hospitalisation->reste_a_payer > 0))
+                                                    <button class="dropdown-item" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#paiement-modal"
+                                                        data-type="{{ $reglement->consultation_id ? 'consultation' : 'hospitalisation' }}"
+                                                        data-id="{{ $reglement->consultation_id ?? $reglement->hospitalisation_id }}"
+                                                        data-montant="{{ $reglement->consultation->reste_a_payer ?? $reglement->hospitalisation->reste_a_payer }}">
+                                                        Payer
+                                                    </button>
+                                                @endif
+
+                                               
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td> --}}
+                                 <td>
+                                    <div class="btn-list flex-nowrap">
+                                        <div class="dropdown">
+                                            <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">Actions</button>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                @if($consultation->pdf_path)
+                                                    <a class="dropdown-item" href="{{ Storage::url($consultation->pdf_path) }}" target="_blank">
+                                                        Réimprimer le reçu
+                                                    </a>
+                                                @endif
+
+                                                <button class="dropdown-item detail-mouvement"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#modal-detail"
+                                                    data-patient="{{ $consultation->patient->nom }} {{ $consultation->patient->prenoms }}"
+                                                    data-date="{{ $consultation->created_at->format('d/m/Y H:i') }}"
+                                                    data-recus="{{ $consultation->numero_recu }}"
+                                                    data-total="{{ number_format($consultation->total, 0, ',', ' ') }}"
+                                                    data-reduction="{{ number_format($consultation->reduction, 0, ',', ' ') }}"
+                                                    data-ticket="{{ number_format($consultation->ticket_moderateur, 0, ',', ' ') }}"
+                                                    data-encaisser="{{ number_format($consultation->reglements->montant, 0, ',', ' ') }}"
+                                                    data-prestations="{{ json_encode($consultation->prestations->map(function($item) {
+                                                        return [
+                                                            'libelle' => $item->libelle,
+                                                            'quantite' => $item->pivot->quantite,
+                                                            'montant' => number_format($item->pivot->montant, 0, ',', ' '),
+                                                            'total' => number_format($item->pivot->total, 0, ',', ' ')
+                                                        ];
+                                                    })) }}"
+                                                    data-caissier="{{ $consultation->user->name }}">
+                                                    Détails
+                                                </button>
+
+                                                @if($consultation->reste_a_payer > 0)
+                                                    <button class="dropdown-item"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#paiement-modal"
+                                                        data-type="consultation"
+                                                        data-id="{{ $consultation->id }}"
+                                                        data-montant="{{ $consultation->reste_a_payer }}">
+                                                        Payer
+                                                    </button>
+                                                @endif
+
+                                               
+                                            </div>
+                                        </div>
                                     </div>
                                 </td>
+
                             </tr>
                             @endforeach
 
@@ -79,24 +152,59 @@
                                 </td>
                                 <td><span class="text-danger fw-bold">{{ number_format($hospitalisation->reste_a_payer, 0, ',', ' ') }} FCFA</span></td>
                                 <td>{{ $hospitalisation->created_at }}</td>
-                                <td>
+                                {{-- <td>
                                     <div class="btn-list flex-nowrap">
-                                        <button class="btn btn-sm btn-info" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#details-modal"
-                                            data-url="{{ route('reglements.details', ['type' => 'hospitalisation', 'id' => $hospitalisation->id]) }}">
-                                            Détails
-                                        </button>
-                                        <button class="btn btn-sm btn-success" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#paiement-modal"
-                                            data-type="hospitalisation"
-                                            data-id="{{ $hospitalisation->id }}"
-                                            data-montant="{{ $hospitalisation->reste_a_payer }}">
-                                            Payer
-                                        </button>
+                                        <div class="dropdown">
+                                            <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">Actions</button>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                @if($reglement->consultation && $reglement->consultation->pdf_path)
+                                                    <a class="dropdown-item" href="{{ Storage::url($reglement->consultation->pdf_path) }}" target="_blank">
+                                                        Réimprimer le reçu
+                                                    </a>
+                                                @endif
+                                                
+                                                <!-- Bouton Détails -->
+                                                <button class="dropdown-item detail-mouvement" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#modal-detail"
+                                                    data-patient="{{ $reglement->consultation->patient->nom ?? $reglement->hospitalisation->patient->nom }} {{ $reglement->consultation->patient->prenoms ?? $reglement->hospitalisation->patient->prenoms }}"
+                                                    data-date="{{ $reglement->created_at->format('d/m/Y H:i') }}"
+                                                    data-recus="{{ $reglement->consultation->numero_recu ?? 'HOSP-'.$reglement->hospitalisation->id }}"
+                                                    data-total="{{ number_format($reglement->consultation->total ?? $reglement->hospitalisation->total, 0, ',', ' ') }}"
+                                                    data-reduction="{{ number_format($reglement->consultation->reduction ?? $reglement->hospitalisation->reduction, 0, ',', ' ') }}"
+                                                    data-ticket="{{ number_format($reglement->consultation->ticket_moderateur ?? $reglement->hospitalisation->ticket_moderateur, 0, ',', ' ') }}"
+                                                    data-encaisser="{{ number_format($reglement->montant, 0, ',', ' ') }}"
+                                                    data-prestations="{{ json_encode($reglement->consultation ? $reglement->consultation->prestations->map(function($item) {
+                                                        return [
+                                                            'libelle' => $item->libelle,
+                                                            'quantite' => $item->pivot->quantite,
+                                                            'montant' => number_format($item->pivot->montant, 0, ',', ' '),
+                                                            'total' => number_format($item->pivot->total, 0, ',', ' ')
+                                                        ];
+                                                    }) : []) }}"
+                                                    data-caissier="{{ $reglement->user->name }}">
+                                                    Détails
+                                                </button>
+
+                                                <!-- Bouton Payer (si reste à payer) -->
+                                                @if(($reglement->consultation && $reglement->consultation->reste_a_payer > 0) || 
+                                                    ($reglement->hospitalisation && $reglement->hospitalisation->reste_a_payer > 0))
+                                                    <button class="dropdown-item" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#paiement-modal"
+                                                        data-type="{{ $reglement->consultation_id ? 'consultation' : 'hospitalisation' }}"
+                                                        data-id="{{ $reglement->consultation_id ?? $reglement->hospitalisation_id }}"
+                                                        data-montant="{{ $reglement->consultation->reste_a_payer ?? $reglement->hospitalisation->reste_a_payer }}">
+                                                        Payer
+                                                    </button>
+                                                @endif
+
+                                               
+                                            </div>
+                                        </div>
                                     </div>
-                                </td>
+                                </td> --}}
+
                             </tr>
                             @endforeach
                         </tbody>
@@ -107,26 +215,78 @@
     </div>
 </div>
 
-<!-- Modal pour les détails -->
-<div class="modal modal-blur fade" id="details-modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+<!-- Modal Detail Mouvement -->
+<div class="modal modal-blur fade" id="modal-detail" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Détails</h5>
+                <h5 class="modal-title">Détails du mouvement</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Le contenu sera chargé via JavaScript -->
-                <div class="text-center py-5">
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Chargement...</span>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Patient</label>
+                        <input type="text" class="form-control" id="detail-patient" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Date & Heure</label>
+                        <input type="text" class="form-control" id="detail-date" readonly>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Numéro de reçu</label>
+                        <input type="text" class="form-control" id="detail-recus" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Caissier</label>
+                        <input type="text" class="form-control" id="detail-caissier" readonly>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h3 class="card-title">Prestations effectuées</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-vcenter">
+                            <thead>
+                                <tr>
+                                    <th>Prestation</th>
+                                    <th>Quantité</th>
+                                    <th>Prix unitaire</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detail-prestations">
+                                <!-- Les prestations seront ajoutées ici par JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <label class="form-label">Montant Total</label>
+                        <input type="text" class="form-control" id="detail-montant" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Ticket modérateur</label>
+                        <input type="text" class="form-control" id="detail-ticket" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Réduction</label>
+                        <input type="text" class="form-control" id="detail-reduction" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Montant Encaissé</label>
+                        <input type="text" class="form-control" id="detail-encaisser" readonly>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">
-                    Fermer
-                </button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
             </div>
         </div>
     </div>
@@ -185,40 +345,45 @@
 
 <script>
 $(document).ready(function() {
-    // Gestion du modal de détails
-    $('#details-modal').on('show.bs.modal', function(event) {
-        const button = $(event.relatedTarget);
-        const url = button.data('url');
-        const modal = $(this);
-        
-        modal.find('.modal-body').load(url, function() {
-            // Contenu chargé
-        });
-    });
+    // Gestion du modal de détail
+    $('.detail-mouvement').on('click', function() {
+        const patient = $(this).data('patient');
+        const date = $(this).data('date');
+        const recus = $(this).data('recus');
+        const total = $(this).data('total');
+        const reduction = $(this).data('reduction');
+        const ticket = $(this).data('ticket');
+        const encaisser = $(this).data('encaisser');
+        const prestations = $(this).data('prestations');
+        const caissier = $(this).data('caissier');
 
-    // Gestion du modal de paiement
-    $('#paiement-modal').on('show.bs.modal', function(event) {
-        const button = $(event.relatedTarget);
-        const type = button.data('type');
-        const id = button.data('id');
-        const montant = button.data('montant');
-        const modal = $(this);
-        
-        modal.find('#paiement-type').val(type);
-        modal.find('#paiement-id').val(id);
-        modal.find('#montant-restant').val(formatMoney(montant));
-        modal.find('#montant-paye').val(montant);
-    });
+        $('#detail-patient').val(patient);
+        $('#detail-date').val(date);
+        $('#detail-recus').val(recus);
+        $('#detail-montant').val(total + ' FCFA');
+        $('#detail-reduction').val(reduction + ' FCFA');
+        $('#detail-ticket').val(ticket + ' FCFA');
+        $('#detail-caissier').val(caissier);
+        $('#detail-encaisser').val(encaisser + ' FCFA');
 
-    // Fonction de formatage monétaire
-    function formatMoney(amount) {
-        return new Intl.NumberFormat('fr-FR', { 
-            style: 'currency', 
-            currency: 'XOF',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        }).format(amount);
-    }
+        // Remplir le tableau des prestations
+        let prestationsHtml = '';
+        if (prestations && prestations.length > 0) {
+            prestations.forEach(prestation => {
+                prestationsHtml += `
+                    <tr>
+                        <td>${prestation.libelle}</td>
+                        <td>${prestation.quantite}</td>
+                        <td>${prestation.montant} FCFA</td>
+                        <td>${prestation.total} FCFA</td>
+                    </tr>
+                `;
+            });
+        } else {
+            prestationsHtml = '<tr><td colspan="4">Aucune prestation trouvée</td></tr>';
+        }
+        $('#detail-prestations').html(prestationsHtml);
+    });
 });
 </script>
 

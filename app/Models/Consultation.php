@@ -37,7 +37,7 @@ class Consultation extends Model
     public function prestations()
     {
         return $this->belongsToMany(Prestation::class, 'consultation_details')
-            ->withPivot('quantite', 'montant', 'total')
+            ->withPivot('quantite', 'montant', 'taux', 'total')
             ->withTimestamps();
     }
 

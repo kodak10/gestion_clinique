@@ -89,6 +89,9 @@ Route::middleware(['auth',])->group(function () {
 
     Route::get('/comptabilite/journalcaisse', [ReglementController::class, 'journalCaisse'])->name('comptabilite.journalcaisse');
 
+    Route::get('/caisse/print', [ReglementController::class, 'printJournal'])
+    ->name('caisse.print');
+    
     Route::resource('reglements', ReglementController::class);
 
     Route::get('/reglements/{type}/{id}/details', [ReglementController::class, 'showDetails'])
@@ -112,6 +115,8 @@ Route::middleware(['auth',])->group(function () {
     Route::get('/aides', function () {
         return view('dashboard.pages.help');
     })->name('aide');
+
+    
 
 });
 

@@ -54,7 +54,7 @@
                             
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-vcenter" id="consultations-table">
+                            <table class="table table-vcenter" id="consultations-table" >
                                 <thead>
                                     <tr>
                                         <th class="w-1"></th>
@@ -109,12 +109,8 @@ data-encaisser="{{ number_format(collect($consultation->reglements)->sum('montan
                                         <td>{{ $consultation->date_consultation->format('d/m/Y H:i') }}</td>
                                         <td>{{ $consultation->medecin->nom_complet }}</td>
                                         <td>{{ number_format($consultation->montant_a_paye, 0, ',', ' ') }} FCFA</td>
-                                        <td>
-                                            @if(is_numeric($consultation->reglements->montant ?? null))
-                                                {{ number_format($consultation->reglements->montant, 0, ',', ' ') }} FCFA
-                                            @else
-                                                N/A
-                                            @endif
+                                       <td>
+                                            {{ number_format(optional($consultation->reglements)->sum('montant') ?? 0, 0, ',', ' ') }} FCFA
                                         </td>
 
 

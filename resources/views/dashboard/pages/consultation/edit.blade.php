@@ -230,13 +230,18 @@
                         <div class="card-body">
                             <div class="mb-3">
                                 <label class="form-label">Montant Perçu <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control @error('montant_paye') is-invalid @enderror" 
-                                    id="payer" name="montant_paye" 
-                                    value="{{ old('montant_paye', $consultation->montant_paye) }}" required>
+                                <input type="number"
+                                    class="form-control @error('montant_paye') is-invalid @enderror"
+                                    id="payer"
+                                    name="montant_paye"
+                                    value="{{ old('montant_paye', 0) }}"
+                                    required>
                                 @error('montant_paye')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
+
                         </div>
                     </div>
                 </div>
@@ -336,7 +341,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-<script>
+{{-- <script>
 $(document).ready(function() {
     const medecinSelect = document.getElementById('medecin-select');
     const specialiteInput = document.getElementById('specialite-input');
@@ -360,7 +365,7 @@ $(document).ready(function() {
                 });
                 $(this).find('.montant').val(0);
                 $(this).find('.quantite').val(1);
-                $(this).find('.taux').val(0);
+                $(this).find('.taux').val('{{ $patient->taux_couverture ?? 0 }}');
                 $(this).find('.total').val(0);
             });
         },
@@ -408,26 +413,24 @@ $(document).ready(function() {
             }
         });
 
-    // Fonction de calcul pour une ligne : TOTAL AVEC TAUX
+    // Calcul du total de chaque ligne (AVEC taux)
     function calculerTotalLigne(ligne) {
         const qte = parseFloat(ligne.find('.quantite').val()) || 0;
         const montant = parseFloat(ligne.find('.montant').val()) || 0;
         const taux = parseFloat(ligne.find('.taux').val()) || 0;
 
-        // Le total de la ligne tient compte du taux
         const totalAvecTaux = (qte * montant * (1 - taux / 100)).toFixed(2);
 
         ligne.find('.total').val(totalAvecTaux);
         recalculerTotauxGlobaux();
     }
 
-    // Fonction de recalcul global
+    // Calcul global
     function recalculerTotauxGlobaux() {
         let totalPrestations = 0;
         let ticketModerateur = 0;
 
         $('[data-repeater-item]').each(function() {
-            // On additionne les totaux déjà calculés (qui sont déjà avec taux)
             const total = parseFloat($(this).find('.total').val()) || 0;
             totalPrestations += total;
         });
@@ -448,9 +451,144 @@ $(document).ready(function() {
         $('#a-payer').data('last-value', montantAPayer.toFixed(2));
     }
 
+    $('[data-repeater-item]').each(function() {
+        calculerTotalLigne($(this));
+    });
+
+    @if(old('prestations'))
+        recalculerTotauxGlobaux();
+    @endif
+});
+</script> --}}
+
+<script>
+$(document).ready(function() {
+    const medecinSelect = document.getElementById('medecin-select');
+    const specialiteInput = document.getElementById('specialite-input');
+
+    medecinSelect.addEventListener('change', function () {
+        const selectedOption = this.options[this.selectedIndex];
+        const specialite = selectedOption.getAttribute('data-specialite');
+        specialiteInput.value = specialite || '';
+    });
+
+    $('#a-payer').data('last-value', parseFloat($('#a-payer').val()) || 0);
+
+    $('.prestations-repeater').repeater({
+        initEmpty: false,
+        isFirstItemUndeletable: true,
+        show: function() {
+            $(this).slideDown(function() {
+                $(this).find('.prestation-select').select2({
+                    width: '100%',
+                    placeholder: "Sélectionner une prestation"
+                });
+                $(this).find('.montant').val(0);
+                $(this).find('.quantite').val(1);
+                $(this).find('.taux').val('{{ $patient->taux_couverture ?? 0 }}');
+                $(this).find('.total').val(0);
+            });
+        },
+        hide: function(deleteElement) {
+            if ($('[data-repeater-item]').length > 1) {
+                $(this).slideUp(deleteElement, function() {
+                    $(this).remove();
+                    recalculerTotauxGlobaux();
+                });
+            }
+        },
+        ready: function(setIndexes) {
+            $('.prestation-select').select2();
+            recalculerTotauxGlobaux();
+            $('[data-repeater-delete]').each(function() {
+                if ($('[data-repeater-item]').length === 1) {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+
+    // Gestion des événements
+    $(document)
+        .on('change', '.prestation-select', function() {
+            const selected = $(this).find('option:selected');
+            const montant = selected.data('montant') || 0;
+            const ligne = $(this).closest('[data-repeater-item]');
+            ligne.find('.montant').val(montant);
+            calculerTotalLigne(ligne);
+        })
+        .on('input', '.montant, .quantite, .taux', function() {
+            const ligne = $(this).closest('[data-repeater-item]');
+            calculerTotalLigne(ligne);
+        })
+        .on('input', '#reduction, #a-payer, #payer', recalculerTotauxGlobaux)
+        .on('click', '[data-repeater-delete]', function() {
+            if ($('[data-repeater-item]').length === 2) {
+                $('[data-repeater-delete]').hide();
+            }
+        })
+        .on('click', '[data-repeater-create]', function() {
+            if ($('[data-repeater-item]').length >= 1) {
+                $('[data-repeater-delete]').show();
+            }
+        });
+
+    // Calcul du total de chaque ligne (SANS taux)
+    function calculerTotalLigne(ligne) {
+        const qte = parseFloat(ligne.find('.quantite').val()) || 0;
+        const montant = parseFloat(ligne.find('.montant').val()) || 0;
+        const total = Math.round(qte * montant);
+
+        ligne.find('.total').val(total);
+        recalculerTotauxGlobaux();
+    }
+
+    // Calcul global
+    function recalculerTotauxGlobaux() {
+        let totalPrestations = 0;
+        let totalTicketModerateur = 0;
+
+        $('[data-repeater-item]').each(function() {
+            const montant = parseFloat($(this).find('.montant').val()) || 0;
+            const quantite = parseFloat($(this).find('.quantite').val()) || 0;
+            const taux = parseFloat($(this).find('.taux').val()) || 0;
+
+            // Total prestation = prix * quantité (SANS taux)
+            //const total = montant * quantite;
+            const total = (quantite * montant * (1 - taux / 100));
+
+            const totalNet = montant * quantite;
+
+            $(this).find('.total').val(Math.round(total));
+
+
+            totalPrestations += totalNet;
+
+            // Ticket modérateur = total * (1 - taux/100)
+            totalTicketModerateur += total ;
+        });
+
+        const reduction = parseFloat($('#reduction').val()) || 0;
+        const montantAPayer = Math.max(0, totalTicketModerateur - reduction);
+
+        $('#total-prestations').val(Math.round(totalPrestations));
+        $('#ticket-moderateur').val(Math.round(totalTicketModerateur));
+        $('#a-payer').val(Math.round(montantAPayer));
+
+
+        const payerActuel = parseFloat($('#payer').val()) || 0;
+        if (payerActuel === 0 || payerActuel === parseFloat($('#a-payer').data('last-value'))) {
+            $('#payer').val(Math.round(montantAPayer));
+
+        }
+        $('#a-payer').data('last-value', Math.round(montantAPayer));
+
+    }
+
     @if(old('prestations'))
         recalculerTotauxGlobaux();
     @endif
 });
 </script>
+
 @endpush

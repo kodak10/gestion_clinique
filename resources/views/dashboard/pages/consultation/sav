@@ -3,10 +3,9 @@
 @section('content')
 <div class="page-header d-print-none">
     <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <h2 class="page-title">Nouvelle Consultation</h2>
-            </div>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h2 class="page-title m-0">Modifier Consultation</h2>
+            <a href="javascript:history.back()" class="btn bg-gray-500">Retour</a>
         </div>
     </div>
 </div>
@@ -22,9 +21,10 @@
                 </ul>
             </div>
         @endif
-        <form id="consultation-form" action="{{ route('consultations.store', $patient) }}" method="POST">
+        <form id="consultation-form" action="{{ route('consultations.update', $consultation) }}" method="POST">
             @csrf
-            <input type="hidden" name="numero_recu" id="numero-recu">
+            @method('PUT')
+            <input type="hidden" name="numero_recu" value="{{ $consultation->numero_recu }}">
             <div class="row">
                 <!-- Carte Info Patient (Gauche) -->
                 <div class="col-md-6">
@@ -72,7 +72,9 @@
                                             @foreach($categorie_medecins as $categorie_medecin)
                                                 <optgroup label="{{ $categorie_medecin->nom }}">
                                                     @foreach($categorie_medecin->medecins as $medecin)
-                                                        <option value="{{ $medecin->id }}" data-specialite="{{ $categorie_medecin->nom }}" {{ old('medecin_id') == $medecin->id ? 'selected' : '' }}>
+                                                        <option value="{{ $medecin->id }}" 
+                                                            data-specialite="{{ $categorie_medecin->nom }}" 
+                                                            {{ $consultation->medecin_id == $medecin->id ? 'selected' : '' }}>
                                                             {{ $medecin->nom_complet }}
                                                         </option>
                                                     @endforeach
@@ -87,7 +89,9 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label class="form-label">Spécialité</label>
-                                        <input type="text" class="form-control @error('specialite') is-invalid @enderror" id="specialite-input" name="specialite" value="{{ old('specialite') }}" readonly>
+                                        <input type="text" class="form-control @error('specialite') is-invalid @enderror" 
+                                            id="specialite-input" name="specialite" 
+                                            value="{{ $consultation->medecin->specialite->nom }}" readonly>
                                         @error('specialite')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -104,86 +108,52 @@
                         <div class="card-body">
                             <div class="prestations-repeater">
                                 <div data-repeater-list="prestations">
-                                    @if(old('prestations'))
-                                        @foreach(old('prestations') as $index => $prestation)
-                                            <div data-repeater-item class="mb-3 border-bottom pb-3">
-                                                <div class="row mt-2">
-                                                    <div class="col-md-3">
-                                                        <select class="form-control prestation-select @error('prestations.'.$index.'.prestation_id') is-invalid @enderror" name="prestation_id">
-                                                            <option value="">Sélectionner une prestation</option>
-                                                            @foreach($categories as $categorie)
-                                                                <optgroup label="{{ $categorie->nom }}">
-                                                                    @foreach($categorie->prestations as $prest)
-                                                                        <option value="{{ $prest->id }}" data-montant="{{ $prest->montant }}" {{ $prestation['prestation_id'] == $prest->id ? 'selected' : '' }}>
-                                                                            {{ $prest->libelle }}
-                                                                        </option>
-                                                                    @endforeach
-                                                                </optgroup>
-                                                            @endforeach
-                                                        </select>
-                                                        @error('prestations.'.$index.'.prestation_id')
-                                                            <div class="invalid-feedback">{{ $message }}</div>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <input type="number" class="form-control montant @error('prestations.'.$index.'.montant') is-invalid @enderror" name="montant" value="{{ $prestation['montant'] ?? 0 }}">
-                                                        @error('prestations.'.$index.'.montant')
-                                                            <div class="invalid-feedback">{{ $message }}</div>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <input type="number" class="form-control quantite @error('prestations.'.$index.'.quantite') is-invalid @enderror" name="quantite" min="1" value="{{ $prestation['quantite'] ?? 1 }}">
-                                                        @error('prestations.'.$index.'.quantite')
-                                                            <div class="invalid-feedback">{{ $message }}</div>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <input type="number" class="form-control taux @error('prestations.'.$index.'.taux') is-invalid @enderror" name="taux" min="0" max="100"
-                                                            value="{{ $prestation['taux'] ?? ($patient->taux_couverture ?? 0) }}">
-                                                        @error('prestations.'.$index.'.taux')
-                                                            <div class="invalid-feedback">{{ $message }}</div>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <input type="number" class="form-control total" name="total" value="{{ ($prestation['montant'] ?? 0) * ($prestation['quantite'] ?? 1) }}" readonly>
-                                                    </div>
-                                                    <div class="col-md-1">
-                                                        <button type="button" data-repeater-delete class="btn btn-danger btn-sm">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    @else
+                                    @foreach($prestationsExistantes as $index => $prestation)
                                         <div data-repeater-item class="mb-3 border-bottom pb-3">
                                             <div class="row mt-2">
                                                 <div class="col-md-3">
-                                                    <select class="form-control prestation-select" name="prestation_id">
+                                                    <select class="form-control prestation-select @error('prestations.'.$index.'.prestation_id') is-invalid @enderror" name="prestation_id">
                                                         <option value="">Sélectionner une prestation</option>
                                                         @foreach($categories as $categorie)
                                                             <optgroup label="{{ $categorie->nom }}">
-                                                                @foreach($categorie->prestations as $prestation)
-                                                                    <option value="{{ $prestation->id }}" data-montant="{{ $prestation->montant }}">
-                                                                        {{ $prestation->libelle }}
+                                                                @foreach($categorie->prestations as $prest)
+                                                                    <option value="{{ $prest->id }}" 
+                                                                        data-montant="{{ $prest->montant }}" 
+                                                                        {{ $prestation['prestation_id'] == $prest->id ? 'selected' : '' }}>
+                                                                        {{ $prest->libelle }}
                                                                     </option>
                                                                 @endforeach
                                                             </optgroup>
                                                         @endforeach
                                                     </select>
+                                                    @error('prestations.'.$index.'.prestation_id')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <input type="number" class="form-control montant" name="montant" value="0">
+                                                    <input type="number" class="form-control montant @error('prestations.'.$index.'.montant') is-invalid @enderror" 
+                                                        name="montant" value="{{ $prestation['montant'] }}">
+                                                    @error('prestations.'.$index.'.montant')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <input type="number" class="form-control quantite" name="quantite" min="1" value="1">
+                                                    <input type="number" class="form-control quantite @error('prestations.'.$index.'.quantite') is-invalid @enderror" 
+                                                        name="quantite" min="1" value="{{ $prestation['quantite'] }}">
+                                                    @error('prestations.'.$index.'.quantite')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <input type="number" class="form-control taux" name="taux" min="0" max="100"
-                                                        value="{{ $patient->taux_couverture ?? 0 }}">
+                                                    <input type="number" class="form-control taux @error('prestations.'.$index.'.taux') is-invalid @enderror" 
+                                                        name="taux" value="{{ $prestation['taux'] }}">
+                                                    @error('prestations.'.$index.'.taux')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <input type="number" class="form-control total" name="total" value="0" readonly>
+                                                    <input type="number" class="form-control total" name="total" 
+                                                        value="{{ $prestation['total'] }}" readonly>
                                                 </div>
                                                 <div class="col-md-1">
                                                     <button type="button" data-repeater-delete class="btn btn-danger btn-sm">
@@ -192,7 +162,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    @endif
+                                    @endforeach
                                 </div>
                                 
                                 <button type="button" data-repeater-create class="btn bg-primary-subtle text-primary">
@@ -212,7 +182,8 @@
                         <div class="card-body">
                             <div class="mb-3">
                                 <label class="form-label">Total Prestations</label>
-                                <input type="number" class="form-control" id="total-prestations" name="total" value="{{ old('total', 0) }}" readonly>
+                                <input type="number" class="form-control" id="total-prestations" name="total" 
+                                    value="{{ old('total', $consultation->total) }}" readonly>
                             </div>
                         </div>
                     </div>
@@ -222,7 +193,8 @@
                         <div class="card-body">
                             <div class="mb-3">
                                 <label class="form-label">Ticket Modérateur</label>
-                                <input type="number" class="form-control" id="ticket-moderateur" name="ticket_moderateur" value="{{ old('ticket_moderateur', 0) }}" readonly>
+                                <input type="number" class="form-control" id="ticket-moderateur" name="ticket_moderateur" 
+                                    value="{{ old('ticket_moderateur', $consultation->ticket_moderateur) }}" readonly>
                             </div>
                         </div>
                     </div>
@@ -232,7 +204,9 @@
                         <div class="card-body">
                             <div class="mb-3">
                                 <label class="form-label">Réduction</label>
-                                <input type="number" class="form-control @error('reduction') is-invalid @enderror" id="reduction" name="reduction" min="0" value="{{ old('reduction', 0) }}">
+                                <input type="number" class="form-control @error('reduction') is-invalid @enderror" 
+                                    id="reduction" name="reduction" min="0" 
+                                    value="{{ old('reduction', $consultation->reduction) }}">
                                 @error('reduction')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -245,7 +219,8 @@
                         <div class="card-body">
                             <div class="mb-3">
                                 <label class="form-label">À Payer</label>
-                                <input type="number" class="form-control" id="a-payer" name="montant_a_paye" value="{{ old('montant_a_paye', 0) }}" readonly>
+                                <input type="number" class="form-control" id="a-payer" name="montant_a_paye" 
+                                    value="{{ old('montant_a_paye', $consultation->montant_a_paye) }}" readonly>
                             </div>
                         </div>
                     </div>
@@ -255,7 +230,9 @@
                         <div class="card-body">
                             <div class="mb-3">
                                 <label class="form-label">Montant Perçu <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control @error('montant_paye') is-invalid @enderror" id="payer" name="montant_paye" value="{{ old('montant_paye') }}" required>
+                                <input type="number" class="form-control @error('montant_paye') is-invalid @enderror" 
+                                    id="payer" name="montant_paye" 
+                                    value="{{ old('montant_paye', $consultation->montant_paye) }}" required>
                                 @error('montant_paye')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -270,7 +247,8 @@
                 <div class="col-lg-3">
                     <div class="form-selectgroup form-selectgroup-boxes d-flex flex-column">
                         <label class="form-selectgroup-item flex-fill">
-                            <input type="radio" name="methode_paiement" value="cash" class="form-selectgroup-input" {{ old('methode_paiement', 'cash') == 'cash' ? 'checked' : '' }}>
+                            <input type="radio" name="methode_paiement" value="cash" class="form-selectgroup-input" 
+                                {{ $consultation->methode_paiement == 'cash' ? 'checked' : '' }}>
                             <div class="form-selectgroup-label d-flex align-items-center p-3">
                                 <div class="me-3">
                                     <span class="form-selectgroup-check"></span>
@@ -286,7 +264,8 @@
                 
                 <div class="col-lg-5">
                     <label class="form-selectgroup-item flex-fill">
-                        <input type="radio" name="methode_paiement" value="mobile_money" class="form-selectgroup-input" {{ old('methode_paiement') == 'mobile_money' ? 'checked' : '' }}>
+                        <input type="radio" name="methode_paiement" value="mobile_money" class="form-selectgroup-input" 
+                            {{ $consultation->methode_paiement == 'mobile_money' ? 'checked' : '' }}>
                         <div class="form-selectgroup-label d-flex align-items-center p-3">
                             <div class="me-3">
                                 <span class="form-selectgroup-check"></span>
@@ -300,7 +279,8 @@
                 </div>
                 <div class="col-lg-4">
                     <label class="form-selectgroup-item flex-fill">
-                        <input type="radio" name="methode_paiement" value="virement" class="form-selectgroup-input" {{ old('methode_paiement') == 'virement' ? 'checked' : '' }}>
+                        <input type="radio" name="methode_paiement" value="virement" class="form-selectgroup-input" 
+                            {{ $consultation->methode_paiement == 'virement' ? 'checked' : '' }}>
                         <div class="form-selectgroup-label d-flex align-items-center p-3">
                             <div class="me-3">
                                 <span class="form-selectgroup-check"></span>
@@ -317,7 +297,7 @@
             <!-- Bouton de soumission -->
             <div class="row mt-3">
                 <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Enregistrer la consultation</button>
+                    <button type="submit" class="btn btn-primary">Mettre à jour la consultation</button>
                 </div>
             </div>
         </form>
@@ -337,13 +317,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const montantPerçuInput = document.getElementById('payer');
 
     form.addEventListener('submit', function (e) {
-        e.preventDefault(); // Bloquer la soumission
-
+        e.preventDefault();
         const montant = parseFloat(montantPerçuInput.value || 0).toFixed(0);
 
         Swal.fire({
             title: 'Confirmation',
-            text: `Êtes-vous sûr de la facture de ${Number(montant).toLocaleString('fr-FR')} FCFA ?`,
+            text: `Êtes-vous sûr de l'encaissement de ${Number(montant).toLocaleString('fr-FR')} FCFA ?`,
             icon: 'question',
             showCancelButton: true,
             confirmButtonText: 'Oui, confirmer',
@@ -429,62 +408,51 @@ $(document).ready(function() {
             }
         });
 
-    // Calcul du total de chaque ligne (SANS taux)
+    // Calcul du total de chaque ligne (AVEC taux)
     function calculerTotalLigne(ligne) {
         const qte = parseFloat(ligne.find('.quantite').val()) || 0;
         const montant = parseFloat(ligne.find('.montant').val()) || 0;
-        const total = Math.round(qte * montant);
+        const taux = parseFloat(ligne.find('.taux').val()) || 0;
 
-        ligne.find('.total').val(total);
+        const totalAvecTaux = (qte * montant * (1 - taux / 100)).toFixed(2);
+
+        ligne.find('.total').val(totalAvecTaux);
         recalculerTotauxGlobaux();
     }
 
     // Calcul global
     function recalculerTotauxGlobaux() {
         let totalPrestations = 0;
-        let totalTicketModerateur = 0;
+        let ticketModerateur = 0;
 
         $('[data-repeater-item]').each(function() {
-            const montant = parseFloat($(this).find('.montant').val()) || 0;
-            const quantite = parseFloat($(this).find('.quantite').val()) || 0;
-            const taux = parseFloat($(this).find('.taux').val()) || 0;
-
-            // Total prestation = prix * quantité (SANS taux)
-            //const total = montant * quantite;
-            const total = (quantite * montant * (1 - taux / 100));
-
-            const totalNet = montant * quantite;
-
-            $(this).find('.total').val(Math.round(total));
-
-
-            totalPrestations += totalNet;
-
-            // Ticket modérateur = total * (1 - taux/100)
-            totalTicketModerateur += total ;
+            const total = parseFloat($(this).find('.total').val()) || 0;
+            totalPrestations += total;
         });
 
+        ticketModerateur = totalPrestations;
+
         const reduction = parseFloat($('#reduction').val()) || 0;
-        const montantAPayer = Math.max(0, totalTicketModerateur - reduction);
+        const montantAPayer = Math.max(0, ticketModerateur - reduction);
 
-        $('#total-prestations').val(Math.round(totalPrestations));
-        $('#ticket-moderateur').val(Math.round(totalTicketModerateur));
-        $('#a-payer').val(Math.round(montantAPayer));
-
+        $('#total-prestations').val(totalPrestations.toFixed(2));
+        $('#ticket-moderateur').val(ticketModerateur.toFixed(2));
+        $('#a-payer').val(montantAPayer.toFixed(2));
 
         const payerActuel = parseFloat($('#payer').val()) || 0;
         if (payerActuel === 0 || payerActuel === parseFloat($('#a-payer').data('last-value'))) {
-            $('#payer').val(Math.round(montantAPayer));
-
+            $('#payer').val(montantAPayer.toFixed(2));
         }
-        $('#a-payer').data('last-value', Math.round(montantAPayer));
-
+        $('#a-payer').data('last-value', montantAPayer.toFixed(2));
     }
+
+    $('[data-repeater-item]').each(function() {
+        calculerTotalLigne($(this));
+    });
 
     @if(old('prestations'))
         recalculerTotauxGlobaux();
     @endif
 });
 </script>
-
 @endpush
