@@ -53,7 +53,7 @@ class Consultation extends Model
 }
 public function reglements()
 {
-    return $this->hasOne(Reglement::class);
+    return $this->hasMany(Reglement::class);
 }
 
 

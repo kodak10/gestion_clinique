@@ -83,7 +83,7 @@
                                                             data-total="{{ number_format($consultation->total, 0, ',', ' ') }}"
                                                             data-reduction="{{ number_format($consultation->reduction, 0, ',', ' ') }}"
                                                             data-ticket="{{ number_format($consultation->montant_a_paye, 0, ',', ' ') }}"
-data-encaisser="{{ number_format(collect($consultation->reglements)->sum('montant'), 0, ',', ' ') }}"
+                                                            data-encaisser="{{ number_format($consultation->reglements->sum('montant'), 0, ',', ' ') }}"
                                                             data-prestations="{{ json_encode($consultation->details->map(function($item) {
                                                                 return [
                                                                     'libelle' => $item->prestation->libelle,
@@ -92,7 +92,9 @@ data-encaisser="{{ number_format(collect($consultation->reglements)->sum('montan
                                                                     'total' => number_format($item->total, 0, ',', ' ')
                                                                 ];
                                                             })) }}"
-                                                            data-caissier="{{ optional(optional(collect($consultation->reglements)->first())->user)->name ?? 'N/A' }}">
+                                                            data-caissier="{{ $consultation->user->name ?? '' }}">
+
+                                                            {{-- data-caissier="{{ optional(optional(collect($consultation->reglements)->first())->user)->name ?? 'N/A' }}"> --}}
                                                             Détail du mouvement
                                                         </a>
                                                         <a class="dropdown-item" href="{{ route('consultations.edit', $consultation->id) }}">Modifier</a>

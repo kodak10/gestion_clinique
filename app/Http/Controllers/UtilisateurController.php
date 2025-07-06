@@ -27,6 +27,7 @@ class UtilisateurController extends Controller
 
     public function store(Request $request)
     {
+        
         if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin'])) {
             abort(403, 'Accès non autorisé.');
         }
