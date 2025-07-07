@@ -19,6 +19,7 @@ class Hospitalisation extends Model
         'medecin_id',
         'total',
         'ticket_moderateur',
+        'caution',
         'reduction',
         'reduction_par',
         'montant_a_paye',

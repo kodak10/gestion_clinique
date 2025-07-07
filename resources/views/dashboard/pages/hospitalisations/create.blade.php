@@ -136,7 +136,7 @@
                                     <div class="col-lg-3">
                                         <div class="mb-3">
                                             <label class="form-label">Caution</label>
-                                            <input type="number" class="form-control @error('caution') is-invalid @enderror" name="caution" placeholder="Montant versé" value="{{ old('caution', $hospitalisation->caution ?? 0) }}">
+                                            <input type="number" class="form-control @error('caution') is-invalid @enderror" id="caution" name="caution" placeholder="Montant versé" value="{{ old('caution', $hospitalisation->caution ?? 0) }}">
                                             @error('caution')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -411,137 +411,6 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-{{-- <script>
-$(document).ready(function() {
-    // Initialisation Select2
-    $('.select2').select2({ width: '100%' });
-
-    // Repeater pour les autres frais
-    $('.autres-repeater').repeater({
-        initEmpty: false,
-        show: function() {
-            $(this).slideDown(function() {
-                $(this).find('.frais-select').select2({ width: '100%' }).trigger('change');
-            });
-        },
-        hide: function(deleteElement) {
-            $(this).slideUp(deleteElement, function() {
-                $(this).remove();
-                calculerTousLesTotaux();
-            });
-        },
-        ready: function(setIndexes) {
-            $('.frais-select').select2({ width: '100%' });
-        }
-    });
-
-    // Calcul du total d'une ligne (affiche la part patient)
-    function calculerTotalLigne(row) {
-        const prix = parseFloat(row.find('.prix').val()) || 0;
-        const quantite = parseInt(row.find('.quantite').val()) || 0;
-        const taux = parseFloat(row.find('.taux').val()) || 0;
-        const montantBrut = prix * quantite;
-        const partCouverture = (montantBrut * taux) / 100;
-        const partPatient = montantBrut - partCouverture;
-        row.find('.total').val(Math.round(partPatient));
-    }
-
-    // Calcul général
-    function calculerTousLesTotaux() {
-        // Pharmacie
-        const prixPharma = parseFloat($('[name="frais_pharmacie[prix]"]').val()) || 0;
-        const qtePharma = parseInt($('[name="frais_pharmacie[quantite]"]').val()) || 0;
-        const tauxPharma = parseFloat($('[name="frais_pharmacie[taux]"]').val()) || 100;
-        const montantPharma = prixPharma * qtePharma;
-        const partPharma = montantPharma - (montantPharma * tauxPharma / 100);
-
-        // Laboratoire
-        const prixLabo = parseFloat($('[name="frais_laboratoire[prix]"]').val()) || 0;
-        const qteLabo = parseInt($('[name="frais_laboratoire[quantite]"]').val()) || 0;
-        const tauxLabo = parseFloat($('[name="frais_laboratoire[taux]"]').val()) || 100;
-        const montantLabo = prixLabo * qteLabo;
-        const partLabo = montantLabo - (montantLabo * tauxLabo / 100);
-
-        // Autres frais
-        let totalAutres = 0;
-        $('.autres-repeater [data-repeater-item]').each(function() {
-            calculerTotalLigne($(this)); // Toujours recalculer la ligne
-            totalAutres += parseFloat($(this).find('.total').val()) || 0;
-        });
-
-        // Total général
-        const totalPrestations = partPharma + partLabo + totalAutres;
-        $('#total-prestations').val(Math.round(partPharma + partLabo + totalAutres));
-        $('#ticket-moderateur').val(Math.round(partPharma + partLabo + totalAutres));
-
-        // Réduction et à payer
-        const reduction = parseFloat($('#reduction').val()) || 0;
-        const montantAPayer = Math.max(0, totalPrestations - reduction);
-        $('#a-payer').val(Math.round(montantAPayer));
-    }
-
-    // Sélection d'un frais => maj prix unitaire
-    $(document).on('change', '.frais-select', function() {
-        const prix = $(this).find('option:selected').data('prix') || 0;
-        const row = $(this).closest('[data-repeater-item]');
-        row.find('.prix').val(prix);
-        calculerTotalLigne(row);
-        calculerTousLesTotaux();
-    });
-
-    // Saisie sur un champ de frais => recalcul
-    $(document).on('input', '.prix, .quantite, .taux, #reduction', function() {
-        let row = $(this).closest('[data-repeater-item]');
-        if (!row.length) row = $(this).closest('.mb-3');
-        calculerTotalLigne(row);
-        calculerTousLesTotaux();
-    });
-
-    // Initialisation au chargement
-    $('.autres-repeater [data-repeater-item]').each(function() {
-        calculerTotalLigne($(this));
-    });
-    calculerTousLesTotaux();
-
-    // Validation réduction
-    $('#reduction').on('change', function() {
-        if (parseFloat($(this).val()) > 0 && $('#reduction_par').val() === '') {
-            Swal.fire({ icon: 'error', title: 'Erreur', text: 'Veuillez indiquer qui a accordé la réduction' });
-            $(this).focus();
-        }
-    });
-
-    // Spécialité médecin
-    $('#medecin-select').on('change', function() {
-        const specialite = $(this).find('option:selected').data('specialite') || '';
-        const specialiteId = $(this).find('option:selected').data('specialite-id') || '';
-        $('#specialite-input').val(specialite);
-        $('#specialite-id').val(specialiteId);
-    });
-    if ($('#medecin-select').val()) $('#medecin-select').trigger('change');
-
-    // Soumission formulaire
-    $('#examenForm').on('submit', function(e) {
-        $('[data-name]').each(function () {
-            $(this).attr('name', $(this).data('name'));
-        });
-        const reduction = parseFloat($('#reduction').val()) || 0;
-        if (reduction > 0 && $('#reduction_par').val() === '') {
-            e.preventDefault();
-            Swal.fire({ icon: 'error', title: 'Erreur', text: 'Veuillez indiquer qui a accordé la réduction' });
-            return false;
-        }
-        const dateEntree = new Date($('[name="date_entree"]').val());
-        const dateSortie = new Date($('[name="date_sortie"]').val());
-        if (dateSortie && dateSortie < dateEntree) {
-            e.preventDefault();
-            Swal.fire({ icon: 'error', title: 'Erreur', text: 'La date de sortie ne peut pas être antérieure à la date d\'entrée' });
-            return false;
-        }
-        return true;
-    });
-});
-</script> --}}
 
 <script>
 $(document).ready(function() {
@@ -620,7 +489,8 @@ $(document).ready(function() {
 
         // Réduction et à payer
         const reduction = parseFloat($('#reduction').val()) || 0;
-        const montantAPayer = Math.max(0, ticketModerateur - reduction);
+        const caution = parseFloat($('#caution').val()) || 0;
+        const montantAPayer = Math.max(0, ticketModerateur - reduction - caution);
         $('#a-payer').val(Math.round(montantAPayer));
     }
 
@@ -634,7 +504,7 @@ $(document).ready(function() {
     });
 
     // Saisie sur un champ de frais => recalcul
-    $(document).on('input', '.prix, .quantite, .taux, #reduction', function() {
+    $(document).on('input', '.prix, .quantite, .taux, #reduction, #caution', function() {
         let row = $(this).closest('[data-repeater-item]');
         if (!row.length) row = $(this).closest('.mb-3');
         calculerTotalLigne(row);
