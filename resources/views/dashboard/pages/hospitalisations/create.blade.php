@@ -413,16 +413,70 @@
 
 
 <script>
+// $(document).ready(function() {
+//     // Initialisation Select2
+//     $('.select2').select2({ width: '100%' });
+
+//     // Repeater pour les autres frais
+//     $('.autres-repeater').repeater({
+//         initEmpty: false,
+//         // show: function() {
+//         //     $(this).slideDown(function() {
+//         //         $(this).find('.frais-select').select2({ width: '100%' }).trigger('change');
+//         //     });
+//         // },
+//         show: function() {
+//             $(this).slideDown(function() {
+//                 $(this).find('.frais-select').each(function() {
+//                     // Si Select2 déjà appliqué, on le détruit
+//                     if ($(this).hasClass("select2-hidden-accessible")) {
+//                         $(this).select2('destroy');
+//                     }
+//                     $(this).select2({ width: '100%' });
+//                 });
+//             });
+//         },
+
+//         hide: function(deleteElement) {
+//             $(this).slideUp(deleteElement, function() {
+//                 $(this).remove();
+//                 calculerTousLesTotaux();
+//             });
+//         },
+//         ready: function(setIndexes) {
+//             $('.frais-select').select2({ width: '100%' });
+//         }
+//     });
 $(document).ready(function() {
     // Initialisation Select2
     $('.select2').select2({ width: '100%' });
+
+    // Fonction pour initialiser Select2 sur un élément
+    function initSelect2(element) {
+        $(element).select2({
+            width: '100%',
+            placeholder: "Choisir un frais"
+        }).on('change', function() {
+            const prix = $(this).find('option:selected').data('prix') || 0;
+            const row = $(this).closest('[data-repeater-item]');
+            row.find('.prix').val(prix);
+            calculerTotalLigne(row);
+            calculerTousLesTotaux();
+        });
+    }
 
     // Repeater pour les autres frais
     $('.autres-repeater').repeater({
         initEmpty: false,
         show: function() {
-            $(this).slideDown(function() {
-                $(this).find('.frais-select').select2({ width: '100%' }).trigger('change');
+            const newItem = $(this).slideDown();
+            // Initialiser Select2 après la création de l'élément
+            initSelect2(newItem.find('.frais-select'));
+            
+            // Mettre à jour les noms des champs
+            newItem.find('[data-name]').each(function() {
+                const name = $(this).data('name').replace('__index__', newItem.index());
+                $(this).attr('name', name);
             });
         },
         hide: function(deleteElement) {
@@ -432,7 +486,12 @@ $(document).ready(function() {
             });
         },
         ready: function(setIndexes) {
-            $('.frais-select').select2({ width: '100%' });
+            // Initialiser Select2 pour les éléments existants
+            $('.frais-select').each(function() {
+                if (!$(this).hasClass('select2-hidden-accessible')) {
+                    initSelect2(this);
+                }
+            });
         }
     });
 
