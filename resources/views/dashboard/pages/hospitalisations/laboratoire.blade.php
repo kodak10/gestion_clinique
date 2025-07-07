@@ -88,15 +88,13 @@
                                         <div class="col-md-1">
                                             <input type="number" class="form-control quantite" name="quantite" value="{{ $med->pivot->quantite }}">
                                         </div>
-                                        <div class="col-md-1">
+                                        <div class="col-md-2">
                                             <input type="number" class="form-control taux" name="taux" value="{{ $patient->assurance->taux ?? '0' }}" min="0" max="100">
                                         </div>
                                         <div class="col-md-2">
                                             <input type="number" class="form-control total" name="total" value="{{ $med->pivot->total }}" readonly>
                                         </div>
-                                        <div class="col-md-1">
-                                            <input type="number" class="form-control ticket-moderateur" name="ticket_moderateur" value="{{ $med->pivot->total * (1 - ($patient->assurance->taux ?? 0) / 100) }}" readonly>
-                                        </div>
+                                        
                                         <div class="col-md-1">
                                             <button type="button" data-repeater-delete class="btn btn-danger btn-sm">
                                                 <i class="fas fa-trash"></i>
@@ -126,14 +124,11 @@
                                         <div class="col-md-1">
                                             <input type="number" class="form-control quantite" name="quantite" value="1" min="1">
                                         </div>
-                                        <div class="col-md-1">
+                                        <div class="col-md-2">
                                             <input type="number" class="form-control taux" name="taux" value="{{ $patient->assurance->taux ?? '0' }}" min="0" max="100">
                                         </div>
                                         <div class="col-md-2">
                                             <input type="number" class="form-control total" name="total" value="0" readonly>
-                                        </div>
-                                        <div class="col-md-1">
-                                            <input type="number" class="form-control ticket-moderateur" name="ticket_moderateur" value="0" readonly>
                                         </div>
                                         <div class="col-md-1">
                                             <button type="button" data-repeater-delete class="btn btn-danger btn-sm">

@@ -190,147 +190,143 @@
                             </div>
                             <div class="card-body">
                                 <div class="autres-repeater">
-                                    <div data-repeater-list="frais">
+    <div data-repeater-list="frais">
 
-                                        {{-- Ligne fixe : Pharmacie --}}
-                                        <div class="mb-3 border-bottom pb-3">
-                                            <div class="row align-items-end">
-                                                <div class="col-md-4">
-                                                    <label class="form-label">Libellé</label>
-                                                    <input type="text" class="form-control" value="Pharmacie" readonly>
-                                                    <input type="hidden" name="frais[0][frais_id]" value="2">
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <label class="form-label">Prix unitaire</label>
-                                                    <input type="number" class="form-control prix" name="frais[0][prix]" value="{{ $detailsPharmacie->first()->prix_unitaire ?? 0 }}" required readonly>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <label class="form-label">Quantité</label>
-                                                    <input type="number" class="form-control quantite" name="frais[0][quantite]" value="{{ $detailsPharmacie->first()->quantite ?? 1 }}" min="1" required readonly>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <label class="form-label">Taux (%)</label>
-                                                    <input type="number" class="form-control taux" name="frais[0][taux]" value="{{ $patient->taux_couverture }}" min="0" max="100" required>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <label class="form-label">Total</label>
-                                                    <input type="number" class="form-control total" name="frais[0][total]" value="{{ $detailsPharmacie->first()->total ?? 0 }}" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
+        {{-- Ligne fixe : Pharmacie --}}
+        <div class="mb-3 border-bottom pb-3">
+            <div class="row align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label">Libellé</label>
+                    <input type="text" class="form-control" value="Pharmacie" readonly>
+                    <input type="hidden" name="frais_pharmacie[frais_id]" value="2">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Prix unitaire</label>
+                    <input type="number" class="form-control prix" name="frais_pharmacie[prix]" value="{{ $detailsPharmacie->first()->prix_unitaire ?? 0 }}" readonly>
+                </div>
+                <div class="col-md-1">
+                    <label class="form-label">Quantité</label>
+                    <input type="number" class="form-control quantite" name="frais_pharmacie[quantite]" value="{{ $detailsPharmacie->first()->quantite ?? 1 }}" readonly>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Taux (%)</label>
+                    <input type="number" class="form-control taux" name="frais_pharmacie[taux]" value="100" readonly>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Total</label>
+                    <input type="number" class="form-control total" name="frais_pharmacie[total]" value="{{ $detailsPharmacie->first()->total ?? 0 }}" readonly>
+                </div>
+            </div>
+        </div>
 
-                                        {{-- Ligne fixe : Laboratoire --}}
-                                        <div class="mb-3 border-bottom pb-3">
-                                            <div class="row align-items-end">
-                                                <div class="col-md-4">
-                                                    <label class="form-label">Libellé</label>
-                                                    <input type="text" class="form-control" value="Laboratoire" readonly>
-                                                    <input type="hidden" name="frais[1][frais_id]" value="1">
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <label class="form-label">Prix unitaire</label>
-                                                    <input type="number" class="form-control prix" name="frais[1][prix]" value="{{ $detailsLaboratoire->first()->prix_unitaire ?? 0 }}" required readonly>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <label class="form-label">Quantité</label>
-                                                    <input type="number" class="form-control quantite" name="frais[1][quantite]" value="{{ $detailsLaboratoire->first()->quantite ?? 1 }}" min="1" required readonly>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <label class="form-label">Taux (%)</label>
-                                                    <input type="number" class="form-control taux" name="frais[1][taux]" value="{{ $patient->taux_couverture }}" min="0" max="100" required>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <label class="form-label">Total</label>
-                                                    <input type="number" class="form-control total" name="frais[1][total]" value="{{ $detailsLaboratoire->first()->total ?? 0 }}" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
+        {{-- Ligne fixe : Laboratoire --}}
+        <div class="mb-3 border-bottom pb-3">
+            <div class="row align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label">Libellé</label>
+                    <input type="text" class="form-control" value="Laboratoire" readonly>
+                    <input type="hidden" name="frais_laboratoire[frais_id]" value="1">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Prix unitaire</label>
+                    <input type="number" class="form-control prix" name="frais_laboratoire[prix]" value="{{ $detailsLaboratoire->first()->prix_unitaire ?? 0 }}" readonly>
+                </div>
+                <div class="col-md-1">
+                    <label class="form-label">Quantité</label>
+                    <input type="number" class="form-control quantite" name="frais_laboratoire[quantite]" value="{{ $detailsLaboratoire->first()->quantite ?? 1 }}" readonly>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Taux (%)</label>
+                    <input type="number" class="form-control taux" name="frais_laboratoire[taux]" value="100" readonly>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Total</label>
+                    <input type="number" class="form-control total" name="frais_laboratoire[total]" value="{{ $detailsLaboratoire->first()->total ?? 0 }}" readonly>
+                </div>
+            </div>
+        </div>
 
-                                        
-                                        @php $currentIndex = 2; @endphp
+        {{-- Autres frais dynamiques --}}
+        @php $currentIndex = 0; @endphp
+        @foreach($autresDetails as $detail)
+            <div data-repeater-item class="mb-3 border-bottom pb-3">
+                <div class="row align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label">Libellé</label>
+                        <input type="text" class="form-control" value="{{ $detail->fraisHospitalisation->libelle }}" readonly>
+                        <input type="hidden" name="frais[{{ $currentIndex }}][frais_id]" value="{{ $detail->frais_hospitalisation_id }}">
+                        <input type="hidden" name="frais[{{ $currentIndex }}][detail_id]" value="{{ $detail->id }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Prix unitaire</label>
+                        <input type="number" class="form-control prix" name="frais[{{ $currentIndex }}][prix]" value="{{ $detail->prix_unitaire }}" required>
+                    </div>
+                    <div class="col-md-1">
+                        <label class="form-label">Quantité</label>
+                        <input type="number" class="form-control quantite" name="frais[{{ $currentIndex }}][quantite]" value="{{ $detail->quantite }}" min="1" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Taux (%)</label>
+                        <input type="number" class="form-control taux" name="frais[{{ $currentIndex }}][taux]" value="{{ $detail->taux ?? $patient->taux_couverture }}" min="0" max="100" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Total</label>
+                        <input type="number" class="form-control total" name="frais[{{ $currentIndex }}][total]" value="{{ $detail->total }}" readonly>
+                    </div>
+                    <div class="col-md-1 text-center">
+                        <button type="button" data-repeater-delete class="btn btn-danger btn-sm mt-4">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            @php $currentIndex++; @endphp
+        @endforeach
 
-                                            @foreach($autresDetails as $detail)
-                                                <div data-repeater-item class="mb-3 border-bottom pb-3">
-                                                    <div class="row align-items-end">
-                                                        <div class="col-md-4">
-                                                            <label class="form-label">Libellé</label>
-                                                            <input type="text" class="form-control" value="{{ $detail->fraisHospitalisation->libelle }}" readonly>
-                                                            <input type="hidden" name="frais[{{ $currentIndex }}][frais_id]" value="{{ $detail->frais_hospitalisation_id }}">
-                                                            <input type="hidden" name="frais[{{ $currentIndex }}][detail_id]" value="{{ $detail->id }}">
-                                                        </div>
-                                                        <div class="col-md-2">
-                                                            <label class="form-label">Prix unitaire</label>
-                                                            <input type="number" class="form-control prix" name="frais[{{ $currentIndex }}][prix]" value="{{ $detail->prix_unitaire }}" required>
-                                                        </div>
-                                                        <div class="col-md-1">
-                                                            <label class="form-label">Quantité</label>
-                                                            <input type="number" class="form-control quantite" name="frais[{{ $currentIndex }}][quantite]" value="{{ $detail->quantite }}" min="1" required>
-                                                        </div>
-                                                        <div class="col-md-2">
-                                                            <label class="form-label">Taux (%)</label>
-                                                            <input type="number" class="form-control taux" name="frais[{{ $currentIndex }}][taux]" value="{{ $detail->taux ?? $patient->taux_couverture }}" min="0" max="100" required>
-                                                        </div>
-                                                        <div class="col-md-2">
-                                                            <label class="form-label">Total</label>
-                                                            <input type="number" class="form-control total" name="frais[{{ $currentIndex }}][total]" value="{{ $detail->total }}" readonly>
-                                                        </div>
-                                                        <div class="col-md-1 text-center">
-                                                            <button type="button" data-repeater-delete class="btn btn-danger btn-sm mt-4">
-                                                                <i class="fas fa-trash"></i>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                @php $currentIndex++; @endphp
-                                            @endforeach
+        {{-- Modèle pour ajout dynamique --}}
+        <div data-repeater-item class="mb-3 border-bottom pb-3">
+            <div class="row align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label">Libellé</label>
+                    <select class="form-select frais-select" data-name="frais[__index__][frais_id]" required>
+                        <option value="" disabled selected>Choisir un frais</option>
+                        @foreach($autresFrais as $frais)
+                            <option value="{{ $frais->id }}" data-prix="{{ $frais->montant }}">
+                                {{ $frais->libelle }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Prix unitaire</label>
+                    <input type="number" class="form-control prix" data-name="frais[__index__][prix]" value="0" required>
+                </div>
+                <div class="col-md-1">
+                    <label class="form-label">Quantité</label>
+                    <input type="number" class="form-control quantite" data-name="frais[__index__][quantite]" value="1" min="1" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Taux (%)</label>
+                    <input type="number" class="form-control taux" data-name="frais[__index__][taux]" value="{{ $patient->taux_couverture ?? 70 }}" min="0" max="100" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Total</label>
+                    <input type="number" class="form-control total" data-name="frais[__index__][total]" value="0" readonly>
+                </div>
+                <div class="col-md-1 text-center">
+                    <button type="button" data-repeater-delete class="btn btn-danger btn-sm mt-4">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
 
+    </div>
+    <button type="button" data-repeater-create class="btn bg-primary-subtle text-primary mt-2">
+        <span class="fs-4 me-1">+</span> Ajouter un autre frais
+    </button>
+</div>
 
-                                        
-                                        <div data-repeater-item class="mb-3 border-bottom pb-3">
-                                            <div class="row align-items-end">
-                                                <div class="col-md-4">
-                                                    <label class="form-label">Libellé</label>
-                                                    <select class="form-select frais-select" data-name="frais[__index__][frais_id]" required>
-                                                        <option value="" disabled selected>Choisir un frais</option>
-                                                        @foreach($autresFrais as $frais)
-                                                            <option value="{{ $frais->id }}" data-prix="{{ $frais->montant }}">
-                                                                {{ $frais->libelle }} ({{ number_format($frais->montant, 0, ',', ' ') }} XOF)
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <label class="form-label">Prix unitaire</label>
-                                                    <input type="number" class="form-control prix" data-name="frais[__index__][prix]" value="0" required>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <label class="form-label">Quantité</label>
-                                                    <input type="number" class="form-control quantite" data-name="frais[__index__][quantite]" value="1" min="1" required>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <label class="form-label">Taux (%)</label>
-                                                    <input type="number" class="form-control taux" data-name="frais[__index__][taux]" value="70" min="0" max="100" required>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <label class="form-label">Total</label>
-                                                    <input type="number" class="form-control total" data-name="frais[__index__][total]" value="0" readonly>
-                                                </div>
-                                                <div class="col-md-1 text-center">
-                                                    <button type="button" data-repeater-delete class="btn btn-danger btn-sm mt-4">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-
-                                    </div>
-
-                                    <button type="button" data-repeater-create class="btn bg-primary-subtle text-primary">
-                                        <span class="fs-4 me-1">+</span> Ajouter un autre frais
-                                    </button>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -412,286 +408,277 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
+{{-- <script>
 $(document).ready(function() {
-    // Initialisation Select2 pour les selects
-    $('.select2').select2({
-        width: '100%',
-        placeholder: "Sélectionner un élément"
-    });
+    // Initialisation Select2
+    $('.select2').select2({ width: '100%' });
 
-    // Gestion du médecin et spécialité
-    $('#medecin-select').on('change', function() {
-        const selectedOption = $(this).find('option:selected');
-        const specialite = selectedOption.data('specialite');
-        const specialiteId = selectedOption.data('specialite-id');
-        
-        $('#specialite-input').val(specialite || '');
-        $('#specialite-id').val(specialiteId || '');
-    });
-
-    // Initialisation du repeater pour les autres frais
+    // Repeater pour les autres frais
     $('.autres-repeater').repeater({
         initEmpty: false,
-        startIndex: {{ 2 + count($autresDetails) }},
         show: function() {
             $(this).slideDown(function() {
-                $(this).find('.frais-select').select2({
-                    width: '100%',
-                    placeholder: "Sélectionner un frais"
-                }).trigger('change');
+                $(this).find('.frais-select').select2({ width: '100%' }).trigger('change');
             });
         },
-        
         hide: function(deleteElement) {
-            const row = $(this);
             $(this).slideUp(deleteElement, function() {
-                row.remove();
-                updateTotals();
-                updateCalculs();
+                $(this).remove();
+                calculerTousLesTotaux();
             });
         },
-
         ready: function(setIndexes) {
-            $('.frais-select').select2({
-                width: '100%',
-                placeholder: "Sélectionner un frais"
-            });
+            $('.frais-select').select2({ width: '100%' });
         }
     });
 
-    // Calcul du total pour une ligne avec taux
-    // function calculateRowTotal(row) {
-    //     const prix = parseFloat(row.find('.prix').val()) || 0;
-    //     const quantite = parseInt(row.find('.quantite').val()) || 0;
-    //     const taux = parseFloat(row.find('.taux').val()) || 100;
-
-    //     const totalBrut = prix * quantite;
-    //     // const total = totalBrut * (taux / 100);
-    //     const total = totalBrut * ((100 - taux) / 100);
-        
-
-
-    //     row.find('.total').val(total.toFixed(0)); // arrondi sans décimales
-    // }
-
-    function calculateRowTotal(row) {
+    // Calcul du total d'une ligne (affiche la part patient)
+    function calculerTotalLigne(row) {
         const prix = parseFloat(row.find('.prix').val()) || 0;
         const quantite = parseInt(row.find('.quantite').val()) || 0;
         const taux = parseFloat(row.find('.taux').val()) || 0;
-
         const montantBrut = prix * quantite;
         const partCouverture = (montantBrut * taux) / 100;
-        const total = montantBrut - partCouverture;
-
-        row.find('.total').val(total.toFixed(0)); // arrondi sans décimales
+        const partPatient = montantBrut - partCouverture;
+        row.find('.total').val(Math.round(partPatient));
     }
 
+    // Calcul général
+    function calculerTousLesTotaux() {
+        // Pharmacie
+        const prixPharma = parseFloat($('[name="frais_pharmacie[prix]"]').val()) || 0;
+        const qtePharma = parseInt($('[name="frais_pharmacie[quantite]"]').val()) || 0;
+        const tauxPharma = parseFloat($('[name="frais_pharmacie[taux]"]').val()) || 100;
+        const montantPharma = prixPharma * qtePharma;
+        const partPharma = montantPharma - (montantPharma * tauxPharma / 100);
 
-    // Mise à jour des totaux affichés
-    function updateTotals() {
-        const prixPharma = parseFloat($('[name="frais[0][prix]"]').val()) || 0;
-        const qtePharma = parseInt($('[name="frais[0][quantite]"]').val()) || 0;
-        const tauxPharma = parseFloat($('[name="frais[0][taux]"]').val()) || 100;
-        const totalPharma = prixPharma * qtePharma * (tauxPharma / 100);
-        $('[name="frais[0][total]"]').val(totalPharma.toFixed(0));
+        // Laboratoire
+        const prixLabo = parseFloat($('[name="frais_laboratoire[prix]"]').val()) || 0;
+        const qteLabo = parseInt($('[name="frais_laboratoire[quantite]"]').val()) || 0;
+        const tauxLabo = parseFloat($('[name="frais_laboratoire[taux]"]').val()) || 100;
+        const montantLabo = prixLabo * qteLabo;
+        const partLabo = montantLabo - (montantLabo * tauxLabo / 100);
 
-        const prixLabo = parseFloat($('[name="frais[1][prix]"]').val()) || 0;
-        const qteLabo = parseInt($('[name="frais[1][quantite]"]').val()) || 0;
-        const tauxLabo = parseFloat($('[name="frais[1][taux]"]').val()) || 100;
-        const totalLabo = prixLabo * qteLabo * (tauxLabo / 100);
-        $('[name="frais[1][total]"]').val(totalLabo.toFixed(0));
-
+        // Autres frais
         let totalAutres = 0;
         $('.autres-repeater [data-repeater-item]').each(function() {
+            calculerTotalLigne($(this)); // Toujours recalculer la ligne
             totalAutres += parseFloat($(this).find('.total').val()) || 0;
         });
 
-        $('#totalPharmacie').text(formatCurrency(totalPharma));
-        $('#totalLaboratoire').text(formatCurrency(totalLabo));
-        $('#totalAutres').text(formatCurrency(totalAutres));
+        // Total général
+        const totalPrestations = partPharma + partLabo + totalAutres;
+        $('#total-prestations').val(Math.round(partPharma + partLabo + totalAutres));
+        $('#ticket-moderateur').val(Math.round(partPharma + partLabo + totalAutres));
 
-        const totalGeneral = totalPharma + totalLabo + totalAutres;
-        $('#totalGeneral').text(formatCurrency(totalGeneral));
+        // Réduction et à payer
+        const reduction = parseFloat($('#reduction').val()) || 0;
+        const montantAPayer = Math.max(0, totalPrestations - reduction);
+        $('#a-payer').val(Math.round(montantAPayer));
     }
 
-    // Calculs finaux (total prestations, ticket modérateur, réduction, montant à payer)
-    // function updateCalculs() {
-    //     let totalPrestations = 0;  // Somme prix × quantité (sans taux)
-    //     let ticketModerateur = 0;  // Somme des totaux (avec taux)
-
-    //     // Pharmacie
-    //     const prixPharma = parseFloat($('[name="frais[0][prix]"]').val()) || 0;
-    //     const qtePharma = parseInt($('[name="frais[0][quantite]"]').val()) || 0;
-    //     totalPrestations += prixPharma * qtePharma;
-    //     const tauxPharma = parseFloat($('[name="frais[0][taux]"]').val()) || 100;
-    //     ticketModerateur += prixPharma * qtePharma * (tauxPharma / 100);
-
-    //     // Laboratoire
-    //     const prixLabo = parseFloat($('[name="frais[1][prix]"]').val()) || 0;
-    //     const qteLabo = parseInt($('[name="frais[1][quantite]"]').val()) || 0;
-    //     totalPrestations += prixLabo * qteLabo;
-    //     const tauxLabo = parseFloat($('[name="frais[1][taux]"]').val()) || 100;
-    //     ticketModerateur += prixLabo * qteLabo * (tauxLabo / 100);
-
-    //     // Autres frais
-    //     $('.autres-repeater [data-repeater-item]').each(function() {
-    //         const prix = parseFloat($(this).find('.prix').val()) || 0;
-    //         const quantite = parseInt($(this).find('.quantite').val()) || 0;
-    //         const taux = parseFloat($(this).find('.taux').val()) || 100;
-    //         totalPrestations += prix * quantite;
-    //         ticketModerateur += prix * quantite * (taux / 100);
-    //     });
-
-    //     $('#total-prestations').val(totalPrestations.toFixed(2));
-    //     $('#ticket-moderateur').val(ticketModerateur.toFixed(2));
-
-    //     const reduction = parseFloat($('#reduction').val()) || 0;
-
-    //     // Montant à payer = ticket modérateur - réduction
-    //     const montantAPayer = ticketModerateur - reduction;
-    //     $('#a-payer').val(Math.max(0, montantAPayer).toFixed(2));
-    // }
-    function updateCalculs() {
-    let totalPrestations = 0;  
-    let ticketModerateur = 0;  
-
-    // Pharmacie
-    const prixPharma = parseFloat($('[name="frais[0][prix]"]').val()) || 0;
-    const qtePharma = parseInt($('[name="frais[0][quantite]"]').val()) || 0;
-    totalPrestations += prixPharma * qtePharma;
-    const tauxPharma = parseFloat($('[name="frais[0][taux]"]').val()) || 100;
-    ticketModerateur += prixPharma * qtePharma * (tauxPharma / 100);
-
-    // Laboratoire
-    const prixLabo = parseFloat($('[name="frais[1][prix]"]').val()) || 0;
-    const qteLabo = parseInt($('[name="frais[1][quantite]"]').val()) || 0;
-    totalPrestations += prixLabo * qteLabo;
-    const tauxLabo = parseFloat($('[name="frais[1][taux]"]').val()) || 100;
-    ticketModerateur += prixLabo * qteLabo * (tauxLabo / 100);
-
-    // Autres frais
-    $('.autres-repeater [data-repeater-item]').each(function() {
-        const prix = parseFloat($(this).find('.prix').val()) || 0;
-        const quantite = parseInt($(this).find('.quantite').val()) || 0;
-        const taux = parseFloat($(this).find('.taux').val()) || 100;
-        totalPrestations += prix * quantite;
-        ticketModerateur += prix * quantite * (taux / 100);
-    });
-
-    $('#total-prestations').val(Math.round(totalPrestations));
-    $('#ticket-moderateur').val(Math.round(ticketModerateur));
-
-    const reduction = parseFloat($('#reduction').val()) || 0;
-    const montantAPayer = ticketModerateur - reduction;
-    $('#a-payer').val(Math.max(0, Math.round(montantAPayer)));
-}
-
-
-    // Formatage monétaire
-    function formatCurrency(amount) {
-        return new Intl.NumberFormat('fr-FR', { 
-            style: 'currency', 
-            currency: 'XOF',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        }).format(amount);
-    }
-
-    // Événements input pour recalcul
-    $(document).on('input', '.prix, .quantite, .taux, #reduction', function() {
-        let row = $(this).closest('[data-repeater-item]');
-        if (!row.length) {
-            row = $(this).closest('.mb-3');
-        }
-        calculateRowTotal(row);
-        updateTotals();
-        updateCalculs();
-    });
-
-    // Changement de frais sélectionné
+    // Sélection d'un frais => maj prix unitaire
     $(document).on('change', '.frais-select', function() {
-        const selectedOption = $(this).find('option:selected');
-        const prix = selectedOption.data('prix') || 0;
+        const prix = $(this).find('option:selected').data('prix') || 0;
         const row = $(this).closest('[data-repeater-item]');
         row.find('.prix').val(prix);
-        calculateRowTotal(row);
-        updateTotals();
-        updateCalculs();
+        calculerTotalLigne(row);
+        calculerTousLesTotaux();
     });
+
+    // Saisie sur un champ de frais => recalcul
+    $(document).on('input', '.prix, .quantite, .taux, #reduction', function() {
+        let row = $(this).closest('[data-repeater-item]');
+        if (!row.length) row = $(this).closest('.mb-3');
+        calculerTotalLigne(row);
+        calculerTousLesTotaux();
+    });
+
+    // Initialisation au chargement
+    $('.autres-repeater [data-repeater-item]').each(function() {
+        calculerTotalLigne($(this));
+    });
+    calculerTousLesTotaux();
 
     // Validation réduction
     $('#reduction').on('change', function() {
-        const reduction = parseFloat($(this).val()) || 0;
-        if (reduction > 0 && $('#reduction_par').val() === '') {
-            Swal.fire({
-                icon: 'error',
-                title: 'Erreur',
-                text: 'Veuillez indiquer qui a accordé la réduction'
-            });
+        if (parseFloat($(this).val()) > 0 && $('#reduction_par').val() === '') {
+            Swal.fire({ icon: 'error', title: 'Erreur', text: 'Veuillez indiquer qui a accordé la réduction' });
             $(this).focus();
         }
     });
 
-    // Initialisation des valeurs au chargement
-    $('.mb-3:not([data-repeater-item])').each(function() {
-        calculateRowTotal($(this));
+    // Spécialité médecin
+    $('#medecin-select').on('change', function() {
+        const specialite = $(this).find('option:selected').data('specialite') || '';
+        const specialiteId = $(this).find('option:selected').data('specialite-id') || '';
+        $('#specialite-input').val(specialite);
+        $('#specialite-id').val(specialiteId);
     });
-    $('.autres-repeater [data-repeater-item]').each(function() {
-        calculateRowTotal($(this));
-    });
-    updateTotals();
-    updateCalculs();
+    if ($('#medecin-select').val()) $('#medecin-select').trigger('change');
 
-    // Initialiser la spécialité si médecin déjà sélectionné
-    if ($('#medecin-select').val()) {
-        $('#medecin-select').trigger('change');
-    }
-
-    // Gestion de la soumission du formulaire
+    // Soumission formulaire
     $('#examenForm').on('submit', function(e) {
         $('[data-name]').each(function () {
             $(this).attr('name', $(this).data('name'));
         });
-
-        const submitBtn = $('#submitBtn');
-        const submitText = $('#submitText');
-        const submitSpinner = $('#submitSpinner');
-        
-        submitBtn.prop('disabled', true);
-        submitText.text('Enregistrement...');
-        submitSpinner.removeClass('d-none');
-
         const reduction = parseFloat($('#reduction').val()) || 0;
         if (reduction > 0 && $('#reduction_par').val() === '') {
             e.preventDefault();
-            Swal.fire({
-                icon: 'error',
-                title: 'Erreur',
-                text: 'Veuillez indiquer qui a accordé la réduction'
-            });
-            submitBtn.prop('disabled', false);
-            submitText.text('Enregistrer');
-            submitSpinner.addClass('d-none');
+            Swal.fire({ icon: 'error', title: 'Erreur', text: 'Veuillez indiquer qui a accordé la réduction' });
             return false;
         }
-
         const dateEntree = new Date($('[name="date_entree"]').val());
         const dateSortie = new Date($('[name="date_sortie"]').val());
-
         if (dateSortie && dateSortie < dateEntree) {
             e.preventDefault();
-            Swal.fire({
-                icon: 'error',
-                title: 'Erreur',
-                text: 'La date de sortie ne peut pas être antérieure à la date d\'entrée'
-            });
-            submitBtn.prop('disabled', false);
-            submitText.text('Enregistrer');
-            submitSpinner.addClass('d-none');
+            Swal.fire({ icon: 'error', title: 'Erreur', text: 'La date de sortie ne peut pas être antérieure à la date d\'entrée' });
             return false;
         }
+        return true;
+    });
+});
+</script> --}}
 
+<script>
+$(document).ready(function() {
+    // Initialisation Select2
+    $('.select2').select2({ width: '100%' });
+
+    // Repeater pour les autres frais
+    $('.autres-repeater').repeater({
+        initEmpty: false,
+        show: function() {
+            $(this).slideDown(function() {
+                $(this).find('.frais-select').select2({ width: '100%' }).trigger('change');
+            });
+        },
+        hide: function(deleteElement) {
+            $(this).slideUp(deleteElement, function() {
+                $(this).remove();
+                calculerTousLesTotaux();
+            });
+        },
+        ready: function(setIndexes) {
+            $('.frais-select').select2({ width: '100%' });
+        }
+    });
+
+    // Calcul du total d'une ligne (affiche la part patient)
+    function calculerTotalLigne(row) {
+        const prix = parseFloat(row.find('.prix').val()) || 0;
+        const quantite = parseInt(row.find('.quantite').val()) || 0;
+        const taux = parseFloat(row.find('.taux').val()) || 0;
+        const montantBrut = prix * quantite;
+        const partCouverture = (montantBrut * taux) / 100;
+        const partPatient = montantBrut - partCouverture;
+        row.find('.total').val(Math.round(partPatient));
+        row.data('montant-brut', montantBrut); // Pour le calcul du total général
+    }
+
+    // Calcul général
+    function calculerTousLesTotaux() {
+        // Pharmacie
+        const prixPharma = parseFloat($('[name="frais_pharmacie[prix]"]').val()) || 0;
+        const qtePharma = parseInt($('[name="frais_pharmacie[quantite]"]').val()) || 0;
+        const tauxPharma = parseFloat($('[name="frais_pharmacie[taux]"]').val()) || 100;
+        const montantPharma = prixPharma * qtePharma;
+        const partPharma = montantPharma;
+
+        // Laboratoire
+        const prixLabo = parseFloat($('[name="frais_laboratoire[prix]"]').val()) || 0;
+        const qteLabo = parseInt($('[name="frais_laboratoire[quantite]"]').val()) || 0;
+        const tauxLabo = parseFloat($('[name="frais_laboratoire[taux]"]').val()) || 100;
+        const montantLabo = prixLabo * qteLabo;
+        const partLabo = montantLabo ;
+
+        // Autres frais
+        let totalAutresBrut = 0;
+        let totalAutresPatient = 0;
+        $('.autres-repeater [data-repeater-item]').each(function() {
+            calculerTotalLigne($(this)); // Toujours recalculer la ligne
+            const prix = parseFloat($(this).find('.prix').val()) || 0;
+            const quantite = parseInt($(this).find('.quantite').val()) || 0;
+            const taux = parseFloat($(this).find('.taux').val()) || 0;
+            const montantBrut = prix * quantite;
+            const partCouverture = (montantBrut * taux) / 100;
+            const partPatient = montantBrut - partCouverture;
+            totalAutresBrut += montantBrut;
+            totalAutresPatient += partPatient;
+        });
+
+        // Total général (somme des montants bruts)
+        const totalPrestations = montantPharma + montantLabo + totalAutresBrut;
+        $('#total-prestations').val(Math.round(totalPrestations));
+
+        // Ticket modérateur (somme des parts patient)
+        const ticketModerateur = partPharma + partLabo + totalAutresPatient;
+        $('#ticket-moderateur').val(Math.round(ticketModerateur));
+
+        // Réduction et à payer
+        const reduction = parseFloat($('#reduction').val()) || 0;
+        const montantAPayer = Math.max(0, ticketModerateur - reduction);
+        $('#a-payer').val(Math.round(montantAPayer));
+    }
+
+    // Sélection d'un frais => maj prix unitaire
+    $(document).on('change', '.frais-select', function() {
+        const prix = $(this).find('option:selected').data('prix') || 0;
+        const row = $(this).closest('[data-repeater-item]');
+        row.find('.prix').val(prix);
+        calculerTotalLigne(row);
+        calculerTousLesTotaux();
+    });
+
+    // Saisie sur un champ de frais => recalcul
+    $(document).on('input', '.prix, .quantite, .taux, #reduction', function() {
+        let row = $(this).closest('[data-repeater-item]');
+        if (!row.length) row = $(this).closest('.mb-3');
+        calculerTotalLigne(row);
+        calculerTousLesTotaux();
+    });
+
+    // Initialisation au chargement
+    $('.autres-repeater [data-repeater-item]').each(function() {
+        calculerTotalLigne($(this));
+    });
+    calculerTousLesTotaux();
+
+    // Validation réduction
+    $('#reduction').on('change', function() {
+        if (parseFloat($(this).val()) > 0 && $('#reduction_par').val() === '') {
+            Swal.fire({ icon: 'error', title: 'Erreur', text: 'Veuillez indiquer qui a accordé la réduction' });
+            $(this).focus();
+        }
+    });
+
+    // Spécialité médecin
+    $('#medecin-select').on('change', function() {
+        const specialite = $(this).find('option:selected').data('specialite') || '';
+        const specialiteId = $(this).find('option:selected').data('specialite-id') || '';
+        $('#specialite-input').val(specialite);
+        $('#specialite-id').val(specialiteId);
+    });
+    if ($('#medecin-select').val()) $('#medecin-select').trigger('change');
+
+    // Soumission formulaire
+    $('#examenForm').on('submit', function(e) {
+        $('[data-name]').each(function () {
+            $(this).attr('name', $(this).data('name'));
+        });
+        const reduction = parseFloat($('#reduction').val()) || 0;
+        if (reduction > 0 && $('#reduction_par').val() === '') {
+            e.preventDefault();
+            Swal.fire({ icon: 'error', title: 'Erreur', text: 'Veuillez indiquer qui a accordé la réduction' });
+            return false;
+        }
+        const dateEntree = new Date($('[name="date_entree"]').val());
+        const dateSortie = new Date($('[name="date_sortie"]').val());
+        if (dateSortie && dateSortie < dateEntree) {
+            e.preventDefault();
+            Swal.fire({ icon: 'error', title: 'Erreur', text: 'La date de sortie ne peut pas être antérieure à la date d\'entrée' });
+            return false;
+        }
         return true;
     });
 });
