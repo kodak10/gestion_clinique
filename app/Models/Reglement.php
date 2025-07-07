@@ -12,6 +12,14 @@ class Reglement extends Model
 {
     use HasFactory, LogsActivity, SoftDeletes;
     
+    // protected $fillable = [
+    //     'hospitalisation_id',
+    //     'consultation_id',
+    //     'user_id',
+    //     'montant',
+    //     'methode_paiement',
+    //     'type',
+    // ];
     protected $fillable = [
         'hospitalisation_id',
         'consultation_id',
@@ -19,6 +27,14 @@ class Reglement extends Model
         'montant',
         'methode_paiement',
         'type',
+        'created_at',
+        'updated_at'
+    ];
+
+    protected $casts = [
+        'montant' => 'decimal:2',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime'
     ];
 
     public function consultation()

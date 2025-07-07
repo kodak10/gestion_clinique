@@ -80,8 +80,13 @@ class Hospitalisation extends Model
     public function examens()
     {
         return $this->belongsToMany(Examen::class, 'hospitalisation_examen')
-                   ->withPivot('quantite', 'prix', 'total',)
+                   ->withPivot('quantite', 'prix', 'taux', 'total',)
                    ->withTimestamps();
+    }
+
+    public function reglements()
+    {
+        return $this->hasMany(Reglement::class);
     }
 
     protected $casts = [

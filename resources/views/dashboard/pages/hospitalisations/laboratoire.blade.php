@@ -89,7 +89,9 @@
                                             <input type="number" class="form-control quantite" name="quantite" value="{{ $med->pivot->quantite }}">
                                         </div>
                                         <div class="col-md-2">
-                                            <input type="number" class="form-control taux" name="taux" value="{{ $patient->assurance->taux ?? '0' }}" min="0" max="100">
+                                            {{-- <input type="number" class="form-control taux" name="taux" value="{{ $patient->taux_couverture ?? '0' }}" min="0" max="100"> --}}
+                                            <input type="number" class="form-control taux" name="taux" value="{{ old('taux', $med->pivot->taux ?? $patient->taux_couverture ?? 0) }}" min="0" max="100" step="1" required>
+
                                         </div>
                                         <div class="col-md-2">
                                             <input type="number" class="form-control total" name="total" value="{{ $med->pivot->total }}" readonly>
@@ -279,18 +281,30 @@
             });
 
         // Fonction de calcul pour une ligne
+        // function calculerTotalLigne(ligne) {
+        //     const qte = parseFloat(ligne.find('.quantite').val()) || 0;
+        //     const montant = parseFloat(ligne.find('.montant').val()) || 0;
+        //     const taux = parseFloat(ligne.find('.taux').val()) || 0;
+            
+        //     const total = (qte * montant).toFixed(2);
+        //     const ticketModerateur = (total * (1 - taux / 100)).toFixed(2);
+            
+        //     ligne.find('.total').val(total);
+        //     ligne.find('.ticket-moderateur').val(ticketModerateur);
+        //     recalculerTotauxGlobaux();
+        // }
         function calculerTotalLigne(ligne) {
             const qte = parseFloat(ligne.find('.quantite').val()) || 0;
             const montant = parseFloat(ligne.find('.montant').val()) || 0;
             const taux = parseFloat(ligne.find('.taux').val()) || 0;
-            
-            const total = (qte * montant).toFixed(2);
-            const ticketModerateur = (total * (1 - taux / 100)).toFixed(2);
-            
-            ligne.find('.total').val(total);
-            ligne.find('.ticket-moderateur').val(ticketModerateur);
-            recalculerTotauxGlobaux();
+
+            const totalBrut = qte * montant;
+            const partAssurance = totalBrut * (taux / 100);
+            const partPatient = totalBrut - partAssurance;
+
+            ligne.find('.total').val(partPatient.toFixed(2)); // Affiche la part patient
         }
+
 
         function recalculerTotauxGlobaux() {
             let totalExamens = 0;

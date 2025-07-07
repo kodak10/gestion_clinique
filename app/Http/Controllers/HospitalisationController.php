@@ -193,8 +193,9 @@ class HospitalisationController extends Controller
         }
 
         $patient = $hospitalisation->patient;
-        $examensPrescrits = $hospitalisation->examens()->get();
+        $examensPrescrits = $hospitalisation->examens()->orderBy('created_at')->get();
 
+        // dd($examensPrescrits);
         // Tous les médicaments disponibles
         $allexamens = Examen::orderBy('nom')->get();
         
@@ -206,12 +207,78 @@ class HospitalisationController extends Controller
         ));
     }
 
+    // public function storeExamen(Request $request, Hospitalisation $hospitalisation)
+    // {
+    //     if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Laboratin', 'Receptionniste'])) {
+    //         abort(403, 'Accès non autorisé.');
+    //     }
+    //     // dd($request);
+
+
+    //     DB::beginTransaction();
+    //     try {
+    //         // Supprimer tous les examens existants pour cette hospitalisation
+    //         $hospitalisation->examens()->detach();
+
+    //         // Ajouter les examens mis à jour
+    //         $examensData = [];
+    //         $totalExamen = 0;
+
+    //         // Traiter les examens existants modifiés
+    //         foreach ($request->examens ?? [] as $examen) {
+    //             $total = $examen['montant'] * $examen['quantite'];
+    //             $examensData[$examen['examen_id']] = [
+    //                 'prix' => $examen['montant'],
+    //                 'taux' => $examen['taux'],
+    //                 'quantite' => $examen['quantite'],
+    //                 'total' => $total
+    //             ];
+    //             $totalExamen += $total;
+    //         }
+
+    //         // Traiter les nouveaux médicaments
+    //         foreach ($request->nouveaux_examens ?? [] as $examen) {
+    //             $total = $examen['montant'] * $examen['quantite'];
+    //             $examensData[$examen['examen_id']] = [
+    //                 'prix' => $examen['montant'],
+    //                 'taux' => $examen['taux'],
+    //                 'quantite' => $examen['quantite'],
+    //                 'total' => $total
+    //             ];
+    //             $totalExamen += $total;
+    //         }
+
+    //         // Attacher tous les médicaments en une seule opération
+    //         $hospitalisation->examens()->attach($examensData);
+
+    //         // Mettre à jour hospitalisation_details
+    //         $hospitalisation->details()
+    //         ->where('frais_hospitalisation_id', 1)
+    //         ->update([
+    //             'hospitalisation_id' => $hospitalisation->id,
+    //             'frais_hospitalisation_id' => 1,
+    //             'quantite' => 1,
+    //             'prix_unitaire' => $totalExamen,
+    //             'taux' => 0,
+    //             'reduction' => 0,
+    //             'total' => $totalExamen,
+            
+    //             'updated_at' => now()
+    //         ]);
+
+    //         DB::commit();
+
+    //         return redirect()->back()->with('success', 'Examen mis à jour avec succès');
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         return redirect()->back()->with('error', 'Erreur lors de la mise à jour: ' . $e->getMessage());
+    //     }
+    // }
     public function storeExamen(Request $request, Hospitalisation $hospitalisation)
     {
         if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Laboratin', 'Receptionniste'])) {
             abort(403, 'Accès non autorisé.');
         }
-
 
         DB::beginTransaction();
         try {
@@ -224,45 +291,52 @@ class HospitalisationController extends Controller
 
             // Traiter les examens existants modifiés
             foreach ($request->examens ?? [] as $examen) {
-                $total = $examen['montant'] * $examen['quantite'];
+                $totalBrut = $examen['montant'] * $examen['quantite'];
+                $taux = isset($examen['taux']) ? floatval($examen['taux']) : 0;
+                $partAssurance = $totalBrut * ($taux / 100);
+                $partPatient = $totalBrut - $partAssurance;
+
                 $examensData[$examen['examen_id']] = [
                     'prix' => $examen['montant'],
-                    'taux' => $examen['taux'],
+                    'taux' => $taux,
                     'quantite' => $examen['quantite'],
-                    'total' => $total
+                    'total' => $partPatient, // On stocke la part à la charge du patient
                 ];
-                $totalExamen += $total;
+                $totalExamen += $partPatient;
             }
 
-            // Traiter les nouveaux médicaments
+            // Traiter les nouveaux examens (si applicable)
             foreach ($request->nouveaux_examens ?? [] as $examen) {
-                $total = $examen['montant'] * $examen['quantite'];
+                $totalBrut = $examen['montant'] * $examen['quantite'];
+                $taux = isset($examen['taux']) ? floatval($examen['taux']) : 0;
+                $partAssurance = $totalBrut * ($taux / 100);
+                $partPatient = $totalBrut - $partAssurance;
+
                 $examensData[$examen['examen_id']] = [
                     'prix' => $examen['montant'],
-                    'taux' => $examen['taux'],
+                    'taux' => $taux,
                     'quantite' => $examen['quantite'],
-                    'total' => $total
+                    'total' => $partPatient,
                 ];
-                $totalExamen += $total;
+                $totalExamen += $partPatient;
             }
 
-            // Attacher tous les médicaments en une seule opération
+            // Attacher tous les examens en une seule opération
             $hospitalisation->examens()->attach($examensData);
 
             // Mettre à jour hospitalisation_details
             $hospitalisation->details()
-            ->where('frais_hospitalisation_id', 1)
-            ->update([
-                'hospitalisation_id' => $hospitalisation->id,
-                'frais_hospitalisation_id' => 1,
-                'quantite' => 1,
-                'prix_unitaire' => $totalExamen,
-                'taux' => 0,
-                'reduction' => 0,
-                'total' => $totalExamen,
-            
-                'updated_at' => now()
-            ]);
+                ->where('frais_hospitalisation_id', 1)
+                ->update([
+                    'hospitalisation_id' => $hospitalisation->id,
+                    'frais_hospitalisation_id' => 1,
+                    'quantite' => 1,
+                    'prix_unitaire' => $totalExamen,
+                    'taux' => 0,
+                    'reduction' => 0,
+                    'total' => $totalExamen,
+                    'updated_at' => now()
+                ]);
 
             DB::commit();
 
@@ -272,6 +346,7 @@ class HospitalisationController extends Controller
             return redirect()->back()->with('error', 'Erreur lors de la mise à jour: ' . $e->getMessage());
         }
     }
+
 
     
     public function createFacture(Hospitalisation $hospitalisation)
@@ -337,108 +412,242 @@ class HospitalisationController extends Controller
         ));
     }
 
-    public function storeFacture(Request $request, Hospitalisation $hospitalisation)
-    {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Comptable'])) {
-            abort(403, 'Accès non autorisé.');
-        }
+    // public function storeFacture(Request $request, Hospitalisation $hospitalisation)
+    // {
+    //     if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Comptable'])) {
+    //         abort(403, 'Accès non autorisé.');
+    //     }
 
-        // Validation des données
-        $validatedData = $request->validate([
-            'frais' => 'required|array|min:1',
-            'frais.*.frais_id' => 'required|exists:frais_hospitalisations,id',
-            'frais.*.prix' => 'required|numeric|min:0',
-            'frais.*.quantite' => 'required|integer|min:1',
-            'frais.*.taux' => 'required|numeric|min:0',
-            'frais.*.total' => 'required|numeric|min:0',
-            'medecin_id' => 'required|exists:medecins,id',
-            'specialite_id' => 'required|exists:specialites,id',
-            'date_sortie' => 'required|date',
-            'date_entree' => 'required|date',
-            'caution' => 'nullable|numeric|min:0',
-            'payeur' => 'nullable|string|max:255',
-            'total' => 'required|numeric|min:0',
-            'ticket_moderateur' => 'required|numeric|min:0',
-            'montant_a_paye' => 'required|numeric|min:0',
-            'reduction' => 'nullable|numeric|min:0',
-            'reduction_par' => 'required_if:reduction,>,1|nullable|string|max:255',
+    //     // Validation des données
+    //     $validatedData = $request->validate([
+    //         'frais' => 'required|array|min:1',
+    //         'frais.*.frais_id' => 'required|exists:frais_hospitalisations,id',
+    //         'frais.*.prix' => 'required|numeric|min:0',
+    //         'frais.*.quantite' => 'required|integer|min:1',
+    //         'frais.*.taux' => 'required|numeric|min:0',
+    //         'frais.*.total' => 'required|numeric|min:0',
+    //         'medecin_id' => 'required|exists:medecins,id',
+    //         'specialite_id' => 'required|exists:specialites,id',
+    //         'date_sortie' => 'required|date',
+    //         'date_entree' => 'required|date',
+    //         'caution' => 'nullable|numeric|min:0',
+    //         'payeur' => 'nullable|string|max:255',
+    //         'total' => 'required|numeric|min:0',
+    //         'ticket_moderateur' => 'required|numeric|min:0',
+    //         'montant_a_paye' => 'required|numeric|min:0',
+    //         'reduction' => 'nullable|numeric|min:0',
+    //         'reduction_par' => 'required_if:reduction,>,1|nullable|string|max:255',
+    //     ]);
+
+    //     DB::beginTransaction();
+    //     try {
+    //         // Mise à jour des informations de base
+    //         $hospitalisation->update([
+    //             'date_entree' => $validatedData['date_entree'],
+    //             'date_sortie' => $validatedData['date_sortie'],
+    //             'medecin_id' => $validatedData['medecin_id'],
+    //             'specialite_id' => $validatedData['specialite_id'],
+    //             'caution' => $validatedData['caution'] ?? 0,
+    //             'payeur' => $validatedData['payeur'] ?? null,
+    //             'total' => $validatedData['total'],
+    //             'ticket_moderateur' => $validatedData['ticket_moderateur'],
+    //             'montant_a_paye' => $validatedData['montant_a_paye'],
+    //             'reste_a_payer' => $validatedData['montant_a_paye'],
+    //             'reduction' => $validatedData['reduction'] ?? 0,
+    //             'reduction_par' => $validatedData['reduction_par'] ?? null,
+    //         ]);
+
+    //         $submittedIds = [];
+    //         $totalGeneral = 0;
+
+    //         // Traitement des frais
+    //         foreach ($validatedData['frais'] as $fraisItem) {
+    //             $fraisId = $fraisItem['frais_id'];
+                
+    //             $detailData = [
+    //                 'hospitalisation_id' => $hospitalisation->id,
+    //                 'frais_hospitalisation_id' => $fraisId,
+    //                 'quantite' => $fraisItem['quantite'],
+    //                 'prix_unitaire' => $fraisItem['prix'],
+    //                 'taux' => $fraisItem['taux'],
+    //                 'total' => $fraisItem['total'],
+    //                 'updated_at' => now()
+    //             ];
+
+    //             // UpdateOrCreate pour éviter les doublons
+    //             $detail = HospitalisationDetail::updateOrCreate(
+    //                 [
+    //                     'hospitalisation_id' => $hospitalisation->id,
+    //                     'frais_hospitalisation_id' => $fraisId
+    //                 ],
+    //                 $detailData
+    //             );
+
+    //             $submittedIds[] = $detail->id;
+    //             $totalGeneral += $fraisItem['total'];
+    //         }
+
+    //         // Génération du PDF
+    //         $pdfPath = $this->generateFacturePdf($hospitalisation);
+
+    //         // Mise à jour du chemin du PDF
+    //         $hospitalisation->update([
+    //             'facture_path' => $pdfPath
+    //         ]);
+
+    //         // Enregistrement dans la table reglements
+    //         $this->createOrUpdateReglement($hospitalisation, $validatedData);
+
+    //         DB::commit();
+            
+    //         return redirect()->back()
+    //             ->with('swal_success', 'Facture enregistrée avec succès.');
+                
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         \Log::error('Erreur storeFacture', [
+    //             'error' => $e->getMessage(),
+    //             'trace' => $e->getTraceAsString()
+    //         ]);
+            
+    //         return redirect()->back()
+    //             ->with('error', 'Erreur lors de l\'enregistrement: ' . $e->getMessage());
+    //     }
+    // }
+
+    public function storeFacture(Request $request, Hospitalisation $hospitalisation)
+{
+    if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Comptable'])) {
+        abort(403, 'Accès non autorisé.');
+    }
+
+    // Validation des données
+    $validatedData = $request->validate([
+        'frais' => 'required|array|min:1',
+        'frais.*.frais_id' => 'required|exists:frais_hospitalisations,id',
+        'frais.*.prix' => 'required|numeric|min:0',
+        'frais.*.quantite' => 'required|integer|min:1',
+        'frais.*.taux' => 'required|numeric|min:0',
+        'frais.*.total' => 'required|numeric|min:0',
+        'medecin_id' => 'required|exists:medecins,id',
+        'specialite_id' => 'required|exists:specialites,id',
+        'date_sortie' => 'required|date',
+        'date_entree' => 'required|date',
+        'caution' => 'nullable|numeric|min:0',
+        'payeur' => 'nullable|string|max:255',
+        'total' => 'required|numeric|min:0',
+        'ticket_moderateur' => 'required|numeric|min:0',
+        'montant_a_paye' => 'required|numeric|min:0',
+        'reduction' => 'nullable|numeric|min:0',
+        'reduction_par' => 'required_if:reduction,>,1|nullable|string|max:255',
+    ]);
+
+    DB::beginTransaction();
+    try {
+        // Mise à jour des informations de base
+        $hospitalisation->update([
+            'date_entree' => $validatedData['date_entree'],
+            'date_sortie' => $validatedData['date_sortie'],
+            'medecin_id' => $validatedData['medecin_id'],
+            'specialite_id' => $validatedData['specialite_id'],
+            'caution' => $validatedData['caution'] ?? 0,
+            'payeur' => $validatedData['payeur'] ?? null,
+            'total' => $validatedData['total'],
+            'ticket_moderateur' => $validatedData['ticket_moderateur'],
+            'montant_a_paye' => $validatedData['montant_a_paye'],
+            'reste_a_payer' => $validatedData['montant_a_paye'] - ($validatedData['caution'] ?? 0),
+            'reduction' => $validatedData['reduction'] ?? 0,
+            'reduction_par' => $validatedData['reduction_par'] ?? null,
         ]);
 
-        DB::beginTransaction();
-        try {
-            // Mise à jour des informations de base
-            $hospitalisation->update([
-                'date_entree' => $validatedData['date_entree'],
-                'date_sortie' => $validatedData['date_sortie'],
-                'medecin_id' => $validatedData['medecin_id'],
-                'specialite_id' => $validatedData['specialite_id'],
-                'caution' => $validatedData['caution'] ?? 0,
-                'payeur' => $validatedData['payeur'] ?? null,
-                'total' => $validatedData['total'],
-                'ticket_moderateur' => $validatedData['ticket_moderateur'],
-                'montant_a_paye' => $validatedData['montant_a_paye'],
-                'reste_a_payer' => $validatedData['montant_a_paye'],
-                'reduction' => $validatedData['reduction'] ?? 0,
-                'reduction_par' => $validatedData['reduction_par'] ?? null,
-            ]);
+        // Récupérer les IDs des frais soumis
+        $submittedFraisIds = collect($validatedData['frais'])->pluck('frais_id')->toArray();
 
-            $submittedIds = [];
-            $totalGeneral = 0;
+        // Supprimer les frais qui ne sont plus dans la requête
+        $hospitalisation->details()
+            ->whereNotIn('frais_hospitalisation_id', $submittedFraisIds)
+            ->delete();
 
-            // Traitement des frais
-            foreach ($validatedData['frais'] as $fraisItem) {
-                $fraisId = $fraisItem['frais_id'];
-                
-                $detailData = [
+        $totalGeneral = 0;
+
+        // Traitement des frais
+        foreach ($validatedData['frais'] as $fraisItem) {
+            $fraisId = $fraisItem['frais_id'];
+            
+            $detailData = [
+                'hospitalisation_id' => $hospitalisation->id,
+                'frais_hospitalisation_id' => $fraisId,
+                'quantite' => $fraisItem['quantite'],
+                'prix_unitaire' => $fraisItem['prix'],
+                'taux' => $fraisItem['taux'],
+                'total' => $fraisItem['total'],
+                'updated_at' => now()
+            ];
+
+            $detail = HospitalisationDetail::updateOrCreate(
+                [
                     'hospitalisation_id' => $hospitalisation->id,
-                    'frais_hospitalisation_id' => $fraisId,
-                    'quantite' => $fraisItem['quantite'],
-                    'prix_unitaire' => $fraisItem['prix'],
-                    'taux' => $fraisItem['taux'],
-                    'total' => $fraisItem['total'],
-                    'updated_at' => now()
-                ];
+                    'frais_hospitalisation_id' => $fraisId
+                ],
+                $detailData
+            );
 
-                // UpdateOrCreate pour éviter les doublons
-                $detail = HospitalisationDetail::updateOrCreate(
-                    [
-                        'hospitalisation_id' => $hospitalisation->id,
-                        'frais_hospitalisation_id' => $fraisId
-                    ],
-                    $detailData
-                );
-
-                $submittedIds[] = $detail->id;
-                $totalGeneral += $fraisItem['total'];
-            }
-
-            // Génération du PDF
-            $pdfPath = $this->generateFacturePdf($hospitalisation);
-
-            // Mise à jour du chemin du PDF
-            $hospitalisation->update([
-                'facture_path' => $pdfPath
-            ]);
-
-            // Enregistrement dans la table reglements
-            $this->createOrUpdateReglement($hospitalisation, $validatedData);
-
-            DB::commit();
-            
-            return redirect()->back()
-                ->with('swal_success', 'Facture enregistrée avec succès.');
-                
-        } catch (\Exception $e) {
-            DB::rollBack();
-            \Log::error('Erreur storeFacture', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            
-            return redirect()->back()
-                ->with('error', 'Erreur lors de l\'enregistrement: ' . $e->getMessage());
+            $totalGeneral += $fraisItem['total'];
         }
+
+        // Gestion des règlements (décommenter si nécessaire)
+        // $this->updateReglements($hospitalisation, $validatedData['caution'] ?? 0);
+
+        // Génération du PDF
+        $pdfPath = $this->generateFacturePdf($hospitalisation);
+
+        // Mise à jour du chemin du PDF
+        $hospitalisation->update([
+            'facture_path' => $pdfPath
+        ]);
+
+        DB::commit();
+        
+        return redirect()->back()
+            ->with('swal_success', 'Facture enregistrée avec succès.');
+            
+    } catch (\Exception $e) {
+        DB::rollBack();
+        \Log::error('Erreur storeFacture', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        
+        return redirect()->back()
+            ->with('error', 'Erreur lors de l\'enregistrement: ' . $e->getMessage());
     }
+}
+
+    // private function updateReglements(Hospitalisation $hospitalisation, $caution)
+    // {
+    //     // Si une caution a été versée
+    //     if ($caution > 0) {
+    //         Reglement::updateOrCreate(
+    //             [
+    //                 'hospitalisation_id' => $hospitalisation->id,
+    //                 'type' => 'entrée',
+    //                 'methode_paiement' => 'cash' // Par défaut, peut être modifié
+    //             ],
+    //             [
+    //                 'user_id' => auth()->id(),
+    //                 'montant' => $caution,
+    //                 'created_at' => now(),
+    //                 'updated_at' => now()
+    //             ]
+    //         );
+    //     }
+
+    //     // Mise à jour du reste à payer
+    //     $totalRegle = $hospitalisation->reglements()->sum('montant');
+    //     $hospitalisation->update([
+    //         'reste_a_payer' => $hospitalisation->montant_a_paye - $totalRegle
+    //     ]);
+    // }
 
     private function generateFacturePdf(Hospitalisation $hospitalisation)
     {
