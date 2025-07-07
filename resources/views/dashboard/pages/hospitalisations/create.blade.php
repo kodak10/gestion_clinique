@@ -18,6 +18,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
+            
 
             @if ($errors->any())
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -202,6 +203,7 @@
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Prix unitaire</label>
+                    <input type="hidden" name="frais_pharmacie[frais_id]" value="2">
                     <input type="number" class="form-control prix" name="frais_pharmacie[prix]" value="{{ $detailsPharmacie->first()->prix_unitaire ?? 0 }}" readonly>
                 </div>
                 <div class="col-md-1">
@@ -229,6 +231,7 @@
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Prix unitaire</label>
+                    <input type="hidden" name="frais_laboratoire[frais_id]" value="1">
                     <input type="number" class="form-control prix" name="frais_laboratoire[prix]" value="{{ $detailsLaboratoire->first()->prix_unitaire ?? 0 }}" readonly>
                 </div>
                 <div class="col-md-1">
@@ -683,5 +686,19 @@ $(document).ready(function() {
     });
 });
 </script>
+
+<script>
+$(document).ready(function() {
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Erreur',
+            html: `{!! addslashes(session('error')) !!}`
+        });
+    @endif
+});
+</script>
+
+
 
 @endpush
