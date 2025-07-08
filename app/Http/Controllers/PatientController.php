@@ -399,7 +399,7 @@ public function index()
     {
         if ($patient->photo) {
             Storage::disk('public')->delete($patient->photo);
-            $patient->update(['photo' => null]);
+            $patient->update(['photo' => 'patients/defaut.jpg']);
         }
 
         return back()->with('success', 'Photo supprimée avec succès');
