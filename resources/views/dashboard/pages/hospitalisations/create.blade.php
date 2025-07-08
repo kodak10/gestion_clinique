@@ -413,40 +413,6 @@
 
 
 <script>
-// $(document).ready(function() {
-//     // Initialisation Select2
-//     $('.select2').select2({ width: '100%' });
-
-//     // Repeater pour les autres frais
-//     $('.autres-repeater').repeater({
-//         initEmpty: false,
-//         // show: function() {
-//         //     $(this).slideDown(function() {
-//         //         $(this).find('.frais-select').select2({ width: '100%' }).trigger('change');
-//         //     });
-//         // },
-//         show: function() {
-//             $(this).slideDown(function() {
-//                 $(this).find('.frais-select').each(function() {
-//                     // Si Select2 déjà appliqué, on le détruit
-//                     if ($(this).hasClass("select2-hidden-accessible")) {
-//                         $(this).select2('destroy');
-//                     }
-//                     $(this).select2({ width: '100%' });
-//                 });
-//             });
-//         },
-
-//         hide: function(deleteElement) {
-//             $(this).slideUp(deleteElement, function() {
-//                 $(this).remove();
-//                 calculerTousLesTotaux();
-//             });
-//         },
-//         ready: function(setIndexes) {
-//             $('.frais-select').select2({ width: '100%' });
-//         }
-//     });
 $(document).ready(function() {
     // Initialisation Select2
     $('.select2').select2({ width: '100%' });
@@ -629,5 +595,12 @@ $(document).ready(function() {
 </script>
 
 
+@if(session('pdf_url'))
+    <script>
+        window.onload = function() {
+            window.open('{{ session('pdf_url') }}', '_blank');
+        };
+    </script>
+@endif
 
 @endpush

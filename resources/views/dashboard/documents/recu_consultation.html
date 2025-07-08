@@ -1,332 +1,192 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Reçu de consultation</title>
-    <style>
-        @page {
-            size: A4 landscape;
-            margin: 20px;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            display: flex;
-            justify-content: space-between;
-            border: 3px solid red;
-            padding: 10px;
-            height: 100%;
-        }
-
-        .receipt {
-            width: 49%;
-            border-right: 1px dashed gray;
-            padding: 15px;
-            box-sizing: border-box;
-            position: relative;
-        }
-
-        .receipt:last-child {
-            border-right: none;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .logo {
-            font-weight: bold;
-        }
-
-        .details {
-            font-size: 10px;
-        }
-
-        .meta {
-            text-align: right;
-            font-size: 10px;
-        }
-
-        .field {
-            margin: 10px 0;
-        }
-
-        .field label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .double-field {
-            display: flex;
-            gap: 10px;
-        }
-
-        .double-field div {
-            flex: 1;
-        }
-
-        .double-field span {
-            display: block;
-            border-bottom: 1px solid #000;
-            padding: 3px 0;
-            min-height: 16px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            font-size: 11px;
-        }
-
-        th, td {
-            border: 1px solid #000;
-            padding: 4px;
-            text-align: left;
-        }
-
-        .inline-fields {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .inline-fields .item {
-            flex: 1;
-        }
-
-        .inline-fields .item label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 3px;
-        }
-
-        .inline-fields .item span {
-            display: block;
-            border-bottom: 1px solid #000;
-            min-height: 16px;
-        }
-
-        .payment-methods {
-            margin: 10px 0;
-        }
-
-        .footer {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            font-size: 10px;
-        }
-
-        .signature {
-            text-align: right;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Facture Proforma</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f2f2;
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      background: #000;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .logo {
+      float: left;
+      margin-top: -20px;
+    }
+    .logo img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+    }
+    .title {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .sub-title {
+      font-size: 18px;
+      margin-top: 10px;
+    }
+    .clearfix {
+      clear: both;
+    }
+    .section {
+      margin: 20px;
+    }
+    .block {
+      display: inline-block;
+      vertical-align: top;
+      width: 48%;
+      margin-bottom: 10px;
+    }
+    .block h4 {
+      background: #d9d6d1;
+      padding: 5px;
+      margin: 0 0 5px 0;
+    }
+    .block p {
+      margin: 5px 0;
+    }
+    .block input {
+      border: none;
+      border-bottom: 1px solid #000;
+      background: transparent;
+      width: 80%;
+    }
+    .dates {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .dates span {
+      background: #000;
+      color: white;
+      padding: 5px 10px;
+      margin: 5px;
+      display: inline-block;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #000;
+      padding: 5px;
+      text-align: center;
+      font-size: 14px;
+    }
+    th {
+      background: #000;
+      color: white;
+    }
+    .totaux {
+      margin-top: 20px;
+      float: right;
+      width: 40%;
+    }
+    .totaux td {
+      text-align: left;
+    }
+    .totaux th {
+      background: #000;
+      color: white;
+    }
+    .footer {
+      clear: both;
+      margin: 20px;
+      font-size: 14px;
+    }
+    .footer p {
+      margin: 5px 0;
+    }
+    .mention {
+      background: red;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-top: 30px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Copie Bureau -->
-        <div class="receipt">
-            <div class="header">
-                <div class="logo">
-                    🔴 LOGO
-                    <div class="details">
-                        Phone: +0123456789
-                    </div>
-                </div>
-                <div class="meta">
-                    <div><strong>DATE:</strong> {{ $date }}</div>
-                    <div><strong>RECU N°:</strong> {{ $numeroRecu }}</div>
-                </div>
-            </div>
 
-            <div class="field">
-                <label>NOM & PRENOMS</label>
-                <span>{{ $patient->nom }} {{ $patient->prenoms }}</span>
-            </div>
-
-            <div class="inline-fields">
-                <div class="item">
-                    <label>MEDECIN</label>
-                    <span>{{ $medecin->nom_complet }}</span>
-                </div>
-                <div class="item">
-                    <label>SPECIALITE</label>
-                    <span>{{ $medecin->specialite->nom }}</span>
-                </div>
-            </div>
-            
-            <div class="field">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Prestation</th>
-                            <th>PU</th>
-                            <th>Qte</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($prestations as $prestation)
-                        <tr>
-                            <td>{{ $prestation->libelle }}</td>
-                            <td>{{ number_format($prestation->pivot->montant, 0, ',', ' ') }}</td>
-                            <td>{{ $prestation->pivot->quantite }}</td>
-                            <td>{{ number_format($prestation->pivot->total, 0, ',', ' ') }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="inline-fields">
-                <div class="item">
-                    <label>Total</label>
-                    <span>{{ number_format($consultation->total, 0, ',', ' ') }} FCFA</span>
-                </div>
-                <div class="item">
-                    <label>Ticket Modérateur</label>
-                    <span>{{ number_format($consultation->ticket_moderateur, 0, ',', ' ') }} FCFA</span>
-                </div>
-                <div class="item">
-                    <label>Réduction</label>
-                    <span>{{ number_format($consultation->reduction, 0, ',', ' ') }} FCFA</span>
-                </div>
-            </div>
-
-            <div class="inline-fields">
-                <div class="item">
-                    <label>Payé</label>
-                    <span>{{ number_format($consultation->montant_paye, 0, ',', ' ') }} FCFA</span>
-                </div>
-                <div class="item">
-                    <label>Reste à payer</label>
-                    <span>{{ number_format($consultation->reste_a_payer, 0, ',', ' ') }} FCFA</span>
-                </div>
-            </div>
-
-            <div class="payment-methods">
-                <label>Mode de paiement:</label>
-                <span>
-                    @if($consultation->methode_paiement == 'cash')
-                    ☑ Cash □ Mobile money □ Virement
-                    @elseif($consultation->methode_paiement == 'mobile_money')
-                    □ Cash ☑ Mobile money □ Virement
-                    @else
-                    □ Cash □ Mobile money ☑ Virement
-                    @endif
-                </span>
-            </div>
-
-            <div class="footer">
-                <div>Encaisser par</div>
-                <div class="signature">{{ $user->name }}</div>
-            </div>
-        </div>
-
-        <!-- Copie Client -->
-        <div class="receipt">
-            <div class="header">
-                <div class="logo">
-                    🔴 LOGO
-                    <div class="details">
-                        Phone: +0123456789
-                    </div>
-                </div>
-                <div class="meta">
-                    <div><strong>DATE:</strong> {{ $date }}</div>
-                    <div><strong>RECU N°:</strong> {{ $numeroRecu }}</div>
-                </div>
-            </div>
-
-            <div class="field">
-                <label>NOM & PRENOMS</label>
-                <span>{{ $patient->nom }} {{ $patient->prenoms }}</span>
-            </div>
-
-            <div class="field">
-                <label>MEDECIN & SPÉCIALITÉ</label>
-                <div class="double-field">
-                    <div><span>{{ $medecin->nom_complet }}</span></div>
-                    <div><span>{{ $medecin->specialite->nom }}</span></div>
-                </div>
-            </div>
-
-            <div class="field">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Prestation</th>
-                            <th>PU</th>
-                            <th>Qte</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($prestations as $prestation)
-                        <tr>
-                            <td>{{ $prestation->libelle }}</td>
-                            <td>{{ number_format($prestation->pivot->montant, 0, ',', ' ') }}</td>
-                            <td>{{ $prestation->pivot->quantite }}</td>
-                            <td>{{ number_format($prestation->pivot->total, 0, ',', ' ') }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="inline-fields">
-                <div class="item">
-                    <label>Total</label>
-                    <span>{{ number_format($consultation->total, 0, ',', ' ') }} FCFA</span>
-                </div>
-                <div class="item">
-                    <label>Ticket Modérateur</label>
-                    <span>{{ number_format($consultation->ticket_moderateur, 0, ',', ' ') }} FCFA</span>
-                </div>
-                <div class="item">
-                    <label>Réduction</label>
-                    <span>{{ number_format($consultation->reduction, 0, ',', ' ') }} FCFA</span>
-                </div>
-            </div>
-
-            <div class="inline-fields">
-                <div class="item">
-                    <label>Payé</label>
-                    <span>{{ number_format($consultation->montant_paye, 0, ',', ' ') }} FCFA</span>
-                </div>
-                <div class="item">
-                    <label>Reste à payer</label>
-                    <span>{{ number_format($consultation->reste_a_payer, 0, ',', ' ') }} FCFA</span>
-                </div>
-            </div>
-
-            <div class="payment-methods">
-                <label>Mode de paiement:</label>
-                <span>
-                    @if($consultation->methode_paiement == 'cash')
-                    ☑ Cash □ Mobile money □ Virement
-                    @elseif($consultation->methode_paiement == 'mobile_money')
-                    □ Cash ☑ Mobile money □ Virement
-                    @else
-                    □ Cash □ Mobile money ☑ Virement
-                    @endif
-                </span>
-            </div>
-
-            <div class="footer">
-                <div>Encaisser par</div>
-                <div class="signature">{{ $user->name }}</div>
-            </div>
-        </div>
+  <div class="header">
+    <div class="logo">
+      <img src="logo.png" alt="Logo">
     </div>
+    <div class="title">CLINIQUE SILOE CORPORATION</div>
+    <div class="sub-title">FACTURE PROFORMA</div>
+    <div class="clearfix"></div>
+  </div>
+
+  <div class="section">
+    <div class="block">
+      <h4>COORDONNEES DU PATIENT</h4>
+      <p>NOM ET PRENOMS : <input type="text"></p>
+      <p>DATE DE NAISSANCE : <input type="text" style="width: 50%;"></p>
+    </div>
+    <div class="block">
+      <h4>MEDECIN TRAITANT</h4>
+      <p>NOM : <input type="text"></p>
+      <h4>ASSURANCE</h4>
+      <p>ASSURANCE : <input type="text"></p>
+    </div>
+    <div class="dates">
+      <span>DATE D’ENTREE</span>
+      <span>DATE DE SORTIE</span>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>LIBELLÉ</th>
+          <th>QTE</th>
+          <th>PRIX UNITAIRE</th>
+          <th>TAUX</th>
+          <th>TOTAL</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 10 lignes vides -->
+        <tr><td colspan="6">&nbsp;</td></tr>
+        <tr><td colspan="6">&nbsp;</td></tr>
+        <tr><td colspan="6">&nbsp;</td></tr>
+        <tr><td colspan="6">&nbsp;</td></tr>
+        <tr><td colspan="6">&nbsp;</td></tr>
+        <tr><td colspan="6">&nbsp;</td></tr>
+        <tr><td colspan="6">&nbsp;</td></tr>
+        <tr><td colspan="6">&nbsp;</td></tr>
+        <tr><td colspan="6">&nbsp;</td></tr>
+        <tr><td colspan="6">&nbsp;</td></tr>
+      </tbody>
+    </table>
+
+    <table class="totaux">
+      <tr><th>TOTAL TTC</th><td></td></tr>
+      <tr><th>TICKET MODERATEUR</th><td></td></tr>
+      <tr><th>REDUCTION</th><td></td></tr>
+      <tr><th>NET A PAYER</th><td></td></tr>
+    </table>
+
+    <div class="footer">
+      <p>ETABLI LE : ___________ &nbsp;&nbsp;&nbsp; PAR : __________________________</p>
+      <p>Arrêté la présente facture à la somme de :</p>
+      <p><strong>Centre Quarante mille Francs CFA</strong></p>
+    </div>
+
+    <div class="mention">
+      Aucun remboursement ne sera possible apres le reglement de la facture<br>
+      la Direction
+    </div>
+  </div>
+
 </body>
 </html>

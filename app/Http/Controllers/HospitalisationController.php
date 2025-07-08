@@ -19,9 +19,11 @@ use App\Models\Specialite;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
+use NumberToWords\NumberToWords;
 
 class HospitalisationController extends Controller
 {
@@ -43,11 +45,11 @@ class HospitalisationController extends Controller
         }
 
         // Vérifier qu'il n'est pas déjà hospitalisé
-        $existe = Hospitalisation::where('patient_id', $patient->id)->whereNull('date_sortie')->exists();
+        // $existe = Hospitalisation::where('patient_id', $patient->id)->whereNull('date_sortie')->exists();
 
-        if ($existe) {
-            return redirect()->back()->with('error', 'Ce patient est déjà hospitalisé.');
-        }
+        // if ($existe) {
+        //     return redirect()->back()->with('error', 'Ce patient est déjà hospitalisé.');
+        // }
 
         DB::beginTransaction();
 
@@ -111,7 +113,6 @@ class HospitalisationController extends Controller
             'patient'
         ));
     }
-    
 
     public function storePharmacie(Request $request, Hospitalisation $hospitalisation)
     {
@@ -181,7 +182,6 @@ class HospitalisationController extends Controller
         }
     }
 
-    
     public function createExamen(Hospitalisation $hospitalisation)
     {
         if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Laboratin', 'Receptionniste', 'Facturié', 'Comptable'])) {
@@ -202,8 +202,6 @@ class HospitalisationController extends Controller
             'patient'
         ));
     }
-
-    
 
     public function storeExamen(Request $request, Hospitalisation $hospitalisation)
     {
@@ -278,9 +276,6 @@ class HospitalisationController extends Controller
             return redirect()->back()->with('error', 'Erreur lors de la mise à jour: ' . $e->getMessage());
         }
     }
-
-
-
     
     public function createFacture(Hospitalisation $hospitalisation)
     {
@@ -346,295 +341,163 @@ class HospitalisationController extends Controller
     }
 
 
-// public function storeFacture(Request $request, Hospitalisation $hospitalisation)
-// {
-//     if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Comptable'])) {
-//         abort(403, 'Accès non autorisé.');
-//     }
-
-//     // Validation des données avec les champs fixes
-//     $validatedData = $request->validate([
-//         // Champs fixes pour pharmacie et labo
-//         'frais_pharmacie.frais_id' => 'required|exists:frais_hospitalisations,id',
-//         'frais_pharmacie.prix' => 'required|numeric|min:0',
-//         'frais_pharmacie.quantite' => 'required|integer|min:1',
-//         'frais_pharmacie.taux' => 'required|numeric|min:0',
-//         'frais_pharmacie.total' => 'required|numeric|min:0',
-        
-//         'frais_laboratoire.frais_id' => 'required|exists:frais_hospitalisations,id',
-//         'frais_laboratoire.prix' => 'required|numeric|min:0',
-//         'frais_laboratoire.quantite' => 'required|integer|min:1',
-//         'frais_laboratoire.taux' => 'required|numeric|min:0',
-//         'frais_laboratoire.total' => 'required|numeric|min:0',
-        
-//         // Autres frais dynamiques
-//         'frais' => 'required|array|min:1',
-//         'frais.*.frais_id' => 'required|exists:frais_hospitalisations,id',
-//         'frais.*.prix' => 'required|numeric|min:0',
-//         'frais.*.quantite' => 'required|integer|min:1',
-//         'frais.*.taux' => 'required|numeric|min:0',
-//         'frais.*.total' => 'required|numeric|min:0',
-        
-//         // Autres champs
-//         'medecin_id' => 'required|exists:medecins,id',
-//         'specialite_id' => 'required|exists:specialites,id',
-//         'date_sortie' => 'required|date',
-//         'date_entree' => 'required|date',
-//         'caution' => 'nullable|numeric|min:0',
-//         'payeur' => 'nullable|string|max:255',
-//         'total' => 'required|numeric|min:0',
-//         'ticket_moderateur' => 'required|numeric|min:0',
-//         'montant_a_paye' => 'required|numeric|min:0',
-//         'reduction' => 'nullable|numeric|min:0',
-//         'reduction_par' => 'required_if:reduction,>,1|nullable|string|max:255',
-//     ]);
-
-//     DB::beginTransaction();
-//     try {
-//         // Mise à jour des informations de base (inchangé)
-//         $hospitalisation->update([
-//             'date_entree' => $validatedData['date_entree'],
-//             'date_sortie' => $validatedData['date_sortie'],
-//             'medecin_id' => $validatedData['medecin_id'],
-//             'specialite_id' => $validatedData['specialite_id'],
-//             'caution' => $validatedData['caution'] ?? 0,
-//             'payeur' => $validatedData['payeur'] ?? null,
-//             'total' => $validatedData['total'],
-//             'ticket_moderateur' => $validatedData['ticket_moderateur'],
-//             'montant_a_paye' => $validatedData['montant_a_paye'],
-//             'reste_a_payer' => $validatedData['montant_a_paye'] - ($validatedData['caution'] ?? 0),
-//             'reduction' => $validatedData['reduction'] ?? 0,
-//             'reduction_par' => $validatedData['reduction_par'] ?? null,
-//         ]);
-
-//         // Combiner tous les frais (pharmacie + labo + autres)
-//         $allFrais = [
-//             $validatedData['frais_pharmacie'],
-//             $validatedData['frais_laboratoire'],
-//             ...$validatedData['frais']
-//         ];
-
-//         // Récupérer les IDs des frais soumis
-//         $submittedFraisIds = collect($allFrais)->pluck('frais_id')->toArray();
-
-//         // Supprimer les frais qui ne sont plus dans la requête
-//         $hospitalisation->details()
-//             ->whereNotIn('frais_hospitalisation_id', $submittedFraisIds)
-//             ->delete();
-
-//         $totalGeneral = 0;
-
-//         // Traitement de tous les frais
-//         foreach ($allFrais as $fraisItem) {
-//             $fraisId = $fraisItem['frais_id'];
-//             $prix = $fraisItem['prix'];
-//             $taux = $fraisItem['taux'];
-
-//             // Vérification des doublons (inchangé)
-//             $doublon = \App\Models\HospitalisationDetail::where('hospitalisation_id', $hospitalisation->id)
-//                 ->where('frais_hospitalisation_id', $fraisId)
-//                 ->where(function($query) use ($prix, $taux) {
-//                     $query->where('prix_unitaire', '!=', $prix)
-//                           ->orWhere('taux', '!=', $taux);
-//                 })
-//                 ->first();
-
-//             if ($doublon) {
-//                 DB::rollBack();
-//                 return redirect()->back()->with('error',
-//                     'Un doublon a été détecté pour le frais "' . ($doublon->frais->libelle ?? 'Inconnu') . '" : '
-//                     . 'Prix existant : ' . $doublon->prix_unitaire . ' XOF, Taux existant : ' . $doublon->taux . '%.<br>'
-//                     . 'Veuillez corriger ou supprimer la ligne existante avant de continuer.');
-//             }
-
-//             $detailData = [
-//                 'hospitalisation_id' => $hospitalisation->id,
-//                 'frais_hospitalisation_id' => $fraisId,
-//                 'quantite' => $fraisItem['quantite'],
-//                 'prix_unitaire' => $prix,
-//                 'taux' => $taux,
-//                 'total' => $fraisItem['total'],
-//                 'updated_at' => now()
-//             ];
-
-//             \App\Models\HospitalisationDetail::updateOrCreate(
-//                 [
-//                     'hospitalisation_id' => $hospitalisation->id,
-//                     'frais_hospitalisation_id' => $fraisId
-//                 ],
-//                 $detailData
-//             );
-
-//             $totalGeneral += $fraisItem['total'];
-//         }
-
-//         DB::commit();
-//         return redirect()->back()
-//             ->with('swal_success', 'Facture enregistrée avec succès.');
-
-//     } catch (\Exception $e) {
-//         DB::rollBack();
-//         \Log::error('Erreur storeFacture', [
-//             'error' => $e->getMessage(),
-//             'trace' => $e->getTraceAsString()
-//         ]);
-//         return redirect()->back()
-//             ->with('error', 'Erreur lors de l\'enregistrement: ' . $e->getMessage());
-//     }
-// }
-public function storeFacture(Request $request, Hospitalisation $hospitalisation)
-{
-    if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Comptable'])) {
-        abort(403, 'Accès non autorisé.');
-    }
-
-    // Validation des données avec les champs fixes
-    $validatedData = $request->validate([
-        // Champs fixes pour pharmacie et labo
-        'frais_pharmacie.frais_id' => 'required|exists:frais_hospitalisations,id',
-        'frais_pharmacie.prix' => 'required|numeric|min:0',
-        'frais_pharmacie.quantite' => 'required|integer|min:1',
-        'frais_pharmacie.taux' => 'required|numeric|min:0',
-        'frais_pharmacie.total' => 'required|numeric|min:0',
-        
-        'frais_laboratoire.frais_id' => 'required|exists:frais_hospitalisations,id',
-        'frais_laboratoire.prix' => 'required|numeric|min:0',
-        'frais_laboratoire.quantite' => 'required|integer|min:1',
-        'frais_laboratoire.taux' => 'required|numeric|min:0',
-        'frais_laboratoire.total' => 'required|numeric|min:0',
-        
-        // Autres frais dynamiques
-        'frais' => 'required|array|min:1',
-        'frais.*.frais_id' => 'required|exists:frais_hospitalisations,id',
-        'frais.*.prix' => 'required|numeric|min:0',
-        'frais.*.quantite' => 'required|integer|min:1',
-        'frais.*.taux' => 'required|numeric|min:0',
-        'frais.*.total' => 'required|numeric|min:0',
-        
-        // Autres champs
-        'medecin_id' => 'required|exists:medecins,id',
-        'specialite_id' => 'required|exists:specialites,id',
-        'date_sortie' => 'required|date',
-        'date_entree' => 'required|date',
-        'caution' => 'nullable|numeric|min:0',
-        'payeur' => 'nullable|string|max:255',
-        'total' => 'required|numeric|min:0',
-        'ticket_moderateur' => 'required|numeric|min:0',
-        'montant_a_paye' => 'required|numeric|min:0',
-        'reduction' => 'nullable|numeric|min:0',
-        'reduction_par' => 'required_if:reduction,>,1|nullable|string|max:255',
-    ]);
-
-    DB::beginTransaction();
-    try {
-        // Mise à jour des informations de base
-        $hospitalisation->update([
-            'date_entree' => $validatedData['date_entree'],
-            'date_sortie' => $validatedData['date_sortie'],
-            'medecin_id' => $validatedData['medecin_id'],
-            'specialite_id' => $validatedData['specialite_id'],
-            'caution' => $validatedData['caution'] ?? 0,
-            'payeur' => $validatedData['payeur'] ?? null,
-            'total' => $validatedData['total'],
-            'ticket_moderateur' => $validatedData['ticket_moderateur'],
-            'montant_a_paye' => $validatedData['montant_a_paye'],
-            'reste_a_payer' => $validatedData['montant_a_paye'] - ($validatedData['caution'] - $validatedData['caution'] ?? 0),
-            'reduction' => $validatedData['reduction'] ?? 0,
-            'reduction_par' => $validatedData['reduction_par'] ?? null,
-        ]);
-
-        // D'abord supprimer tous les détails existants pour cette hospitalisation
-        $hospitalisation->details()->delete();
-
-        $totalGeneral = 0;
-        $fraisTraites = []; // Pour éviter les doublons dans la même requête
-
-        // Combiner tous les frais (pharmacie + labo + autres)
-        $allFrais = [
-            $validatedData['frais_pharmacie'],
-            $validatedData['frais_laboratoire'],
-            ...$validatedData['frais']
-        ];
-
-        foreach ($allFrais as $fraisItem) {
-            $fraisId = $fraisItem['frais_id'];
-
-            // Vérifier si ce frais a déjà été traité dans cette requête
-            if (in_array($fraisId, $fraisTraites)) {
-                DB::rollBack();
-                return redirect()->back()->with('error', 
-                    'Le frais ID '.$fraisId.' est en doublon dans le formulaire.');
-            }
-
-            $fraisTraites[] = $fraisId;
-
-            // Créer le nouveau détail
-            $detailData = [
-                'hospitalisation_id' => $hospitalisation->id,
-                'frais_hospitalisation_id' => $fraisId,
-                'quantite' => $fraisItem['quantite'],
-                'prix_unitaire' => $fraisItem['prix'],
-                'taux' => $fraisItem['taux'],
-                'total' => $fraisItem['total'],
-                'created_at' => now(),
-                'updated_at' => now()
-            ];
-
-            \App\Models\HospitalisationDetail::create($detailData);
-
-            $totalGeneral += $fraisItem['total'];
+    public function storeFacture(Request $request, Hospitalisation $hospitalisation)
+    {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Comptable'])) {
+            abort(403, 'Accès non autorisé.');
         }
 
-        DB::commit();
-        return redirect()->back()
-            ->with('swal_success', 'Facture enregistrée avec succès.');
-
-    } catch (\Exception $e) {
-        DB::rollBack();
-        \Log::error('Erreur storeFacture', [
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
+        // Validation des données avec les champs fixes
+        $validatedData = $request->validate([
+            // Champs fixes pour pharmacie et labo
+            'frais_pharmacie.frais_id' => 'required|exists:frais_hospitalisations,id',
+            'frais_pharmacie.prix' => 'required|numeric|min:0',
+            'frais_pharmacie.quantite' => 'required|integer|min:1',
+            'frais_pharmacie.taux' => 'required|numeric|min:0',
+            'frais_pharmacie.total' => 'required|numeric|min:0',
+            
+            'frais_laboratoire.frais_id' => 'required|exists:frais_hospitalisations,id',
+            'frais_laboratoire.prix' => 'required|numeric|min:0',
+            'frais_laboratoire.quantite' => 'required|integer|min:1',
+            'frais_laboratoire.taux' => 'required|numeric|min:0',
+            'frais_laboratoire.total' => 'required|numeric|min:0',
+            
+            // Autres frais dynamiques
+            'frais' => 'required|array|min:1',
+            'frais.*.frais_id' => 'required|exists:frais_hospitalisations,id',
+            'frais.*.prix' => 'required|numeric|min:0',
+            'frais.*.quantite' => 'required|integer|min:1',
+            'frais.*.taux' => 'required|numeric|min:0',
+            'frais.*.total' => 'required|numeric|min:0',
+            
+            // Autres champs
+            'medecin_id' => 'required|exists:medecins,id',
+            'specialite_id' => 'required|exists:specialites,id',
+            'date_sortie' => 'required|date',
+            'date_entree' => 'required|date',
+            'caution' => 'nullable|numeric|min:0',
+            'payeur' => 'nullable|string|max:255',
+            'total' => 'required|numeric|min:0',
+            'ticket_moderateur' => 'required|numeric|min:0',
+            'montant_a_paye' => 'required|numeric|min:0',
+            'reduction' => 'nullable|numeric|min:0',
+            'reduction_par' => 'required_if:reduction,>,1|nullable|string|max:255',
         ]);
-        return redirect()->back()
-            ->with('error', 'Erreur lors de l\'enregistrement: ' . $e->getMessage());
+
+        DB::beginTransaction();
+        try {
+            // Mise à jour des informations de base
+            $hospitalisation->update([
+                'date_entree' => $validatedData['date_entree'],
+                'date_sortie' => $validatedData['date_sortie'],
+                'medecin_id' => $validatedData['medecin_id'],
+                'specialite_id' => $validatedData['specialite_id'],
+                'caution' => $validatedData['caution'] ?? 0,
+                'payeur' => $validatedData['payeur'] ?? null,
+                'total' => $validatedData['total'],
+                'ticket_moderateur' => $validatedData['ticket_moderateur'],
+                'montant_a_paye' => $validatedData['montant_a_paye'],
+                'reste_a_payer' => $validatedData['montant_a_paye'] - ($validatedData['caution'] - $validatedData['caution'] ?? 0),
+                'reduction' => $validatedData['reduction'] ?? 0,
+                'reduction_par' => $validatedData['reduction_par'] ?? null,
+            ]);
+
+            // D'abord supprimer tous les détails existants pour cette hospitalisation
+            $hospitalisation->details()->delete();
+
+            $totalGeneral = 0;
+            $fraisTraites = []; // Pour éviter les doublons dans la même requête
+
+            // Combiner tous les frais (pharmacie + labo + autres)
+            $allFrais = [
+                $validatedData['frais_pharmacie'],
+                $validatedData['frais_laboratoire'],
+                ...$validatedData['frais']
+            ];
+
+            foreach ($allFrais as $fraisItem) {
+                $fraisId = $fraisItem['frais_id'];
+
+                // Vérifier si ce frais a déjà été traité dans cette requête
+                if (in_array($fraisId, $fraisTraites)) {
+                    DB::rollBack();
+                    return redirect()->back()->with('error', 
+                        'Le frais ID '.$fraisId.' est en doublon dans le formulaire.');
+                }
+
+                $fraisTraites[] = $fraisId;
+
+                // Créer le nouveau détail
+                $detailData = [
+                    'hospitalisation_id' => $hospitalisation->id,
+                    'frais_hospitalisation_id' => $fraisId,
+                    'quantite' => $fraisItem['quantite'],
+                    'prix_unitaire' => $fraisItem['prix'],
+                    'taux' => $fraisItem['taux'],
+                    'total' => $fraisItem['total'],
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ];
+
+                HospitalisationDetail::create($detailData);
+
+                $totalGeneral += $fraisItem['total'];
+            }
+
+            // Génération du PDF
+            $facturePath = $this->generateFacturePdf($hospitalisation);
+            $hospitalisation->update(['facture_path' => $facturePath]);
+
+            DB::commit();
+            return redirect()->back()
+                ->with('swal_success', 'Facture enregistrée avec succès.')
+                ->with('pdf_url', Storage::url($facturePath));
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Erreur storeFacture', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect()->back()
+                ->with('error', 'Erreur lors de l\'enregistrement: ' . $e->getMessage());
+        }
     }
-}
-
-
 
     private function generateFacturePdf(Hospitalisation $hospitalisation)
     {
+        $numberToWords = new NumberToWords();
+        $numberTransformer = $numberToWords->getNumberTransformer('fr');
+        $montantEnLettres = ucfirst($numberTransformer->toWords($hospitalisation->montant_a_paye));
+
         $pdf = Pdf::loadView('dashboard.documents.facture', [
             'hospitalisation' => $hospitalisation,
             'patient' => $hospitalisation->patient,
             'medecin' => $hospitalisation->medecin,
-            'details' => $hospitalisation->details
+            'details' => $hospitalisation->details()->with('frais')->get(),
+            'montantEnLettres' => $montantEnLettres
         ]);
 
-        // Création du dossier si inexistant
-        $directory = storage_path('app/public/factures');
-        if (!file_exists($directory)) {
-            mkdir($directory, 0755, true);
+        // Chemin relatif dans le storage public
+        $directory = 'factures';
+        $filename = 'facture_'.$hospitalisation->id.'_'.now()->format('YmdHis').'.pdf';
+        $filepath = $directory.'/'.$filename;
+
+        // Création du dossier si inexistant dans le storage public
+        if (!Storage::disk('public')->exists($directory)) {
+            Storage::disk('public')->makeDirectory($directory);
         }
 
-        // Nom du fichier
-        $filename = 'facture_' . $hospitalisation->id . '_' . time() . '.pdf';
-        $filepath = 'factures/' . $filename;
-        $fullPath = storage_path('app/public/' . $filepath);
-
-        // Suppression de l'ancien fichier s'il existe
+        // Suppression de l'ancien fichier
         if ($hospitalisation->facture_path) {
-            $oldPath = storage_path('app/public/' . $hospitalisation->facture_path);
-            if (file_exists($oldPath)) {
-                unlink($oldPath);
-            }
+            Storage::disk('public')->delete($hospitalisation->facture_path);
         }
 
-        // Sauvegarde du nouveau fichier
-        $pdf->save($fullPath);
+        // Sauvegarde du nouveau fichier dans le storage public
+        Storage::disk('public')->put($filepath, $pdf->output());
 
         return $filepath;
-    }   
+    }
 
     private function createOrUpdateReglement(Hospitalisation $hospitalisation, array $data)
     {

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Facture Proforma</title>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 5px;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f2f2;
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      background: #000;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .logo {
+      float: left;
+      margin-top: -20px;
+    }
+    .logo img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+    }
+    .title {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .sub-title {
+      font-size: 18px;
+      margin-top: 10px;
+    }
+    .clearfix {
+      clear: both;
+    }
+    .section {
+      margin: 0;
+    }
+    .block {
+      display: inline-block;
+      vertical-align: top;
+      width: 48%;
+      margin-bottom: 10px;
+    }
+    .block h4 {
+      background: #d9d6d1;
+      padding: 5px;
+      margin: 0 0 5px 0;
+    }
+    .block p {
+      margin: 5px 0;
+    }
+    .block input {
+      border: none;
+      border-bottom: 1px solid #000;
+      background: transparent;
+      width: 80%;
+    }
+    .dates {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .dates span {
+      background: #000;
+      color: white;
+      padding: 5px 10px;
+      margin: 5px;
+      display: inline-block;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #000;
+      padding: 5px;
+      text-align: center;
+      font-size: 14px;
+    }
+    th {
+      background: #000;
+      color: white;
+    }
+    .totaux {
+      margin-top: 20px;
+      float: right;
+      width: 40%;
+    }
+    .totaux td {
+      text-align: left;
+    }
+    .totaux th {
+      background: #000;
+      color: white;
+    }
+    .footer {
+      clear: both;
+      margin: 20px;
+      font-size: 14px;
+    }
+    .footer p {
+      margin: 5px 0;
+    }
+    .mention {
+      background: red;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-top: 30px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="logo">
+      <img src="{{ public_path('assets/dist/img/logo.png') }}" alt="Logo">
+    </div>
+    <div class="title">CLINIQUE SILOE CORPORATION</div>
+    <div class="sub-title">FACTURE PROFORMA</div>
+    <div class="clearfix"></div>
+  </div>
+
+  <div class="section">
+    <div class="block">
+      <h4>COORDONNEES DU PATIENT</h4>
+      <p>NOM ET PRENOMS : {{ $patient->nom }} {{ $patient->prenoms }}</p>
+      <p>DATE DE NAISSANCE : {{ $patient->date_naissance->format('d/m/Y') }}</p>
+    </div>
+    <div class="block">
+      <h4>MEDECIN TRAITANT</h4>
+      <p>NOM : {{ $medecin->nom_complet }}</p>
+      <h4>SPECIALITE</h4>
+      <p>{{ $medecin->specialite->nom }}</p>
+    </div>
+    <div class="dates">
+      <span>DATE D'ENTREE: {{ $hospitalisation->date_entree->format('d/m/Y') }}</span>
+      <span>DATE DE SORTIE: {{ $hospitalisation->date_sortie->format('d/m/Y') }}</span>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>LIBELLÉ</th>
+          <th>QTE</th>
+          <th>PRIX UNITAIRE</th>
+          <th>TAUX</th>
+          <th>TOTAL</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach($details as $index => $detail)
+        <tr>
+          <td>{{ $index + 1 }}</td>
+          <td>{{ $detail->frais->libelle }}</td>
+          <td>{{ $detail->quantite }}</td>
+          <td>{{ number_format($detail->prix_unitaire, 0, ',', ' ') }}</td>
+          <td>{{ number_format($detail->taux, 0, ',', ' ') }}%</td>
+          <td>{{ number_format($detail->total, 0, ',', ' ') }}</td>
+        </tr>
+        @endforeach
+      </tbody>
+    </table>
+
+    <table class="totaux">
+      <tr><th>TOTAL TTC</th><td>{{ number_format($hospitalisation->total, 0, ',', ' ') }} </td></tr>
+      <tr><th>TICKET MODERATEUR</th><td>{{ number_format($hospitalisation->ticket_moderateur, 0, ',', ' ') }}</td></tr>
+      <tr><th>REDUCTION</th><td>{{ number_format($hospitalisation->reduction, 0, ',', ' ') }}</td></tr>
+      <tr><th>NET A PAYER</th><td>{{ number_format($hospitalisation->montant_a_paye, 0, ',', ' ') }} FCFA</td></tr>
+    </table>
+
+    <div class="footer">
+      <p>Etablie le : {{ now()->format('d/m/Y') }} &nbsp;&nbsp;&nbsp; Par : {{ auth()->user()->name }}</p>
+      <p>Arrêté la présente facture à la somme de :</p>
+      <p><strong>{{ $montantEnLettres }} Francs CFA</strong></p>
+    </div>
+
+    <div class="mention">
+      Aucun remboursement ne sera possible après le règlement de la facture<br>
+      la Direction
+    </div>
+  </div>
+
+</body>
+{{-- <body>
+
+  <div class="header">
+    <div class="logo">
+      <img src="logo.png" alt="Logo">
+    </div>
+    <div class="title">CLINIQUE SILOE CORPORATION</div>
+    <div class="sub-title">FACTURE PROFORMA</div>
+    <div class="clearfix"></div>
+  </div>
+
+  <div class="section">
+    <div class="block">
+      <h4>COORDONNEES DU PATIENT</h4>
+      <p>NOM ET PRENOMS : <input type="text"></p>
+      <p>DATE DE NAISSANCE : <input type="text" style="width: 50%;"></p>
+    </div>
+    <div class="block">
+      <h4>MEDECIN TRAITANT</h4>
+      <p>NOM : <input type="text"></p>
+      <h4>ASSURANCE</h4>
+      <p>ASSURANCE : <input type="text"></p>
+    </div>
+    <div class="dates">
+      <span>DATE D’ENTREE</span>
+      <span>DATE DE SORTIE</span>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>LIBELLÉ</th>
+          <th>QTE</th>
+          <th>PRIX UNITAIRE</th>
+          <th>TAUX</th>
+          <th>TOTAL</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 10 lignes vides -->
+        <tr><td colspan="6">&nbsp;</td></tr>
+        <tr><td colspan="6">&nbsp;</td></tr>
+        <tr><td colspan="6">&nbsp;</td></tr>
+        <tr><td colspan="6">&nbsp;</td></tr>
+        <tr><td colspan="6">&nbsp;</td></tr>
+        <tr><td colspan="6">&nbsp;</td></tr>
+        <tr><td colspan="6">&nbsp;</td></tr>
+        <tr><td colspan="6">&nbsp;</td></tr>
+        <tr><td colspan="6">&nbsp;</td></tr>
+        <tr><td colspan="6">&nbsp;</td></tr>
+      </tbody>
+    </table>
+
+    <table class="totaux">
+      <tr><th>TOTAL TTC</th><td></td></tr>
+      <tr><th>TICKET MODERATEUR</th><td></td></tr>
+      <tr><th>REDUCTION</th><td></td></tr>
+      <tr><th>NET A PAYER</th><td></td></tr>
+    </table>
+
+    <div class="footer">
+      <p>ETABLI LE : ___________ &nbsp;&nbsp;&nbsp; PAR : __________________________</p>
+      <p>Arrêté la présente facture à la somme de :</p>
+      <p><strong>Centre Quarante mille Francs CFA</strong></p>
+    </div>
+
+    <div class="mention">
+      Aucun remboursement ne sera possible apres le reglement de la facture<br>
+      la Direction
+    </div>
+  </div>
+
+</body> --}}
+</html>
