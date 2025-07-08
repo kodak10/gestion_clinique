@@ -53,7 +53,7 @@
                                             <div class="dropdown-menu dropdown-menu-end">
                                                 @if($consultation->pdf_path)
                                                     <a class="dropdown-item" href="{{ Storage::url($consultation->pdf_path) }}" target="_blank">
-                                                        Réimprimer le reçu
+                                                        Voir la Consultation
                                                     </a>
                                                 @endif
 
@@ -99,84 +99,14 @@
                             </tr>
                             @endforeach
 
-                            {{-- @foreach($hospitalisations as $hospitalisation)
-                            <tr>
-                                <td><span class="badge bg-orange-lt">Hospitalisation</span></td>
-                                <td><span class="text-primary">{{ $hospitalisation->patient->num_dossier }}</span></td>
-                                <td>{{ $hospitalisation->patient->nom }} {{ $hospitalisation->patient->prenoms }}</td>
-                                <td>
-                                    @if($hospitalisation->patient->telephone)
-                                        <a href="tel:{{ $hospitalisation->patient->telephone }}">{{ $hospitalisation->patient->telephone }}</a>
-                                    @else
-                                        N/A
-                                    @endif
-                                </td>
-                                <td><span class="text-danger fw-bold">{{ number_format($hospitalisation->reste_a_payer, 0, ',', ' ') }} FCFA</span></td>
-                                <td>{{ $hospitalisation->created_at }}</td>
-
-                                <td>
-                                    <div class="btn-list flex-nowrap">
-                                        <div class="dropdown">
-                                            <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">Actions</button>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                @if($hospitalisation->pdf_path)
-                                                    <a class="dropdown-item" href="{{ Storage::url($hospitalisation->pdf_path) }}" target="_blank">
-                                                        Réimprimer le reçu
-                                                    </a>
-                                                @endif
-
-                                                <button class="dropdown-item detail-mouvement-hospi"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#modal-detail-hospi"
-                                                    data-patient="{{ $hospitalisation->patient->nom }} {{ $hospitalisation->patient->prenoms }}"
-                                                    data-date="{{ $hospitalisation->created_at->format('d/m/Y H:i') }}"
-                                                    data-recus="{{ $hospitalisation->numero_recu }}"
-                                                    data-total="{{ number_format($hospitalisation->total, 0, ',', ' ') }}"
-                                                    data-reduction="{{ number_format($hospitalisation->reduction, 0, ',', ' ') }}"
-                                                    data-ticket="{{ number_format($hospitalisation->ticket_moderateur, 0, ',', ' ') }}"
-                                                    data-encaisser="{{ number_format($hospitalisation->reglements->sum('montant'), 0, ',', ' ') }}"
-                                                    data-prestations="{{ json_encode($hospitalisation->details->map(function($item) {
-                                                        return [
-                                                            'libelle' => $item->frais->libelle ?? '',
-                                                            'quantite' => $item->quantite,
-                                                            'prix' => number_format($item->prix_unitaire, 0, ',', ' '),
-                                                            'taux' => $item->taux,
-                                                            'total' => number_format($item->total, 0, ',', ' ')
-                                                        ];
-                                                    })) }}"
-
-                                                    data-caissier="{{ $hospitalisation->user->name }}">
-                                                    Détails
-                                                </button>
-
-                                                @if($hospitalisation->reste_a_payer > 0)
-                                                    <button class="dropdown-item"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#paiement-modal"
-                                                        data-type="consultation"
-                                                        data-id="{{ $hospitalisation->id }}"
-                                                        data-montant="{{ $hospitalisation->reste_a_payer }}">
-                                                        Payer
-                                                    </button>
-                                                @endif
-
-                                               
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                
-
-                            </tr>
-                            @endforeach --}}
                             @foreach($hospitalisations as $hospitalisation)
                                 <tr>
                                     <td><span class="badge bg-orange-lt">Hospitalisation</span></td>
                                     <td><span class="text-primary">{{ $hospitalisation->patient->num_dossier ?? 'N/A' }}</span></td>
                                     <td>{{ $hospitalisation->patient->nom ?? 'N/A' }} {{ $hospitalisation->patient->prenoms ?? '' }}</td>
                                     <td>
-                                        @if($hospitalisation->patient->telephone ?? false)
-                                            <a href="tel:{{ $hospitalisation->patient->telephone }}">{{ $hospitalisation->patient->telephone }}</a>
+                                        @if($hospitalisation->patient->contact_patient ?? false)
+                                            <a href="tel:{{ $hospitalisation->patient->contact_patient }}">{{ $hospitalisation->patient->contact_patient }}</a>
                                         @else
                                             N/A
                                         @endif
@@ -190,7 +120,7 @@
                                                 <div class="dropdown-menu dropdown-menu-end">
                                                     @if($hospitalisation->facture_path ?? false)
                                                         <a class="dropdown-item" href="{{ Storage::url($hospitalisation->facture_path) }}" target="_blank">
-                                                            Réimprimer le reçu
+                                                            Voir la facture
                                                         </a>
                                                     @endif
 
