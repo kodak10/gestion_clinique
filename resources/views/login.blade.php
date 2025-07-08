@@ -60,7 +60,7 @@
             @csrf
             <div class="mb-3">
               <label class="form-label">Pseudo</label>
-              <input type="text" class="form-control @error('pseudo') is-invalid @enderror" 
+              <input type="text" placeholder="Pseudo" class="form-control @error('pseudo') is-invalid @enderror" 
                      name="pseudo" value="{{ old('pseudo') }}" required autocomplete="pseudo" autofocus>
               @error('pseudo')
                 <span class="invalid-feedback" role="alert">
@@ -71,7 +71,7 @@
             <div class="mb-2">
               <label class="form-label">Mot de passe</label>
               <div class="input-group input-group-flat">
-                <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                <input type="password" placeholder="Mot de passe" class="form-control @error('password') is-invalid @enderror" 
                        name="password" required autocomplete="current-password">
                 <span class="input-group-text">
                   <a href="#" class="link-secondary" title="Voir le mot de passe" data-bs-toggle="tooltip" onclick="togglePassword()">

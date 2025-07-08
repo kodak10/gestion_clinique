@@ -49,7 +49,7 @@
         <div class="collapse navbar-collapse" id="navbar-menu">
           <div class="navbar">
             <div class="container-xl">
-              <div class="row flex-fill align-items-center m-auto">
+              <div class="row flex-fill align-items-center ">
                 <div class="col">
                   <!-- BEGIN NAVBAR MENU -->
                   <ul class="navbar-nav">
