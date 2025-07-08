@@ -91,11 +91,12 @@ class ReglementController extends Controller
             ->where('reste_a_payer', '>', 0)
             ->get();
 
-            // dd($consultations);
+            
 
-        $hospitalisations = Hospitalisation::with(['patient', 'frais'])
+        $hospitalisations = Hospitalisation::with(['patient', 'user', 'details.frais', 'reglements'])
             ->where('reste_a_payer', '>', 0)
             ->get();
+        // dd($hospitalisations);
 
         return view('dashboard.pages.comptabilites.reglement', compact('consultations', 'hospitalisations'));
     }
@@ -181,70 +182,138 @@ class ReglementController extends Controller
 //             'pdf_url' => Storage::url($pdfPath)
 //         ]);
 // }
-public function store(Request $request)
-{
-    if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Caissière', 'Comptable'])) {
-        abort(403, 'Accès non autorisé.');
-    }
+    // public function store(Request $request)
+    // {
+    //     if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Caissière', 'Comptable'])) {
+    //         abort(403, 'Accès non autorisé.');
+    //     }
 
-    $validated = $request->validate([
-        'type' => 'required|in:consultation,hospitalisation',
-        'id' => 'required|integer',
-        'montant' => 'required|numeric|min:1',
-        'methode_paiement' => 'required|in:cash,mobile_money,virement'
-    ]);
+    //     $validated = $request->validate([
+    //         'type' => 'required|in:consultation,hospitalisation',
+    //         'id' => 'required|integer',
+    //         'montant' => 'required|numeric|min:1',
+    //         'methode_paiement' => 'required|in:cash,mobile_money,virement'
+    //     ]);
 
-    $model = $validated['type'] === 'consultation'
-        ? Consultation::findOrFail($validated['id'])
-        : Hospitalisation::findOrFail($validated['id']);
+    //     $model = $validated['type'] === 'consultation'
+    //         ? Consultation::findOrFail($validated['id'])
+    //         : Hospitalisation::findOrFail($validated['id']);
 
-    if ($validated['montant'] > $model->reste_a_payer) {
-        return back()->with('error', 'Le montant payé ne peut pas dépasser le reste à payer');
-    }
+    //     if ($validated['montant'] > $model->reste_a_payer) {
+    //         return back()->with('error', 'Le montant payé ne peut pas dépasser le reste à payer');
+    //     }
 
-    $pdfPath = null;
+    //     $pdfPath = null;
 
-    DB::transaction(function() use ($validated, $model, &$pdfPath) {
-        $reglement = Reglement::create([
-            'user_id' => auth()->id(),
-            'montant' => $validated['montant'],
-            'methode_paiement' => $validated['methode_paiement'],
-            $validated['type'].'_id' => $model->id
-        ]);
+    //     DB::transaction(function() use ($validated, $model, &$pdfPath) {
+    //         $reglement = Reglement::create([
+    //             'user_id' => auth()->id(),
+    //             'montant' => $validated['montant'],
+    //             'methode_paiement' => $validated['methode_paiement'],
+    //             $validated['type'].'_id' => $model->id
+    //         ]);
 
-        $model->montant_paye += $validated['montant']; 
-        $model->reste_a_payer -= $validated['montant'];
-        $model->save();
+    //         $model->montant_paye += $validated['montant']; 
+    //         $model->reste_a_payer -= $validated['montant'];
+    //         $model->save();
 
-        $numeroRecu = 'RC-'.str_pad($reglement->id, 6, '0', STR_PAD_LEFT);
-        $pdfData = [
-            'patient' => $model->patient,
-            'date' => now()->format('d/m/Y H:i'),
-            'numeroRecu' => $numeroRecu,
-            'user' => auth()->user(),
-            'reglement' => $reglement
-        ];
+    //         $numeroRecu = 'RC-'.str_pad($reglement->id, 6, '0', STR_PAD_LEFT);
+    //         $pdfData = [
+    //             'patient' => $model->patient,
+    //             'date' => now()->format('d/m/Y H:i'),
+    //             'numeroRecu' => $numeroRecu,
+    //             'user' => auth()->user(),
+    //             'reglement' => $reglement
+    //         ];
 
-        if ($validated['type'] === 'consultation') {
-            $pdfData['consultation'] = $model;
-            $pdfData['medecin'] = $model->medecin;
-            $pdfData['prestations'] = $model->prestations;
-        } else {
-            $pdfData['hospitalisation'] = $model;
+    //         if ($validated['type'] === 'consultation') {
+    //             $pdfData['consultation'] = $model;
+    //             $pdfData['medecin'] = $model->medecin;
+    //             $pdfData['prestations'] = $model->prestations;
+    //         } else {
+    //             $pdfData['hospitalisation'] = $model;
+    //         }
+
+    //         $pdf = Pdf::loadView('dashboard.documents.recu_consultation', $pdfData);
+    //         $pdfPath = 'reglements/'.$reglement->id.'/recu-'.$numeroRecu.'.pdf';
+    //         Storage::disk('public')->put($pdfPath, $pdf->output());
+    //         $reglement->update(['pdf_path' => $pdfPath]);
+    //     });
+
+    //     return redirect()->route('reglements.index')
+    //         ->with([
+    //             'success' => 'Paiement enregistré avec succès',
+    //             'pdf_url' => Storage::url($pdfPath)
+    //         ]);
+    // }
+    public function store(Request $request)
+    {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Caissière', 'Comptable'])) {
+            abort(403, 'Accès non autorisé.');
         }
 
-        $pdf = Pdf::loadView('dashboard.documents.recu_consultation', $pdfData);
-        $pdfPath = 'reglements/'.$reglement->id.'/recu-'.$numeroRecu.'.pdf';
-        Storage::disk('public')->put($pdfPath, $pdf->output());
-        $reglement->update(['pdf_path' => $pdfPath]);
-    });
-
-    return redirect()->route('reglements.index')
-        ->with([
-            'success' => 'Paiement enregistré avec succès',
-            'pdf_url' => Storage::url($pdfPath)
+        $validated = $request->validate([
+            'type' => 'required|in:consultation,hospitalisation',
+            'id' => 'required|integer',
+            'montant' => 'required|numeric|min:1',
+            'methode_paiement' => 'required|in:cash,mobile_money,virement'
         ]);
-}
+
+        $model = $validated['type'] === 'consultation'
+            ? Consultation::findOrFail($validated['id'])
+            : Hospitalisation::findOrFail($validated['id']);
+
+        if ($validated['montant'] > $model->reste_a_payer) {
+            return back()->with('error', 'Le montant payé ne peut pas dépasser le reste à payer');
+        }
+
+        $pdfPath = null;
+
+        DB::transaction(function() use ($validated, $model, &$pdfPath) {
+            $reglement = Reglement::create([
+                'user_id' => auth()->id(),
+                'montant' => $validated['montant'],
+                'methode_paiement' => $validated['methode_paiement'],
+                $validated['type'].'_id' => $model->id
+            ]);
+
+            $model->montant_paye += $validated['montant']; 
+            $model->reste_a_payer -= $validated['montant'];
+            $model->save();
+
+            $numeroRecu = 'RC-'.str_pad($reglement->id, 6, '0', STR_PAD_LEFT);
+            $pdfData = [
+                'patient' => $model->patient,
+                'date' => now()->format('d/m/Y H:i'),
+                'numeroRecu' => $numeroRecu,
+                'user' => auth()->user(),
+                'reglement' => $reglement
+            ];
+
+            if ($validated['type'] === 'consultation') {
+                $pdfData['consultation'] = $model;
+                $pdfData['medecin'] = $model->medecin;
+                $pdfData['prestations'] = $model->prestations;
+                $view = 'dashboard.documents.recu_consultation';
+            } else {
+                $pdfData['hospitalisation'] = $model;
+                $pdfData['medecin'] = $model->medecin;
+                $pdfData['prestations'] = $model->details;
+                $view = 'dashboard.documents.recu_consultation';
+            }
+
+            $pdf = Pdf::loadView($view, $pdfData);
+            $pdfPath = 'reglements/'.$reglement->id.'/recu-'.$numeroRecu.'.pdf';
+            Storage::disk('public')->put($pdfPath, $pdf->output());
+            $reglement->update(['pdf_path' => $pdfPath]);
+        });
+
+        return redirect()->route('reglements.index')
+            ->with([
+                'success' => 'Paiement enregistré avec succès',
+                'pdf_url' => Storage::url($pdfPath)
+            ]);
+    }
 
     public function edit($id)
     {
@@ -257,7 +326,8 @@ public function store(Request $request)
         return view('dashboard.pages.comptabilites.edit_reglement', compact('reglement'));
     }
 
-//     public function updateReglement(Request $request, $id)
+
+// public function updateReglement(Request $request, $id)
 // {
 //     if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Caissière', 'Comptable'])) {
 //         abort(403, 'Accès non autorisé.');
@@ -274,16 +344,37 @@ public function store(Request $request)
 //         : Hospitalisation::findOrFail($reglement->hospitalisation_id);
 
 //     DB::transaction(function() use ($validated, $reglement, $model) {
-//         // Réajustement du reste à payer
 //         $model->reste_a_payer += $reglement->montant;
 //         $model->reste_a_payer -= $validated['montant'];
 //         $model->save();
 
-//         // Mise à jour du règlement
 //         $reglement->update([
 //             'montant' => $validated['montant'],
 //             'methode_paiement' => $validated['methode_paiement']
 //         ]);
+
+//         // Re-génération du PDF
+//         $numeroRecu = 'RC-'.str_pad($reglement->id, 6, '0', STR_PAD_LEFT);
+//         $pdfData = [
+//             'patient' => $model->patient,
+//             'date' => now()->format('d/m/Y H:i'),
+//             'numeroRecu' => $numeroRecu,
+//             'user' => auth()->user(),
+//             'reglement' => $reglement
+//         ];
+
+//         if ($reglement->consultation_id) {
+//             $pdfData['consultation'] = $model;
+//             $pdfData['medecin'] = $model->medecin;
+//             $pdfData['prestations'] = $model->prestations;
+//         } else {
+//             $pdfData['hospitalisation'] = $model;
+//         }
+
+//         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('dashboard.documents.recu_consultation', $pdfData);
+//         $pdfPath = 'reglements/'.$reglement->id.'/recu-'.$numeroRecu.'.pdf';
+//         Storage::disk('public')->put($pdfPath, $pdf->output());
+//         $reglement->update(['pdf_path' => $pdfPath]);
 //     });
 
 //     return redirect()->route('reglements.journal')
@@ -306,6 +397,8 @@ public function updateReglement(Request $request, $id)
         : Hospitalisation::findOrFail($reglement->hospitalisation_id);
 
     DB::transaction(function() use ($validated, $reglement, $model) {
+        $model->montant_paye -= $reglement->montant;
+        $model->montant_paye += $validated['montant'];
         $model->reste_a_payer += $reglement->montant;
         $model->reste_a_payer -= $validated['montant'];
         $model->save();
@@ -329,11 +422,14 @@ public function updateReglement(Request $request, $id)
             $pdfData['consultation'] = $model;
             $pdfData['medecin'] = $model->medecin;
             $pdfData['prestations'] = $model->prestations;
+            $view = 'dashboard.documents.recu_consultation';
         } else {
             $pdfData['hospitalisation'] = $model;
+            $pdfData['details'] = $model->details;
+            $view = 'dashboard.documents.recu_hospitalisation';
         }
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('dashboard.documents.recu_consultation', $pdfData);
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView($view, $pdfData);
         $pdfPath = 'reglements/'.$reglement->id.'/recu-'.$numeroRecu.'.pdf';
         Storage::disk('public')->put($pdfPath, $pdf->output());
         $reglement->update(['pdf_path' => $pdfPath]);
@@ -342,8 +438,6 @@ public function updateReglement(Request $request, $id)
     return redirect()->route('reglements.journal')
         ->with('success', 'Règlement mis à jour avec succès');
 }
-
-
 
 
 // public function destroy($id)
@@ -355,22 +449,34 @@ public function updateReglement(Request $request, $id)
 //     $reglement = Reglement::findOrFail($id);
 
 //     DB::transaction(function () use ($reglement) {
-//         // Récupérer le modèle associé
 //         $model = $reglement->consultation_id
 //             ? Consultation::findOrFail($reglement->consultation_id)
 //             : Hospitalisation::findOrFail($reglement->hospitalisation_id);
 
-//         // Recalcul des montants
-//         $model->montant_paye = max(0, $model->montant_paye - $reglement->montant);
-//         $model->reste_a_payer += $reglement->montant;
+//         $avantMontantPaye = $model->montant_paye;
+//         $avantResteAPayer = $model->reste_a_payer;
+
+//         // Protection : ne jamais aller en dessous de 0
+//         $nouveauMontantPaye = max(0, $model->montant_paye - $reglement->montant);
+//         $nouveauReste = $model->montant_a_paye - $nouveauMontantPaye;
+
+//         // Debug
+//         // dd([
+//         //     'montant_reglement' => $reglement->montant,
+//         //     'avant_montant_paye' => $avantMontantPaye,
+//         //     'avant_reste_a_payer' => $avantResteAPayer,
+//         //     'apres_montant_paye' => $nouveauMontantPaye,
+//         //     'apres_reste_a_payer' => $nouveauReste,
+//         // ]);
+
+//         $model->montant_paye = $nouveauMontantPaye;
+//         $model->reste_a_payer = $nouveauReste;
 //         $model->save();
 
-//         // Suppression du fichier PDF s’il existe
 //         if ($reglement->pdf_path && Storage::disk('public')->exists($reglement->pdf_path)) {
 //             Storage::disk('public')->delete($reglement->pdf_path);
 //         }
 
-//         // Suppression du règlement
 //         $reglement->delete();
 //     });
 
@@ -386,41 +492,63 @@ public function destroy($id)
     $reglement = Reglement::findOrFail($id);
 
     DB::transaction(function () use ($reglement) {
+        // Déterminer si c'est une consultation ou une hospitalisation
         $model = $reglement->consultation_id
             ? Consultation::findOrFail($reglement->consultation_id)
             : Hospitalisation::findOrFail($reglement->hospitalisation_id);
 
-        $avantMontantPaye = $model->montant_paye;
-        $avantResteAPayer = $model->reste_a_payer;
+        // Sauvegarder les valeurs avant modification pour vérification
+        $ancienMontantPaye = $model->montant_paye;
+        $ancienResteAPayer = $model->reste_a_payer;
 
-        // Protection : ne jamais aller en dessous de 0
+        // Calculer les nouvelles valeurs
         $nouveauMontantPaye = max(0, $model->montant_paye - $reglement->montant);
-        $nouveauReste = $model->montant_a_paye - $nouveauMontantPaye;
+        $nouveauResteAPayer = $model->reste_a_payer + $reglement->montant;
 
-        // Debug
-        // dd([
-        //     'montant_reglement' => $reglement->montant,
-        //     'avant_montant_paye' => $avantMontantPaye,
-        //     'avant_reste_a_payer' => $avantResteAPayer,
-        //     'apres_montant_paye' => $nouveauMontantPaye,
-        //     'apres_reste_a_payer' => $nouveauReste,
-        // ]);
+        // Vérifier la cohérence des calculs
+        $totalAttendu = $nouveauMontantPaye + $nouveauResteAPayer;
+        $totalInitial = $model->montant_a_paye;
 
-        $model->montant_paye = $nouveauMontantPaye;
-        $model->reste_a_payer = $nouveauReste;
-        $model->save();
-
-        if ($reglement->pdf_path && Storage::disk('public')->exists($reglement->pdf_path)) {
-            Storage::disk('public')->delete($reglement->pdf_path);
+        if (abs($totalAttendu - $totalInitial) > 0.01) { // Tolérance pour les arrondis
+            throw new \Exception("Incohérence dans les calculs financiers lors de la suppression du règlement");
         }
 
+        // Mettre à jour le modèle
+        $model->update([
+            'montant_paye' => $nouveauMontantPaye,
+            'reste_a_payer' => $nouveauResteAPayer
+        ]);
+
+        // Supprimer le fichier PDF associé s'il existe
+        if ($reglement->pdf_path) {
+            Storage::disk('public')->delete($reglement->pdf_path);
+            
+            // Supprimer le dossier si vide
+            $directory = dirname($reglement->pdf_path);
+            if (count(Storage::disk('public')->files($directory)) === 0) {
+                Storage::disk('public')->deleteDirectory($directory);
+            }
+        }
+
+        // Supprimer le règlement
         $reglement->delete();
+
+        // Journalisation pour audit
+        \Log::info('Suppression règlement', [
+            'reglement_id' => $reglement->id,
+            'type' => $reglement->consultation_id ? 'consultation' : 'hospitalisation',
+            'model_id' => $reglement->consultation_id ?? $reglement->hospitalisation_id,
+            'ancien_montant_paye' => $ancienMontantPaye,
+            'nouveau_montant_paye' => $nouveauMontantPaye,
+            'ancien_reste_a_payer' => $ancienResteAPayer,
+            'nouveau_reste_a_payer' => $nouveauResteAPayer,
+            'user_id' => auth()->id()
+        ]);
     });
 
     return redirect()->route('comptabilite.journalcaisse')
         ->with('success', 'Règlement supprimé avec succès');
 }
-
 
 
 public function printJournal(Request $request)

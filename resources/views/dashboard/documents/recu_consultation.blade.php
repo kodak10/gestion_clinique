@@ -151,69 +151,95 @@
                     <span>{{ $patient->nom }} {{ $patient->prenoms }}</span>
                 </div>
 
-                <div class="inline-fields">
-                    <div class="item">
-                        <label class="bold">MEDECIN</label>
-                        <span>{{ $medecin->nom_complet }}</span>
+                @if(isset($consultation))
+                    <div class="inline-fields">
+                        <div class="item">
+                            <label class="bold">MEDECIN</label>
+                            <span>{{ $medecin->nom_complet }}</span>
+                        </div>
+                        <div class="item">
+                            <label class="bold">SPECIALITE</label>
+                            <span>{{ $medecin->specialite->nom }}</span>
+                        </div>
                     </div>
-                    <div class="item">
-                        <label class="bold">SPECIALITE</label>
-                        <span>{{ $medecin->specialite->nom }}</span>
+                @else
+                    <div class="inline-fields">
+                        <div class="item">
+                            <label class="bold">CAUTION</label>
+                            <span>{{ number_format($hospitalisation->caution, 0, ',', ' ') }}</span>
+                        </div>
                     </div>
-                </div>
+                @endif
 
                 <table>
                     <thead>
                         <tr>
                             <th>Prestation</th>
-                            <th>Total</th>
+                            @if(isset($consultation))
+                                <th>Total</th>
+                            @else
+                                <th>Total</th>
+                            @endif
+                            
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($prestations as $prestation)
-                        <tr>
-                            <td>{{ $prestation->libelle }}</td>
-                            <td>{{ number_format($prestation->pivot->total, 0, ',', ' ') }}</td>
-                        </tr>
-                        @endforeach
+                        
+                        @if(isset($consultation))
+                            @foreach($prestations as $prestation)
+                            <tr>
+                                <td>{{ $prestation->libelle }}</td>
+                                <td>{{ number_format($prestation->pivot->total ?? 0, 0, ',', ' ') }}</td>
+                            </tr>
+                            @endforeach
+                        @else
+                            <tr>
+                                <td>Hospitalisation</td>
+                                <td>{{ number_format($hospitalisation->total, 0, ',', ' ') }}</td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
+
+                @php
+                    $entity = $consultation ?? $hospitalisation;
+                @endphp
 
                 <div class="inline-fields" style="margin-top: 5px;">
                     <div class="item">
                         <label class="bold">Total</label>
-                        <span>{{ number_format($consultation->total, 0, ',', ' ') }}</span>
+                        <span>{{ number_format($entity->total, 0, ',', ' ') }}</span>
                     </div>
                     <div class="item">
                         <label class="bold">Ticket Mod.</label>
-                        <span>{{ number_format($consultation->ticket_moderateur, 0, ',', ' ') }}</span>
+                        <span>{{ number_format($entity->ticket_moderateur, 0, ',', ' ') }}</span>
                     </div>
                     <div class="item">
                         <label class="bold">Réduction</label>
-                        <span>{{ number_format($consultation->reduction, 0, ',', ' ') }}</span>
+                        <span>{{ number_format($entity->reduction, 0, ',', ' ') }}</span>
                     </div>
                 </div>
 
                 <div class="inline-fields">
                     <div class="item">
                         <label class="bold">Payé</label>
-                        <span>{{ number_format($consultation->montant_paye, 0, ',', ' ') }} FCFA</span>
+                        <span>{{ number_format($entity->montant_paye, 0, ',', ' ') }} FCFA</span>
                     </div>
                     <div class="item">
                         <label class="bold">Reste à payer</label>
-                        <span>{{ number_format($consultation->reste_a_payer, 0, ',', ' ') }} FCFA</span>
+                        <span>{{ number_format($entity->reste_a_payer, 0, ',', ' ') }} FCFA</span>
                     </div>
                 </div>
 
                 <div class="payment-methods">
                     <label class="bold">Mode de paiement:</label>
                     <span>
-                        @if($consultation->methode_paiement == 'cash')
-                        Cash
-                        @elseif($consultation->methode_paiement == 'mobile_money')
-                        Mobile money
+                        @if($reglement->methode_paiement == 'cash')
+                            Cash
+                        @elseif($reglement->methode_paiement == 'mobile_money')
+                            Mobile money
                         @else
-                        Virement
+                            Virement
                         @endif
                     </span>
                 </div>
@@ -255,16 +281,25 @@
                     <span>{{ $patient->nom }} {{ $patient->prenoms }}</span>
                 </div>
 
-                <div class="inline-fields">
-                    <div class="item">
-                        <label class="bold">MEDECIN</label>
-                        <span>{{ $medecin->nom_complet }}</span>
+               @if(isset($consultation))
+                    <div class="inline-fields">
+                        <div class="item">
+                            <label class="bold">MEDECIN</label>
+                            <span>{{ $medecin->nom_complet }}</span>
+                        </div>
+                        <div class="item">
+                            <label class="bold">SPECIALITE</label>
+                            <span>{{ $medecin->specialite->nom }}</span>
+                        </div>
                     </div>
-                    <div class="item">
-                        <label class="bold">SPECIALITE</label>
-                        <span>{{ $medecin->specialite->nom }}</span>
+                @else
+                    <div class="inline-fields">
+                        <div class="item">
+                            <label class="bold">CAUTION</label>
+                            <span>{{ number_format($hospitalisation->caution, 0, ',', ' ') }}</span>
+                        </div>
                     </div>
-                </div>
+                @endif
 
                 <table>
                     <thead>
@@ -276,18 +311,29 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($prestations as $prestation)
-                        <tr>
-                            <td>{{ $prestation->libelle }}</td>
-                            <td>{{ number_format($prestation->pivot->montant, 0, ',', ' ') }}</td>
-                            <td>{{ $prestation->pivot->quantite }}</td>
-                            <td>{{ number_format($prestation->pivot->total, 0, ',', ' ') }}</td>
-                        </tr>
+                        @if(isset($consultation))
+                            @foreach($prestations as $prestation)
+                                <tr>
+                                    <td>{{ $prestation->libelle }}</td>
+                                    <td>{{ number_format($prestation->pivot->montant, 0, ',', ' ') }}</td>
+                                    <td>{{ $prestation->pivot->quantite }}</td>
+                                    <td>{{ number_format($prestation->pivot->total, 0, ',', ' ') }}</td>
+                                </tr>
                         @endforeach
+                        @else
+                            <tr>
+                                <td>Hospitalisation</td>
+                                <td>{{ number_format($hospitalisation->total, 0, ',', ' ') }}</td>
+                                <td>1</td>
+                                <td>{{ number_format($hospitalisation->total, 0, ',', ' ') }}</td>
+                            </tr>
+                        @endif
+
+                        
                     </tbody>
                 </table>
 
-                <div class="inline-fields" style="margin-top: 5px;">
+                {{-- <div class="inline-fields" style="margin-top: 5px;">
                     <div class="item">
                         <label class="bold">Total</label>
                         <span>{{ number_format($consultation->total, 0, ',', ' ') }}</span>
@@ -322,6 +368,49 @@
                         Mobile money
                         @else
                         Virement
+                        @endif
+                    </span>
+                </div> --}}
+
+                @php
+                    $entity = $consultation ?? $hospitalisation;
+                @endphp
+
+                <div class="inline-fields" style="margin-top: 5px;">
+                    <div class="item">
+                        <label class="bold">Total</label>
+                        <span>{{ number_format($entity->total, 0, ',', ' ') }}</span>
+                    </div>
+                    <div class="item">
+                        <label class="bold">Ticket Mod.</label>
+                        <span>{{ number_format($entity->ticket_moderateur, 0, ',', ' ') }}</span>
+                    </div>
+                    <div class="item">
+                        <label class="bold">Réduction</label>
+                        <span>{{ number_format($entity->reduction, 0, ',', ' ') }}</span>
+                    </div>
+                </div>
+
+                <div class="inline-fields">
+                    <div class="item">
+                        <label class="bold">Payé</label>
+                        <span>{{ number_format($entity->montant_paye, 0, ',', ' ') }} FCFA</span>
+                    </div>
+                    <div class="item">
+                        <label class="bold">Reste à payer</label>
+                        <span>{{ number_format($entity->reste_a_payer, 0, ',', ' ') }} FCFA</span>
+                    </div>
+                </div>
+
+                <div class="payment-methods">
+                    <label class="bold">Mode de paiement:</label>
+                    <span>
+                        @if($reglement->methode_paiement == 'cash')
+                            Cash
+                        @elseif($reglement->methode_paiement == 'mobile_money')
+                            Mobile money
+                        @else
+                            Virement
                         @endif
                     </span>
                 </div>

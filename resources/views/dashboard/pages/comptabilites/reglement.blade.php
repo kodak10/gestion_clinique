@@ -5,7 +5,7 @@
     <div class="container-xl">
         <div class="row g-2 align-items-center">
             <div class="col">
-                <h2 class="page-title">Factures Non Soldées</h2>
+                <h2 class="page-title">Règlements</h2>
             </div>
         </div>
     </div>
@@ -46,7 +46,7 @@
                                 
                               
                                
-                                 <td>
+                                <td>
                                     <div class="btn-list flex-nowrap">
                                         <div class="dropdown">
                                             <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">Actions</button>
@@ -99,7 +99,7 @@
                             </tr>
                             @endforeach
 
-                            @foreach($hospitalisations as $hospitalisation)
+                            {{-- @foreach($hospitalisations as $hospitalisation)
                             <tr>
                                 <td><span class="badge bg-orange-lt">Hospitalisation</span></td>
                                 <td><span class="text-primary">{{ $hospitalisation->patient->num_dossier }}</span></td>
@@ -113,9 +113,125 @@
                                 </td>
                                 <td><span class="text-danger fw-bold">{{ number_format($hospitalisation->reste_a_payer, 0, ',', ' ') }} FCFA</span></td>
                                 <td>{{ $hospitalisation->created_at }}</td>
+
+                                <td>
+                                    <div class="btn-list flex-nowrap">
+                                        <div class="dropdown">
+                                            <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">Actions</button>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                @if($hospitalisation->pdf_path)
+                                                    <a class="dropdown-item" href="{{ Storage::url($hospitalisation->pdf_path) }}" target="_blank">
+                                                        Réimprimer le reçu
+                                                    </a>
+                                                @endif
+
+                                                <button class="dropdown-item detail-mouvement-hospi"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#modal-detail-hospi"
+                                                    data-patient="{{ $hospitalisation->patient->nom }} {{ $hospitalisation->patient->prenoms }}"
+                                                    data-date="{{ $hospitalisation->created_at->format('d/m/Y H:i') }}"
+                                                    data-recus="{{ $hospitalisation->numero_recu }}"
+                                                    data-total="{{ number_format($hospitalisation->total, 0, ',', ' ') }}"
+                                                    data-reduction="{{ number_format($hospitalisation->reduction, 0, ',', ' ') }}"
+                                                    data-ticket="{{ number_format($hospitalisation->ticket_moderateur, 0, ',', ' ') }}"
+                                                    data-encaisser="{{ number_format($hospitalisation->reglements->sum('montant'), 0, ',', ' ') }}"
+                                                    data-prestations="{{ json_encode($hospitalisation->details->map(function($item) {
+                                                        return [
+                                                            'libelle' => $item->frais->libelle ?? '',
+                                                            'quantite' => $item->quantite,
+                                                            'prix' => number_format($item->prix_unitaire, 0, ',', ' '),
+                                                            'taux' => $item->taux,
+                                                            'total' => number_format($item->total, 0, ',', ' ')
+                                                        ];
+                                                    })) }}"
+
+                                                    data-caissier="{{ $hospitalisation->user->name }}">
+                                                    Détails
+                                                </button>
+
+                                                @if($hospitalisation->reste_a_payer > 0)
+                                                    <button class="dropdown-item"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#paiement-modal"
+                                                        data-type="consultation"
+                                                        data-id="{{ $hospitalisation->id }}"
+                                                        data-montant="{{ $hospitalisation->reste_a_payer }}">
+                                                        Payer
+                                                    </button>
+                                                @endif
+
+                                               
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
                                 
 
                             </tr>
+                            @endforeach --}}
+                            @foreach($hospitalisations as $hospitalisation)
+                                <tr>
+                                    <td><span class="badge bg-orange-lt">Hospitalisation</span></td>
+                                    <td><span class="text-primary">{{ $hospitalisation->patient->num_dossier ?? 'N/A' }}</span></td>
+                                    <td>{{ $hospitalisation->patient->nom ?? 'N/A' }} {{ $hospitalisation->patient->prenoms ?? '' }}</td>
+                                    <td>
+                                        @if($hospitalisation->patient->telephone ?? false)
+                                            <a href="tel:{{ $hospitalisation->patient->telephone }}">{{ $hospitalisation->patient->telephone }}</a>
+                                        @else
+                                            N/A
+                                        @endif
+                                    </td>
+                                    <td><span class="text-danger fw-bold">{{ number_format($hospitalisation->reste_a_payer, 0, ',', ' ') }} FCFA</span></td>
+                                    <td>{{ $hospitalisation->created_at->format('d/m/Y H:i') }}</td>
+                                    <td>
+                                        <div class="btn-list flex-nowrap">
+                                            <div class="dropdown">
+                                                <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">Actions</button>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    @if($hospitalisation->facture_path ?? false)
+                                                        <a class="dropdown-item" href="{{ Storage::url($hospitalisation->facture_path) }}" target="_blank">
+                                                            Réimprimer le reçu
+                                                        </a>
+                                                    @endif
+
+                                                    <button class="dropdown-item detail-mouvement-hospi"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#modal-detail-hospi"
+                                                        data-patient="{{ $hospitalisation->patient->nom ?? '' }} {{ $hospitalisation->patient->prenoms ?? '' }}"
+                                                        data-date="{{ $hospitalisation->created_at->format('d/m/Y H:i') }}"
+                                                        data-recus="{{ $hospitalisation->numero_recu ?? 'N/A' }}"
+                                                        data-total="{{ number_format($hospitalisation->total, 0, ',', ' ') }}"
+                                                        data-reduction="{{ number_format($hospitalisation->reduction, 0, ',', ' ') }}"
+                                                        data-ticket="{{ number_format($hospitalisation->ticket_moderateur, 0, ',', ' ') }}"
+                                                        data-encaisser="{{ number_format($hospitalisation->reglements->sum('montant'), 0, ',', ' ') }}"
+                                                        data-prestations="{{ json_encode($hospitalisation->details->map(function($item) {
+                                                            return [
+                                                                'libelle' => $item->frais->libelle ?? 'N/A',
+                                                                'quantite' => $item->quantite,
+                                                                'prix' => number_format($item->prix_unitaire, 0, ',', ' '),
+                                                                'taux' => $item->taux,
+                                                                'total' => number_format($item->total, 0, ',', ' ')
+                                                            ];
+                                                        })) }}"
+                                                        data-caissier="{{ $hospitalisation->user->name ?? 'N/A' }}">
+                                                        Détails
+                                                    </button>
+
+                                                    @if($hospitalisation->reste_a_payer > 0)
+                                                        <button class="dropdown-item"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#paiement-modal"
+                                                            data-type="hospitalisation"
+                                                            data-id="{{ $hospitalisation->id }}"
+                                                            data-montant="{{ $hospitalisation->reste_a_payer }}">
+                                                            Payer
+                                                        </button>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
                             @endforeach
                         </tbody>
                     </table>
@@ -125,7 +241,7 @@
     </div>
 </div>
 
-<!-- Modal Detail Mouvement -->
+<!-- Modal Detail Mouvement consultation  -->
 <div class="modal modal-blur fade" id="modal-detail" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -202,6 +318,90 @@
     </div>
 </div>
 
+<div class="modal modal-blur fade" id="modal-detail-hospi" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Détails de l'hospitalisation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Patient</label>
+                        <input type="text" class="form-control" id="detail-patient" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Date & Heure</label>
+                        <input type="text" class="form-control" id="detail-date" readonly>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Numéro de reçu</label>
+                        <input type="text" class="form-control" id="detail-recus" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Caissier</label>
+                        <input type="text" class="form-control" id="detail-caissier" readonly>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h3 class="card-title">Prestations effectuées</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-vcenter">
+                            <thead>
+                                <tr>
+                                    <th>Prestation</th>
+                                    <th>Quantité</th>
+                                    <th>Prix unitaire</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detail-prestations">
+                                <!-- Les prestations seront ajoutées ici par JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <label class="form-label">Montant Total</label>
+                        <input type="text" class="form-control" id="detail-total" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Ticket modérateur</label>
+                        <input type="text" class="form-control" id="detail-ticket" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Réduction</label>
+                        <input type="text" class="form-control" id="detail-reduction" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Montant Encaissé</label>
+                        <input type="text" class="form-control" id="detail-encaisser" readonly>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-3">
+                        <label class="form-label">Reste à payer</label>
+                        <input type="text" class="form-control" id="detail-reste" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 <!-- Modal pour le paiement -->
 <div class="modal modal-blur fade" id="paiement-modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -255,7 +455,7 @@
 
 <script>
 $(document).ready(function() {
-    // Gestion du modal de détail
+    // Gestion du modal de détail cinsultation
     $('.detail-mouvement').on('click', function() {
         const patient = $(this).data('patient');
         const date = $(this).data('date');
@@ -298,6 +498,59 @@ $(document).ready(function() {
 </script>
 
 <script>
+$(document).ready(function() {
+    // Modal de détails
+    $(document).on('click', '.detail-mouvement-hospi', function() {
+        $('#detail-patient').val($(this).data('patient'));
+        $('#detail-date').val($(this).data('date'));
+        $('#detail-recus').val($(this).data('recus'));
+        $('#detail-caissier').val($(this).data('caissier'));
+        $('#detail-total').val($(this).data('total') + ' FCFA');
+        $('#detail-ticket').val($(this).data('ticket') + ' FCFA');
+        $('#detail-reduction').val($(this).data('reduction') + ' FCFA');
+        $('#detail-encaisser').val($(this).data('encaisser') + ' FCFA');
+        
+        // Calcul du reste à payer
+        const total = parseFloat($(this).data('total'));
+        const encaisser = parseFloat($(this).data('encaisser'));
+        const reste = total - encaisser;
+        $('#detail-reste').val(reste.toLocaleString('fr-FR') + ' FCFA');
+        
+        // Ajout des prestations
+        const prestations = $(this).data('prestations');
+        let html = '';
+        prestations.forEach(prestation => {
+            html += `
+                <tr>
+                    <td>${prestation.libelle}</td>
+                    <td>${prestation.quantite}</td>
+                    <td>${prestation.prix} FCFA</td>
+                    <td>${prestation.total} FCFA</td>
+                </tr>
+            `;
+        });
+        $('#detail-prestations').html(html);
+    });
+
+    // // Modal de paiement
+    // $(document).on('click', '[data-bs-target="#paiement-modal"]', function() {
+    //     const type = $(this).data('type');
+    //     const id = $(this).data('id');
+    //     const montant = $(this).data('montant');
+        
+    //     $('#paiement-type').val(type);
+    //     $('#paiement-id').val(id);
+    //     $('#montant-restant').val(montant.toLocaleString('fr-FR') + ' FCFA');
+    //     $('#montant-paye').val(montant);
+    //     $('#montant-paye').attr({
+    //         'max': montant,
+    //         'min': 1
+    //     });
+    // });
+});
+</script>
+
+<script>
     $(document).ready(function() {
     // Gestion du modal de paiement
     $(document).on('click', '[data-bs-target="#paiement-modal"]', function() {
@@ -319,9 +572,9 @@ $(document).ready(function() {
 <script>
     $(document).ready(function() {
         $('#table-default').DataTable({
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/French.json"
-            },
+            // "language": {
+            //     "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/French.json"
+            // },
             "paging": true,
             "searching": true,
             "ordering": true,
@@ -332,6 +585,7 @@ $(document).ready(function() {
 
     });
 </script>
+
 
  @if(session('pdf_url'))
     <script>
