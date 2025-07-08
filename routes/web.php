@@ -87,6 +87,10 @@ Route::middleware(['auth',])->group(function () {
     Route::post('/hospitalisations/{hospitalisation}/laboratoire', [HospitalisationController::class, 'storeExamen'])->name('hospitalisations.laboratoire.store');
     Route::delete('/hospitalisations/{hospitalisation}/laboratoire/{pivot}', [HospitalisationController::class, 'destroyMedicament'])->name('hospitalisations.laboratoire.destroy');
 
+    Route::get('/print/laboratoire/{id}', [HospitalisationController::class, 'printLaboratoire'])->name('print.laboratoire');
+    Route::get('/print/pharmacie/{id}', [HospitalisationController::class, 'printPharmacie'])->name('print.pharmacie');
+
+    
     Route::get('/comptabilite/journalcaisse', [ReglementController::class, 'journalCaisse'])->name('comptabilite.journalcaisse');
 
     Route::get('/caisse/print', [ReglementController::class, 'printJournal'])

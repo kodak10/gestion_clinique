@@ -522,4 +522,45 @@ class HospitalisationController extends Controller
         }
     }
 
+public function printLaboratoire($id)
+{
+    $hospitalisation = Hospitalisation::with(['patient', 'medecin'])->findOrFail($id);
+    
+    // Récupération des détails laboratoire depuis hospitalisation_details
+   $examens = DB::table('hospitalisation_examen')
+        ->where('hospitalisation_id', $id)
+        ->join('examens', 'hospitalisation_examen.examen_id', '=', 'examens.id')
+        ->select('hospitalisation_examen.*', 'examens.nom as libelle')
+        ->get();
+    
+        //dd($examens);
+
+    $pdf = Pdf::loadView('dashboard.documents.print_laboratoire', [
+        'hospitalisation' => $hospitalisation,
+        'details' => $examens
+    ]);
+
+    return $pdf->stream('laboratoire_'.$id.'.pdf');
+}
+
+
+public function printPharmacie($id)
+{
+    $hospitalisation = Hospitalisation::with(['patient', 'medecin'])->findOrFail($id);
+    
+    // Utilisez la table hospitalisation_medicament
+    $medicaments = DB::table('hospitalisation_medicament')
+        ->where('hospitalisation_id', $id)
+        ->join('medicaments', 'hospitalisation_medicament.medicament_id', '=', 'medicaments.id')
+        ->select('hospitalisation_medicament.*', 'medicaments.nom as libelle')
+        ->get();
+
+    $pdf = Pdf::loadView('dashboard.documents.print_pharmacie', [
+        'hospitalisation' => $hospitalisation,
+        'medicaments' => $medicaments
+    ]);
+
+    return $pdf->stream('pharmacie_'.$id.'.pdf');
+}
+
 }

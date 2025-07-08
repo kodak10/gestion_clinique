@@ -160,10 +160,12 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <h4 class="mb-3">Examens Laboratoire</h4>
                             <div>
-                                <span class="badge bg-primary me-2" id="">
+                                <span class="badge bg-primary me-2">
                                     {{ number_format($detailsLaboratoire->sum('total'), 0, ',', ' ') }} XOF
                                 </span>
-                                <a href="#" target="_blank" class="btn btn-sm btn-primary">
+                                <a href="{{ route('print.laboratoire', $hospitalisation->id) }}" 
+                                target="_blank"
+                                class="btn btn-sm btn-primary">
                                     <i class="fas fa-print"></i> Imprimer
                                 </a>
                             </div>
@@ -174,10 +176,12 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <h4 class="mb-3">Pharmacie</h4>
                             <div>
-                                <span class="badge bg-primary me-2" id="">
+                                <span class="badge bg-primary me-2">
                                     {{ number_format($detailsPharmacie->sum('total'), 0, ',', ' ') }} XOF
                                 </span>
-                                <a href="#" target="_blank" class="btn btn-sm btn-primary">
+                                <a href="{{ route('print.pharmacie', $hospitalisation->id) }}" 
+                                target="_blank"
+                                class="btn btn-sm btn-primary">
                                     <i class="fas fa-print"></i> Imprimer
                                 </a>
                             </div>
@@ -191,144 +195,144 @@
                             </div>
                             <div class="card-body">
                                 <div class="autres-repeater">
-    <div data-repeater-list="frais">
+                                    <div data-repeater-list="frais">
 
-        {{-- Ligne fixe : Pharmacie --}}
-        <div class="mb-3 border-bottom pb-3">
-            <div class="row align-items-end">
-                <div class="col-md-4">
-                    <label class="form-label">Libellé</label>
-                    <input type="text" class="form-control" value="Pharmacie" readonly>
-                    <input type="hidden" name="frais_pharmacie[frais_id]" value="2">
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Prix unitaire</label>
-                    <input type="hidden" name="frais_pharmacie[frais_id]" value="2">
-                    <input type="number" class="form-control prix" name="frais_pharmacie[prix]" value="{{ $detailsPharmacie->first()->prix_unitaire ?? 0 }}" readonly>
-                </div>
-                <div class="col-md-1">
-                    <label class="form-label">Quantité</label>
-                    <input type="number" class="form-control quantite" name="frais_pharmacie[quantite]" value="{{ $detailsPharmacie->first()->quantite ?? 1 }}" readonly>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Taux (%)</label>
-                    <input type="number" class="form-control taux" name="frais_pharmacie[taux]" value="100" readonly>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Total</label>
-                    <input type="number" class="form-control total" name="frais_pharmacie[total]" value="{{ $detailsPharmacie->first()->total ?? 0 }}" readonly>
-                </div>
-            </div>
-        </div>
+                                        {{-- Ligne fixe : Pharmacie --}}
+                                        <div class="mb-3 border-bottom pb-3">
+                                            <div class="row align-items-end">
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Libellé</label>
+                                                    <input type="text" class="form-control" value="Pharmacie" readonly>
+                                                    <input type="hidden" name="frais_pharmacie[frais_id]" value="2">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Prix unitaire</label>
+                                                    <input type="hidden" name="frais_pharmacie[frais_id]" value="2">
+                                                    <input type="number" class="form-control prix" name="frais_pharmacie[prix]" value="{{ $detailsPharmacie->first()->prix_unitaire ?? 0 }}" readonly>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <label class="form-label">Quantité</label>
+                                                    <input type="number" class="form-control quantite" name="frais_pharmacie[quantite]" value="{{ $detailsPharmacie->first()->quantite ?? 1 }}" readonly>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Taux (%)</label>
+                                                    <input type="number" class="form-control taux" name="frais_pharmacie[taux]" value="100" readonly>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Total</label>
+                                                    <input type="number" class="form-control total" name="frais_pharmacie[total]" value="{{ $detailsPharmacie->first()->total ?? 0 }}" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
 
-        {{-- Ligne fixe : Laboratoire --}}
-        <div class="mb-3 border-bottom pb-3">
-            <div class="row align-items-end">
-                <div class="col-md-4">
-                    <label class="form-label">Libellé</label>
-                    <input type="text" class="form-control" value="Laboratoire" readonly>
-                    <input type="hidden" name="frais_laboratoire[frais_id]" value="1">
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Prix unitaire</label>
-                    <input type="hidden" name="frais_laboratoire[frais_id]" value="1">
-                    <input type="number" class="form-control prix" name="frais_laboratoire[prix]" value="{{ $detailsLaboratoire->first()->prix_unitaire ?? 0 }}" readonly>
-                </div>
-                <div class="col-md-1">
-                    <label class="form-label">Quantité</label>
-                    <input type="number" class="form-control quantite" name="frais_laboratoire[quantite]" value="{{ $detailsLaboratoire->first()->quantite ?? 1 }}" readonly>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Taux (%)</label>
-                    <input type="number" class="form-control taux" name="frais_laboratoire[taux]" value="100" readonly>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Total</label>
-                    <input type="number" class="form-control total" name="frais_laboratoire[total]" value="{{ $detailsLaboratoire->first()->total ?? 0 }}" readonly>
-                </div>
-            </div>
-        </div>
+                                        {{-- Ligne fixe : Laboratoire --}}
+                                        <div class="mb-3 border-bottom pb-3">
+                                            <div class="row align-items-end">
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Libellé</label>
+                                                    <input type="text" class="form-control" value="Laboratoire" readonly>
+                                                    <input type="hidden" name="frais_laboratoire[frais_id]" value="1">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Prix unitaire</label>
+                                                    <input type="hidden" name="frais_laboratoire[frais_id]" value="1">
+                                                    <input type="number" class="form-control prix" name="frais_laboratoire[prix]" value="{{ $detailsLaboratoire->first()->prix_unitaire ?? 0 }}" readonly>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <label class="form-label">Quantité</label>
+                                                    <input type="number" class="form-control quantite" name="frais_laboratoire[quantite]" value="{{ $detailsLaboratoire->first()->quantite ?? 1 }}" readonly>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Taux (%)</label>
+                                                    <input type="number" class="form-control taux" name="frais_laboratoire[taux]" value="100" readonly>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Total</label>
+                                                    <input type="number" class="form-control total" name="frais_laboratoire[total]" value="{{ $detailsLaboratoire->first()->total ?? 0 }}" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
 
-        {{-- Autres frais dynamiques --}}
-        @php $currentIndex = 0; @endphp
-        @foreach($autresDetails as $detail)
-            <div data-repeater-item class="mb-3 border-bottom pb-3">
-                <div class="row align-items-end">
-                    <div class="col-md-4">
-                        <label class="form-label">Libellé</label>
-                        <input type="text" class="form-control" value="{{ $detail->fraisHospitalisation->libelle }}" readonly>
-                        <input type="hidden" name="frais[{{ $currentIndex }}][frais_id]" value="{{ $detail->frais_hospitalisation_id }}">
-                        <input type="hidden" name="frais[{{ $currentIndex }}][detail_id]" value="{{ $detail->id }}">
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Prix unitaire</label>
-                        <input type="number" class="form-control prix" name="frais[{{ $currentIndex }}][prix]" value="{{ $detail->prix_unitaire }}" required>
-                    </div>
-                    <div class="col-md-1">
-                        <label class="form-label">Quantité</label>
-                        <input type="number" class="form-control quantite" name="frais[{{ $currentIndex }}][quantite]" value="{{ $detail->quantite }}" min="1" required>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Taux (%)</label>
-                        <input type="number" class="form-control taux" name="frais[{{ $currentIndex }}][taux]" value="{{ $detail->taux ?? $patient->taux_couverture }}" min="0" max="100" required>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Total</label>
-                        <input type="number" class="form-control total" name="frais[{{ $currentIndex }}][total]" value="{{ $detail->total }}" readonly>
-                    </div>
-                    <div class="col-md-1 text-center">
-                        <button type="button" data-repeater-delete class="btn btn-danger btn-sm mt-4">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            @php $currentIndex++; @endphp
-        @endforeach
+                                        {{-- Autres frais dynamiques --}}
+                                        @php $currentIndex = 0; @endphp
+                                        @foreach($autresDetails as $detail)
+                                            <div data-repeater-item class="mb-3 border-bottom pb-3">
+                                                <div class="row align-items-end">
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">Libellé</label>
+                                                        <input type="text" class="form-control" value="{{ $detail->fraisHospitalisation->libelle }}" readonly>
+                                                        <input type="hidden" name="frais[{{ $currentIndex }}][frais_id]" value="{{ $detail->frais_hospitalisation_id }}">
+                                                        <input type="hidden" name="frais[{{ $currentIndex }}][detail_id]" value="{{ $detail->id }}">
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <label class="form-label">Prix unitaire</label>
+                                                        <input type="number" class="form-control prix" name="frais[{{ $currentIndex }}][prix]" value="{{ $detail->prix_unitaire }}" required>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <label class="form-label">Quantité</label>
+                                                        <input type="number" class="form-control quantite" name="frais[{{ $currentIndex }}][quantite]" value="{{ $detail->quantite }}" min="1" required>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <label class="form-label">Taux (%)</label>
+                                                        <input type="number" class="form-control taux" name="frais[{{ $currentIndex }}][taux]" value="{{ $detail->taux ?? $patient->taux_couverture }}" min="0" max="100" required>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <label class="form-label">Total</label>
+                                                        <input type="number" class="form-control total" name="frais[{{ $currentIndex }}][total]" value="{{ $detail->total }}" readonly>
+                                                    </div>
+                                                    <div class="col-md-1 text-center">
+                                                        <button type="button" data-repeater-delete class="btn btn-danger btn-sm mt-4">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @php $currentIndex++; @endphp
+                                        @endforeach
 
-        {{-- Modèle pour ajout dynamique --}}
-        <div data-repeater-item class="mb-3 border-bottom pb-3">
-            <div class="row align-items-end">
-                <div class="col-md-4">
-                    <label class="form-label">Libellé</label>
-                    <select class="form-select frais-select" data-name="frais[__index__][frais_id]" required>
-                        <option value="" disabled selected>Choisir un frais</option>
-                        @foreach($autresFrais as $frais)
-                            <option value="{{ $frais->id }}" data-prix="{{ $frais->montant }}">
-                                {{ $frais->libelle }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Prix unitaire</label>
-                    <input type="number" class="form-control prix" data-name="frais[__index__][prix]" value="0" required>
-                </div>
-                <div class="col-md-1">
-                    <label class="form-label">Quantité</label>
-                    <input type="number" class="form-control quantite" data-name="frais[__index__][quantite]" value="1" min="1" required>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Taux (%)</label>
-                    <input type="number" class="form-control taux" data-name="frais[__index__][taux]" value="{{ $patient->taux_couverture ?? 70 }}" min="0" max="100" required>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Total</label>
-                    <input type="number" class="form-control total" data-name="frais[__index__][total]" value="0" readonly>
-                </div>
-                <div class="col-md-1 text-center">
-                    <button type="button" data-repeater-delete class="btn btn-danger btn-sm mt-4">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
+                                        {{-- Modèle pour ajout dynamique --}}
+                                        <div data-repeater-item class="mb-3 border-bottom pb-3">
+                                            <div class="row align-items-end">
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Libellé</label>
+                                                    <select class="form-select frais-select" data-name="frais[__index__][frais_id]" required>
+                                                        <option value="" disabled selected>Choisir un frais</option>
+                                                        @foreach($autresFrais as $frais)
+                                                            <option value="{{ $frais->id }}" data-prix="{{ $frais->montant }}">
+                                                                {{ $frais->libelle }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Prix unitaire</label>
+                                                    <input type="number" class="form-control prix" data-name="frais[__index__][prix]" value="0" required>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <label class="form-label">Quantité</label>
+                                                    <input type="number" class="form-control quantite" data-name="frais[__index__][quantite]" value="1" min="1" required>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Taux (%)</label>
+                                                    <input type="number" class="form-control taux" data-name="frais[__index__][taux]" value="{{ $patient->taux_couverture ?? 70 }}" min="0" max="100" required>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Total</label>
+                                                    <input type="number" class="form-control total" data-name="frais[__index__][total]" value="0" readonly>
+                                                </div>
+                                                <div class="col-md-1 text-center">
+                                                    <button type="button" data-repeater-delete class="btn btn-danger btn-sm mt-4">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
 
-    </div>
-    <button type="button" data-repeater-create class="btn bg-primary-subtle text-primary mt-2">
-        <span class="fs-4 me-1">+</span> Ajouter un autre frais
-    </button>
-</div>
+                                    </div>
+                                    <button type="button" data-repeater-create class="btn bg-primary-subtle text-primary mt-2">
+                                        <span class="fs-4 me-1">+</span> Ajouter un autre frais
+                                    </button>
+                                </div>
 
                             </div>
                         </div>
