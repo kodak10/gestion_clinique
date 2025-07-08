@@ -181,12 +181,18 @@
                                                 <div class="dropdown-menu dropdown-menu-end">
                                                     @if($reglement->consultation && $reglement->consultation->pdf_path)
                                                         <a class="dropdown-item" href="{{ Storage::url($reglement->consultation->pdf_path) }}" target="_blank">
-                                                            Réimprimer le reçu
+                                                            Réimprimer le reçu consultation
+                                                        </a>
+                                                    @elseif($reglement->hospitalisation && $reglement->hospitalisation->facture_path)
+                                                        <a class="dropdown-item" href="{{ Storage::url($reglement->hospitalisation->facture_path) }}" target="_blank">
+                                                            Réimprimer le reçu hospitalisation
                                                         </a>
                                                     @endif
+                                                    
                                                     <a class="dropdown-item detail-mouvement" href="#" 
                                                         data-bs-toggle="modal" 
-                                                        data-bs-target="#modal-detail"
+                                                        data-bs-target="@if($reglement->consultation) #modal-detail @else #modal-hospitalisation-detail @endif"
+                                                        data-type="{{ $reglement->consultation ? 'consultation' : 'hospitalisation' }}"
                                                         data-patient="{{ $reglement->consultation->patient->nom ?? $reglement->hospitalisation->patient->nom }} {{ $reglement->consultation->patient->prenoms ?? $reglement->hospitalisation->patient->prenoms }}"
                                                         data-date="{{ $reglement->created_at->format('d/m/Y H:i') }}"
                                                         data-recus="{{ $reglement->consultation->numero_recu ?? 'HOSP-'.$reglement->hospitalisation->id }}"
@@ -202,10 +208,33 @@
                                                                 'total' => number_format($item->pivot->total, 0, ',', ' ')
                                                             ];
                                                         }) : []) }}"
+                                                        data-hospitalisation="{{ json_encode($reglement->hospitalisation ? [
+                                                            'date_entree' => $reglement->hospitalisation->date_entree->format('d/m/Y'),
+                                                            'date_sortie' => $reglement->hospitalisation->date_sortie ? $reglement->hospitalisation->date_sortie->format('d/m/Y') : 'En cours',
+                                                            'medecin' => $reglement->hospitalisation->medecin->nom_complet ?? 'Non spécifié',
+                                                            'details' => $reglement->hospitalisation->details->map(function($item) {
+                                                                return [
+                                                                    'libelle' => $item->frais->libelle,
+                                                                    'quantite' => $item->quantite,
+                                                                    'prix' => number_format($item->prix_unitaire, 0, ',', ' '),
+                                                                    'total' => number_format($item->total, 0, ',', ' ')
+                                                                ];
+                                                            }),
+                                                            'medicaments' => $reglement->hospitalisation->medicaments->map(function($item) {
+                                                                return [
+                                                                    'libelle' => $item->nom,
+                                                                    'quantite' => $item->pivot->quantite,
+                                                                    'prix' => number_format($item->pivot->prix_unitaire, 0, ',', ' '),
+                                                                    'total' => number_format($item->pivot->total, 0, ',', ' ')
+                                                                ];
+                                                            }),
+                                                            'reste' => number_format($reglement->hospitalisation->reste_a_payer, 0, ',', ' ')
+                                                        ] : null) }}"
                                                         data-caissier="{{ $reglement->user->name }}">
                                                         Détail du mouvement
                                                     </a>
-                                                   @auth
+                                                    
+                                                    @auth
                                                         @if(auth()->user()->hasAnyRole(['Admin', 'Développeur', 'Comptable', 'Respo Caissière']))
                                                             <form action="{{ route('reglements.destroy', $reglement->id) }}" method="POST" class="d-inline">
                                                                 @csrf
@@ -217,7 +246,6 @@
                                                             </form>
                                                         @endif
                                                     @endauth
-
                                                 </div>
                                             </div>
                                         </div>
@@ -313,6 +341,81 @@
         </div>
     </div>
 </div>
+
+
+<!-- Modal Détails Hospitalisation -->
+<div class="modal modal-blur fade" id="modal-hospitalisation-detail" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Détails de l'hospitalisation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Date admission</label>
+                        <input type="text" class="form-control" id="hosp-date-entree" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Date sortie</label>
+                        <input type="text" class="form-control" id="hosp-date-sortie" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Médecin traitant</label>
+                        <input type="text" class="form-control" id="hosp-medecin" readonly>
+                    </div>
+                </div>
+                
+                <!-- Frais d'hospitalisation -->
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h3 class="card-title">Frais d'hospitalisation</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-vcenter">
+                            <thead>
+                                <tr>
+                                    <th>Libellé</th>
+                                    <th>Quantité</th>
+                                    <th>Prix unitaire</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="hosp-details">
+                                <!-- Les frais seront ajoutés ici par JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+               
+                
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <label class="form-label">Total</label>
+                        <input type="text" class="form-control" id="hosp-total" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Ticket modérateur</label>
+                        <input type="text" class="form-control" id="hosp-ticket" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Réduction</label>
+                        <input type="text" class="form-control" id="hosp-reduction" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Reste à payer</label>
+                        <input type="text" class="form-control" id="hosp-reste" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -320,53 +423,89 @@
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
 <script>
-$(document).ready(function() {
-    // Initialisation de DataTable
-    $('#table').DataTable({
-        "language": {
-            "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/French.json"
-        },
-        "order": [[1, "desc"]]
-    });
-
-    // Gestion du modal de détail
-    $('.detail-mouvement').on('click', function() {
-        const patient = $(this).data('patient');
-        const date = $(this).data('date');
-        const recus = $(this).data('recus');
-        const total = $(this).data('total');
-        const reduction = $(this).data('reduction');
-        const ticket = $(this).data('ticket');
-        const encaisser = $(this).data('encaisser');
-        const prestations = $(this).data('prestations');
-        const caissier = $(this).data('caissier');
-
-        $('#detail-patient').val(patient);
-        $('#detail-date').val(date);
-        $('#detail-recus').val(recus);
-        $('#detail-montant').val(total + ' FCFA');
-        $('#detail-reduction').val(reduction + ' FCFA');
-        $('#detail-ticket').val(ticket + ' FCFA');
-        $('#detail-caissier').val(caissier);
-        $('#detail-encaisser').val(encaisser + ' FCFA');
-
-        // Remplir le tableau des prestations
-        let prestationsHtml = '';
-        if (prestations && prestations.length > 0) {
-            prestations.forEach(prestation => {
-                prestationsHtml += `
-                    <tr>
-                        <td>${prestation.libelle}</td>
-                        <td>${prestation.quantite}</td>
-                        <td>${prestation.montant} FCFA</td>
-                        <td>${prestation.total} FCFA</td>
-                    </tr>
-                `;
-            });
-        } else {
-            prestationsHtml = '<tr><td colspan="4">Aucune prestation trouvée</td></tr>';
-        }
-        $('#detail-prestations').html(prestationsHtml);
+    document.addEventListener('DOMContentLoaded', function() {
+    // Gestion des détails de mouvement
+    document.querySelectorAll('.detail-mouvement').forEach(item => {
+        item.addEventListener('click', function() {
+            const type = this.getAttribute('data-type');
+            const patient = this.getAttribute('data-patient');
+            const date = this.getAttribute('data-date');
+            const recus = this.getAttribute('data-recus');
+            const total = this.getAttribute('data-total');
+            const reduction = this.getAttribute('data-reduction');
+            const ticket = this.getAttribute('data-ticket');
+            const encaisser = this.getAttribute('data-encaisser');
+            const caissier = this.getAttribute('data-caissier');
+            
+            if (type === 'consultation') {
+                // Remplissage modal consultation
+                document.getElementById('detail-patient').value = patient;
+                document.getElementById('detail-date').value = date;
+                document.getElementById('detail-recus').value = recus;
+                document.getElementById('detail-caissier').value = caissier;
+                document.getElementById('detail-montant').value = total + ' XOF';
+                document.getElementById('detail-ticket').value = ticket + ' XOF';
+                document.getElementById('detail-reduction').value = reduction + ' XOF';
+                document.getElementById('detail-encaisser').value = encaisser + ' XOF';
+                
+                // Remplissage des prestations
+                const prestations = JSON.parse(this.getAttribute('data-prestations'));
+                const tbody = document.getElementById('detail-prestations');
+                tbody.innerHTML = '';
+                
+                prestations.forEach(presta => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${presta.libelle}</td>
+                        <td>${presta.quantite}</td>
+                        <td>${presta.montant}</td>
+                        <td>${presta.total} </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                // Remplissage modal hospitalisation
+                const hospData = JSON.parse(this.getAttribute('data-hospitalisation'));
+                
+                document.getElementById('hosp-date-entree').value = hospData.date_entree;
+                document.getElementById('hosp-date-sortie').value = hospData.date_sortie;
+                document.getElementById('hosp-medecin').value = hospData.medecin;
+                document.getElementById('hosp-total').value = total + ' XOF';
+                document.getElementById('hosp-ticket').value = ticket + ' XOF';
+                document.getElementById('hosp-reduction').value = reduction + ' XOF';
+                document.getElementById('hosp-reste').value = hospData.reste + ' XOF';
+                
+                // Remplissage des frais d'hospitalisation
+                const detailsTbody = document.getElementById('hosp-details');
+                detailsTbody.innerHTML = '';
+                
+                hospData.details.forEach(detail => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${detail.libelle}</td>
+                        <td>${detail.quantite}</td>
+                        <td>${detail.prix} </td>
+                        <td>${detail.total} </td>
+                    `;
+                    detailsTbody.appendChild(tr);
+                });
+                
+                // Remplissage des médicaments
+                const medsTbody = document.getElementById('hosp-medicaments');
+                medsTbody.innerHTML = '';
+                
+                hospData.medicaments.forEach(med => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${med.libelle}</td>
+                        <td>${med.quantite}</td>
+                        <td>${med.prix} </td>
+                        <td>${med.total} </td>
+                    `;
+                    medsTbody.appendChild(tr);
+                });
+            }
+        });
     });
 });
 </script>
