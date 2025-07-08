@@ -194,29 +194,63 @@
                                                         </a>
                                                     @endif
 
-                                                    <button class="dropdown-item detail-mouvement-hospi"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#modal-detail-hospi"
-                                                        data-patient="{{ $hospitalisation->patient->nom ?? '' }} {{ $hospitalisation->patient->prenoms ?? '' }}"
-                                                        data-date="{{ $hospitalisation->created_at->format('d/m/Y H:i') }}"
-                                                        data-recus="{{ $hospitalisation->numero_recu ?? 'N/A' }}"
-                                                        data-total="{{ number_format($hospitalisation->total, 0, ',', ' ') }}"
-                                                        data-reduction="{{ number_format($hospitalisation->reduction, 0, ',', ' ') }}"
-                                                        data-ticket="{{ number_format($hospitalisation->ticket_moderateur, 0, ',', ' ') }}"
-                                                        data-encaisser="{{ number_format($hospitalisation->reglements->sum('montant'), 0, ',', ' ') }}"
-                                                        data-prestations="{{ json_encode($hospitalisation->details->map(function($item) {
-                                                            return [
-                                                                'libelle' => $item->frais->libelle ?? 'N/A',
-                                                                'quantite' => $item->quantite,
-                                                                'prix' => number_format($item->prix_unitaire, 0, ',', ' '),
-                                                                'taux' => $item->taux,
-                                                                'total' => number_format($item->total, 0, ',', ' ')
-                                                            ];
-                                                        })) }}"
-                                                        data-caissier="{{ $hospitalisation->user->name ?? 'N/A' }}">
-                                                        Détails
-                                                    </button>
+                                                    <a class="dropdown-item detail-mouvement" href="#" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#modal-detail"
+                                                            
+                                                            data-patient="{{ $hospitalisation->patient->nom }} {{ $hospitalisation->patient->prenoms }}"
+                                                            data-date="{{ $hospitalisation->date_entree->format('d/m/Y H:i') }}"
+                                                            data-recus="{{ $hospitalisation->patient->num_dossier }}"
+                                                            data-total="{{ number_format($hospitalisation->total, 0, ',', ' ') }}"
+                                                            data-reduction="{{ number_format($hospitalisation->reduction, 0, ',', ' ') }}"
+                                                            data-ticket="{{ number_format($hospitalisation->ticket_moderateur, 0, ',', ' ') }}"
+                                                            data-encaisser="{{ number_format($hospitalisation->total - $hospitalisation->reste_a_payer, 0, ',', ' ') }}"
+                                                            data-prestations="{{ json_encode($hospitalisation->details->map(function($item) {
+                                                                return [
+                                                                    'libelle' => $item->fraisHospitalisation->libelle,
+                                                                    'quantite' => $item->quantite,
+                                                                    'montant' => number_format($item->prix_unitaire, 0, ',', ' '),
+                                                                    'total' => number_format($item->total, 0, ',', ' ')
+                                                                ];
+                                                            })) }}"
+                                                            data-caissier="{{ $hospitalisation->user->name ?? 'N/A' }}"
 
+                                                            data-hospitalisation="{{ json_encode([
+                                                                'patient_nom' => $hospitalisation->patient->nom,
+                                                                'patient_prenoms' => $hospitalisation->patient->prenoms,
+                                                                'date_entree' => $hospitalisation->date_entree->format('d/m/Y H:i'),
+                                                                'date_sortie' => $hospitalisation->date_sortie ? $hospitalisation->date_sortie->format('d/m/Y H:i') : null,
+                                                                'medecin' => $hospitalisation->medecin->nom_complet ?? 'Non spécifié',
+                                                                'total' => $hospitalisation->total,
+                                                                'ticket_moderateur' => $hospitalisation->ticket_moderateur,
+                                                                'reduction' => $hospitalisation->reduction,
+                                                                'reste_a_payer' => $hospitalisation->reste_a_payer,
+                                                                'user' => $hospitalisation->user->name
+                                                            ]) }}"
+                                                            data-details="{{ json_encode($hospitalisation->details->map(function($item) {
+                                                                return [
+                                                                    'libelle' => $item->fraisHospitalisation->libelle,
+                                                                    'quantite' => $item->quantite,
+                                                                    'prix' => $item->prix_unitaire,
+                                                                    'total' => $item->total
+                                                                ];
+                                                            })) }}"
+                                                            data-medicaments="{{ json_encode($hospitalisation->medicaments->map(function($item) {
+                                                                return [
+                                                                    'nom' => $item->nom,
+                                                                    'quantite' => $item->pivot->quantite,
+                                                                    'prix' => $item->pivot->prix_unitaire,
+                                                                    'total' => $item->pivot->total
+                                                                ];
+                                                            })) }}"
+                                                            data-examens="{{ json_encode($hospitalisation->examens->map(function($item) {
+                                                                return [
+                                                                    'nom' => $item->nom,
+                                                                    'resultat' => $item->pivot->resultat ?? 'Non disponible'
+                                                                ];
+                                                            })) }}">
+                                                            Détails
+                                                        </a>
                                                     @if($hospitalisation->reste_a_payer > 0)
                                                         <button class="dropdown-item"
                                                             data-bs-toggle="modal"
@@ -318,7 +352,8 @@
     </div>
 </div>
 
-<div class="modal modal-blur fade" id="modal-detail-hospi" tabindex="-1" role="dialog" aria-hidden="true">
+<!-- Modal Détails Hospitalisation -->
+<div class="modal modal-blur fade" id="modal-hospitalisation-detail" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -327,42 +362,79 @@
             </div>
             <div class="modal-body">
                 <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Patient</label>
-                        <input type="text" class="form-control" id="detail-patient" readonly>
+                    <div class="col-md-4">
+                        <label class="form-label">Date admission</label>
+                        <input type="text" class="form-control" id="hosp-date-entree" readonly>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Date & Heure</label>
-                        <input type="text" class="form-control" id="detail-date" readonly>
+                    <div class="col-md-4">
+                        <label class="form-label">Date sortie</label>
+                        <input type="text" class="form-control" id="hosp-date-sortie" readonly>
                     </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Numéro de reçu</label>
-                        <input type="text" class="form-control" id="detail-recus" readonly>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Caissier</label>
-                        <input type="text" class="form-control" id="detail-caissier" readonly>
+                    <div class="col-md-4">
+                        <label class="form-label">Médecin traitant</label>
+                        <input type="text" class="form-control" id="hosp-medecin" readonly>
                     </div>
                 </div>
                 
+                <!-- Frais d'hospitalisation -->
                 <div class="card mt-3">
                     <div class="card-header">
-                        <h3 class="card-title">Prestations effectuées</h3>
+                        <h3 class="card-title">Frais d'hospitalisation</h3>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-vcenter">
                             <thead>
                                 <tr>
-                                    <th>Prestation</th>
+                                    <th>Libellé</th>
                                     <th>Quantité</th>
                                     <th>Prix unitaire</th>
                                     <th>Total</th>
                                 </tr>
                             </thead>
-                            <tbody id="detail-prestations">
-                                <!-- Les prestations seront ajoutées ici par JavaScript -->
+                            <tbody id="hosp-details">
+                                <!-- Les frais seront ajoutés ici par JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Médicaments -->
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h3 class="card-title">Médicaments</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-vcenter">
+                            <thead>
+                                <tr>
+                                    <th>Médicament</th>
+                                    <th>Quantité</th>
+                                    <th>Prix unitaire</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="hosp-medicaments">
+                                <!-- Les médicaments seront ajoutés ici par JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Examens -->
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h3 class="card-title">Examens</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-vcenter">
+                            <thead>
+                                <tr>
+                                    <th>Examen</th>
+                                    <th>Résultat</th>
+                                </tr>
+                            </thead>
+                            <tbody id="hosp-examens">
+                                <!-- Les examens seront ajoutés ici par JavaScript -->
                             </tbody>
                         </table>
                     </div>
@@ -370,26 +442,20 @@
                 
                 <div class="row mt-4">
                     <div class="col-md-3">
-                        <label class="form-label">Montant Total</label>
-                        <input type="text" class="form-control" id="detail-total" readonly>
+                        <label class="form-label">Total</label>
+                        <input type="text" class="form-control" id="hosp-total" readonly>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Ticket modérateur</label>
-                        <input type="text" class="form-control" id="detail-ticket" readonly>
+                        <input type="text" class="form-control" id="hosp-ticket" readonly>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Réduction</label>
-                        <input type="text" class="form-control" id="detail-reduction" readonly>
+                        <input type="text" class="form-control" id="hosp-reduction" readonly>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Montant Encaissé</label>
-                        <input type="text" class="form-control" id="detail-encaisser" readonly>
-                    </div>
-                </div>
-                <div class="row mt-2">
                     <div class="col-md-3">
                         <label class="form-label">Reste à payer</label>
-                        <input type="text" class="form-control" id="detail-reste" readonly>
+                        <input type="text" class="form-control" id="hosp-reste" readonly>
                     </div>
                 </div>
             </div>
@@ -399,7 +465,6 @@
         </div>
     </div>
 </div>
-
 
 
 <!-- Modal pour le paiement -->
@@ -498,56 +563,69 @@ $(document).ready(function() {
 </script>
 
 <script>
-$(document).ready(function() {
-    // Modal de détails
-    $(document).on('click', '.detail-mouvement-hospi', function() {
-        $('#detail-patient').val($(this).data('patient'));
-        $('#detail-date').val($(this).data('date'));
-        $('#detail-recus').val($(this).data('recus'));
-        $('#detail-caissier').val($(this).data('caissier'));
-        $('#detail-total').val($(this).data('total') + ' FCFA');
-        $('#detail-ticket').val($(this).data('ticket') + ' FCFA');
-        $('#detail-reduction').val($(this).data('reduction') + ' FCFA');
-        $('#detail-encaisser').val($(this).data('encaisser') + ' FCFA');
-        
-        // Calcul du reste à payer
-        const total = parseFloat($(this).data('total'));
-        const encaisser = parseFloat($(this).data('encaisser'));
-        const reste = total - encaisser;
-        $('#detail-reste').val(reste.toLocaleString('fr-FR') + ' FCFA');
-        
-        // Ajout des prestations
-        const prestations = $(this).data('prestations');
-        let html = '';
-        prestations.forEach(prestation => {
-            html += `
-                <tr>
-                    <td>${prestation.libelle}</td>
-                    <td>${prestation.quantite}</td>
-                    <td>${prestation.prix} FCFA</td>
-                    <td>${prestation.total} FCFA</td>
-                </tr>
-            `;
-        });
-        $('#detail-prestations').html(html);
-    });
+    $(document).ready(function() {
+        // Gestion du modal de détail d'hospitalisation
+        $('.detail-hospitalisation').on('click', function() {
+            const hosp = JSON.parse($(this).data('hospitalisation'));
+            const details = JSON.parse($(this).data('details'));
+            const medicaments = JSON.parse($(this).data('medicaments'));
+            const examens = JSON.parse($(this).data('examens'));
 
-    // // Modal de paiement
-    // $(document).on('click', '[data-bs-target="#paiement-modal"]', function() {
-    //     const type = $(this).data('type');
-    //     const id = $(this).data('id');
-    //     const montant = $(this).data('montant');
-        
-    //     $('#paiement-type').val(type);
-    //     $('#paiement-id').val(id);
-    //     $('#montant-restant').val(montant.toLocaleString('fr-FR') + ' FCFA');
-    //     $('#montant-paye').val(montant);
-    //     $('#montant-paye').attr({
-    //         'max': montant,
-    //         'min': 1
-    //     });
-    // });
-});
+            // Formatage des nombres
+            const formatNumber = (num) => {
+                return new Intl.NumberFormat('fr-FR').format(num);
+            };
+
+            // Remplir les informations de base
+            $('#hosp-date-entree').val(hosp.date_entree);
+            $('#hosp-date-sortie').val(hosp.date_sortie || 'En cours');
+            $('#hosp-medecin').val(hosp.medecin);
+            $('#hosp-total').val(formatNumber(hosp.total) + ' FCFA');
+            $('#hosp-ticket').val(formatNumber(hosp.ticket_moderateur) + ' FCFA');
+            $('#hosp-reduction').val(formatNumber(hosp.reduction) + ' FCFA');
+            $('#hosp-reste').val(formatNumber(hosp.reste_a_payer) + ' FCFA');
+
+            // Remplir les frais d'hospitalisation
+            let detailsHtml = '';
+            details.forEach(item => {
+                detailsHtml += `
+                    <tr>
+                        <td>${item.libelle}</td>
+                        <td>${item.quantite}</td>
+                        <td>${formatNumber(item.prix)} FCFA</td>
+                        <td>${formatNumber(item.total)} FCFA</td>
+                    </tr>
+                `;
+            });
+            $('#hosp-details').html(detailsHtml);
+
+            // Remplir les médicaments
+            let medsHtml = '';
+            medicaments.forEach(med => {
+                medsHtml += `
+                    <tr>
+                        <td>${med.nom}</td>
+                        <td>${med.quantite}</td>
+                        <td>${formatNumber(med.prix)} FCFA</td>
+                        <td>${formatNumber(med.total)} FCFA</td>
+                    </tr>
+                `;
+            });
+            $('#hosp-medicaments').html(medsHtml);
+
+            // Remplir les examens
+            let examsHtml = '';
+            examens.forEach(exam => {
+                examsHtml += `
+                    <tr>
+                        <td>${exam.nom}</td>
+                        <td>${exam.resultat}</td>
+                    </tr>
+                `;
+            });
+            $('#hosp-examens').html(examsHtml);
+        });
+    });
 </script>
 
 <script>

@@ -93,14 +93,12 @@
                                                                 ];
                                                             })) }}"
                                                             data-caissier="{{ $consultation->user->name ?? '' }}">
-
-                                                            {{-- data-caissier="{{ optional(optional(collect($consultation->reglements)->first())->user)->name ?? 'N/A' }}"> --}}
                                                             Détail du mouvement
                                                         </a>
                                                         <a class="dropdown-item" href="{{ route('consultations.edit', $consultation->id) }}">Modifier</a>
                                                         @if($consultation->pdf_path)
                                                         <a class="dropdown-item" href="{{ Storage::url($consultation->pdf_path) }}" target="_blank">
-                                                            Imprimer le reçu
+                                                            Voir le reçu
                                                         </a>
                                                         @endif
                                                     </div>
@@ -205,12 +203,9 @@
                                                             })) }}">
                                                             Détails
                                                         </a>
-                                                        <a class="dropdown-item" href="{{ route('hospitalisations.edit', $hospitalisation->id) }}">Modifier</a>
-                                                        @if($hospitalisation->pdf_path)
-                                                        <a class="dropdown-item" href="{{ Storage::url($hospitalisation->pdf_path) }}" target="_blank">
-                                                            Imprimer le dossier
-                                                        </a>
-                                                        @endif
+                                                        <a class="dropdown-item" href="{{ Storage::url($hospitalisation->facture_path) }}" target="_blank">
+                                                            Voir la facture
+                                                        </a>                                                        
                                                     </div>
                                                 </div>
                                             </div>
