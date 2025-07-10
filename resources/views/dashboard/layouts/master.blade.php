@@ -9,6 +9,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <title>Gestionnaire de clinique</title>
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/dist/img/logo.png') }}">
+
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="{{ asset('assets/libs/tom-select/dist/css/tom-select.bootstrap5.min.css') }} " rel="stylesheet">
