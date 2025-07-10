@@ -40,6 +40,7 @@
                                         </tr>
                                         @endforeach
                                     </tbody>
+                                    
                                 </table>
                             </div>
                         </div>
@@ -74,6 +75,7 @@
                                         </tr>
                                         @endforeach
                                     </tbody>
+                                    
                                 </table>
                             </div>
                         </div>
@@ -112,6 +114,7 @@
                                         </tr>
                                         @endforeach
                                     </tbody>
+                                    
                                 </table>
                             </div>
                         </div>
@@ -146,7 +149,11 @@
                                         </tr>
                                         @endforeach
                                     </tbody>
+                                    
+
                                 </table>
+
+                                
                             </div>
                         </div>
                     </div>

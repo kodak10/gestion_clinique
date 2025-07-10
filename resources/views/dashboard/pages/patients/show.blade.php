@@ -95,7 +95,11 @@
                                                             data-caissier="{{ $consultation->user->name ?? '' }}">
                                                             Détail du mouvement
                                                         </a>
-                                                        <a class="dropdown-item" href="{{ route('consultations.edit', $consultation->id) }}">Modifier</a>
+                                                        @auth
+                                                            @if(auth()->user()->hasAnyRole(['Admin', 'Développeur', 'Respo Caissière']))
+                                                                <a class="dropdown-item" href="{{ route('consultations.edit', $consultation->id) }}">Modifier</a>
+                                                            @endif
+                                                        @endauth
                                                         @if($consultation->pdf_path)
                                                         <a class="dropdown-item" href="{{ Storage::url($consultation->pdf_path) }}" target="_blank">
                                                             Voir le reçu

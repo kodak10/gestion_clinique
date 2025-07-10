@@ -190,25 +190,25 @@ private function enregistrerPaiement(Consultation $consultation, float $montant,
 }
 
 
-    public function index()
-{
-    // Vérification des permissions
-    if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
-        abort(403, 'Accès non autorisé.');
-    }
+//     public function index()
+// {
+//     // Vérification des permissions
+//     if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+//         abort(403, 'Accès non autorisé.');
+//     }
 
-    // Récupération des règlements avec les relations nécessaires
-    $reglements = Reglement::with([
-            'consultation.patient', 
-            'consultation.medecin',
-            'hospitalisation.patient',
-            'user'
-        ])
-        ->latest()
-        ->get(); 
+//     // Récupération des règlements avec les relations nécessaires
+//     $reglements = Reglement::with([
+//             'consultation.patient', 
+//             'consultation.medecin',
+//             'hospitalisation.patient',
+//             'user'
+//         ])
+//         ->latest()
+//         ->get(); 
 
-    return view('dashboard.pages.comptabilites.reglement', compact('reglements'));
-}
+//     return view('dashboard.pages.comptabilites.reglement', compact('reglements'));
+// }
 
     public function edit(Consultation $consultation)
     {
