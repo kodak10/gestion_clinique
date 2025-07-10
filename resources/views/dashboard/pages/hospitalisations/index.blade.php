@@ -38,10 +38,11 @@
                                             <div class="dropdown">
                                                 <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">Actions</button>
                                                 <div class="dropdown-menu dropdown-menu-end">
-                                                    {{-- <a class="dropdown-item" href="{{ route('factures.create', $hospitalisation->id) }}">Facture</a>
-                                                    <a class="dropdown-item" href="{{ route('pharmacie.commande', $hospitalisation->id) }}">Pharmacie</a>
-                                                    <a class="dropdown-item" href="{{ route('laboratoire.demande', $hospitalisation->id) }}">Laboratoire</a> --}}
-
+                                                    @if(!empty($hospitalisation->facture_path))
+                                                        <a class="dropdown-item bg-cyan" href="{{ Storage::url($hospitalisation->facture_path) }}" target="_blank">
+                                                            Voir la facture
+                                                        </a>
+                                                    @endisset
                                                     <a class="dropdown-item" href="{{ route('hospitalisations.facture.create', ['hospitalisation' => $hospitalisation->id]) }}">Facture</a>
                                                     <a class="dropdown-item" href="{{ route('hospitalisations.pharmacie.create', ['hospitalisation' => $hospitalisation->id]) }}">Pharmacie</a>
                                                     <a class="dropdown-item" href="{{ route('hospitalisations.laboratoire.create', ['hospitalisation' => $hospitalisation->id]) }}">Laboratoire</a>
