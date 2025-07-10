@@ -174,10 +174,14 @@ private function enregistrerPaiement(Consultation $consultation, float $montant,
     // Stockage du PDF
     Storage::disk('public')->put($pdfPath, $pdf->output());
 
+   // dd([$montant,$consultation->reste_a_payer,$consultation->montant_paye,]);
+    
+    
+
     // Mise à jour de la consultation
     $consultation->update([
         'montant_paye' => $consultation->montant_paye,
-        'reste_a_payer' => $consultation->reste_a_payer - $montant,
+        'reste_a_payer' => $consultation->reste_a_payer,
         'pdf_path' => $pdfPath // Sauvegarde du chemin du PDF
     ]);
 

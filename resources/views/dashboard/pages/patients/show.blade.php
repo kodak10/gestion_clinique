@@ -53,7 +53,7 @@
                             <h4>Historique des Consultations</h4>
                             
                         </div>
-                        <div class="table-responsive">
+                        <div class="table-responsive" style="min-height:200px">
                             <table class="table table-vcenter" id="consultations-table" >
                                 <thead>
                                     <tr>
@@ -125,11 +125,11 @@
                         <div class="d-flex justify-content-between mb-3">
                             <h4>Historique des Hospitalisations</h4>
                         </div>
-                        <div class="table-responsive">
+                        <div class="table-responsive" style="min-height:200px">
                             <table class="table table-vcenter" id="hospitalisations-table">
                                 <thead>
                                     <tr>
-                                        <th class="w-1">Actions</th>
+                                        <th class="w-1"></th>
                                         <th>Date admission</th>
                                         <th>Date sortie</th>
                                         <th>Médecin</th>
@@ -259,9 +259,7 @@
                 </div>
                 
                 <div class="card mt-3">
-                    <div class="card-header">
-                        <h3 class="card-title">Prestations effectuées</h3>
-                    </div>
+                    
                     <div class="table-responsive">
                         <table class="table table-vcenter">
                             <thead>

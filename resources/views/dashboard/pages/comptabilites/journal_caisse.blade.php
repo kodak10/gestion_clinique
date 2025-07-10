@@ -160,7 +160,7 @@
                     <h3 class="card-title">Mouvements</h3>
                 </div>
                 <div class="table-responsive">
-                    <table class="table" id="table">
+                    <table class="table" id="table" style="min-height: 200px">
                         <thead>
                             <tr>
                                 <th class="w-1"></th>
@@ -296,9 +296,7 @@
                 </div>
                 
                 <div class="card mt-3">
-                    <div class="card-header">
-                        <h3 class="card-title">Prestations effectuées</h3>
-                    </div>
+                    
                     <div class="table-responsive">
                         <table class="table table-vcenter">
                             <thead>

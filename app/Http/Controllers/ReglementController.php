@@ -305,18 +305,7 @@ class ReglementController extends Controller
 
             // Supprimer le règlement
             $reglement->delete();
-
-            // Journalisation pour audit
-            \Log::info('Suppression règlement', [
-                'reglement_id' => $reglement->id,
-                'type' => $reglement->consultation_id ? 'consultation' : 'hospitalisation',
-                'model_id' => $reglement->consultation_id ?? $reglement->hospitalisation_id,
-                'ancien_montant_paye' => $ancienMontantPaye,
-                'nouveau_montant_paye' => $nouveauMontantPaye,
-                'ancien_reste_a_payer' => $ancienResteAPayer,
-                'nouveau_reste_a_payer' => $nouveauResteAPayer,
-                'user_id' => auth()->id()
-            ]);
+            
         });
 
         return redirect()->route('comptabilite.journalcaisse')

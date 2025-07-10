@@ -236,9 +236,7 @@
                 </div>
                 
                 <div class="card mt-3">
-                    <div class="card-header">
-                        <h3 class="card-title">Prestations effectuées</h3>
-                    </div>
+                    
                     <div class="table-responsive">
                         <table class="table table-vcenter">
                             <thead>
