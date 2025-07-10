@@ -37,7 +37,7 @@ public function index()
     public function getPatientsData(Request $request)
     {
         $patients = Patient::select('id', 'num_dossier', 'nom', 'prenoms', 'date_naissance', 'contact_patient', 'contact_urgence', 'assurance_id')
-            ->with('assurance:id,name,taux');
+            ->with('assurance:id,name,taux')->orderBy('nom');
 
         return DataTables::eloquent($patients)
             // Colonne Actions (boutons)

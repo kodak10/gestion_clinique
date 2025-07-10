@@ -18,6 +18,10 @@ class MedicamentController extends Controller
      */
     public function index()
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Comptable','Pharmacien'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+
         $medicaments = Medicament::with(['categorie'])
             ->orderBy('nom')
             ->get();
