@@ -23,9 +23,20 @@ class Medicament extends Model
         'stock',
         'stock_alerte',
         'date_peremption',
-        // 'categorie_id',
-        // 'fournisseur_id'
+        'categorie_id',
+        'fournisseur_id'
     ];
+
+    public function categorie()
+    {
+        return $this->belongsTo(CategorieMedicament::class);
+    }
+
+    public function fournisseur()
+    {
+        return $this->belongsTo(Fournisseur::class);
+    }
+
 
     protected $casts = [
         'date_peremption' => 'date',

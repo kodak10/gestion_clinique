@@ -176,7 +176,7 @@ private function enregistrerPaiement(Consultation $consultation, float $montant,
 
     // Mise à jour de la consultation
     $consultation->update([
-        'montant_paye' => $consultation->montant_paye + $montant,
+        'montant_paye' => $consultation->montant_paye,
         'reste_a_payer' => $consultation->reste_a_payer - $montant,
         'pdf_path' => $pdfPath // Sauvegarde du chemin du PDF
     ]);

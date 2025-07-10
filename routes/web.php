@@ -8,6 +8,7 @@ use App\Http\Controllers\FraisHospitalisationController;
 use App\Http\Controllers\HistoriqueController;
 use App\Http\Controllers\HospitalisationController;
 use App\Http\Controllers\MedecinController;
+use App\Http\Controllers\MedicamentController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PrestationController;
 use App\Http\Controllers\ReglementController;
@@ -15,6 +16,8 @@ use App\Http\Controllers\TracabiliteController;
 use App\Http\Controllers\UtilisateurController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
+
 
 
 
@@ -114,6 +117,8 @@ Route::middleware(['auth',])->group(function () {
     // Route::get('/logs/data', [LogController::class, 'data'])->name('logs.data');
 
     Route::resource('historique', HistoriqueController::class);
+
+    Route::resource('medicaments', MedicamentController::class);
 
 
     Route::get('/aides', function () {

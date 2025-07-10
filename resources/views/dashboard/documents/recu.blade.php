@@ -17,35 +17,62 @@
         }
 
         /* Conteneur global avec cadre rouge */
-        .table-container {
+        /* .table-container {
             display: table;
             width: 100%;
             border: 3px solid red;
             padding: 10px;
             box-sizing: border-box;
+        } */
+        .table-container {
+            display: table;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            border-collapse: collapse;
         }
+
 
         .table-row {
             display: table-row;
         }
 
         /* Premier reçu - bureau plus étroit */
-        .receipt.bureau {
+        /* .receipt.bureau {
             display: table-cell;
             width: 35%;
             vertical-align: top;
             padding: 15px;
             box-sizing: border-box;
             border-right: 1px dashed gray;
+        } */
+        .receipt.bureau {
+            display: table-cell;
+            width: 35%;
+            vertical-align: top;
+            padding: 15px;
+            box-sizing: border-box;
+            border: 2px solid orange; /* ou autre couleur selon la préférence */
+            border-right: 1px dashed gray;
+            background-color: #fff8b3; /* jaune pâle, ajustable */
         }
 
         /* Deuxième reçu - client plus large */
+        /* .receipt.client {
+            display: table-cell;
+            width: 65%;
+            vertical-align: top;
+            padding: 15px;
+            box-sizing: border-box;
+        } */
         .receipt.client {
             display: table-cell;
             width: 65%;
             vertical-align: top;
             padding: 15px;
             box-sizing: border-box;
+            border: 2px solid #000;
+            background-color: #ffffff; /* fond blanc explicite */
         }
 
         .header, .footer, .inline-fields, .field, .payment-methods {
