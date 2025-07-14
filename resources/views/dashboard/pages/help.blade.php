@@ -9,7 +9,7 @@
                       <div class="accordion-item">
                         <button class="accordion-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1-default" aria-expanded="true">
                           <div class="accordion-header-text">
-                            <h4>What makes Tabler different from other UI frameworks?</h4>
+                            <h4>Comment voir la liste des patients</h4>
                           </div>
                           <div class="accordion-header-toggle">
                             <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
@@ -18,16 +18,17 @@
                             </svg>
                           </div>
                         </button>
-                        <div id="collapse-1-default" class="accordion-collapse collapse show" data-bs-parent="#accordion-default">
+                        <div id="collapse-1-default" class="accordion-collapse collapse" data-bs-parent="#accordion-default">
                           <div class="accordion-body">
-                            Tabler offers a modern, responsive design with a clean aesthetic, built on Bootstrap for ease of use and flexibility.
+                            <img src="{{ asset('assets/dist/img/header.png') }}" alt="">
+                            Cliquez sur le bouton "Patients" dans le menu de navigation pour accéder à la liste des patients. En mobile, appuyez sur le bouton de menu en haut à gauche pour afficher les options.
                           </div>
                         </div>
                       </div>
                       <div class="accordion-item">
                         <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-2-default" aria-expanded="false">
                           <div class="accordion-header-text">
-                            <h4>How can I customize Tabler components to fit my design needs?</h4>
+                            <h4>Comment Rechercher - Ajouter un Patient </h4>
                           </div>
                           <div class="accordion-header-toggle">
                             <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
@@ -38,14 +39,18 @@
                         </button>
                         <div id="collapse-2-default" class="accordion-collapse collapse" data-bs-parent="#accordion-default">
                           <div class="accordion-body">
-                            You can customize Tabler components using CSS variables, SCSS, and utility classes to match your design preferences.
+                            <img src="{{ asset('assets/dist/img/patient.png') }}" alt="">
+                            <ul>
+                              <li>Pour Rechercher un patient cliqué dans la zone de "search" ou "Rechercher" Puis entrer le nom du patient</li>
+                              <li>Pour Ajouter un patient cliqué sur le bouton "Ajouter"</li>
+                            </ul>
                           </div>
                         </div>
                       </div>
                       <div class="accordion-item">
                         <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-3-default" aria-expanded="false">
                           <div class="accordion-header-text">
-                            <h4>Is Tabler optimized for performance and fast loading times?</h4>
+                            <h4>Comment Enregistrer un Patient</h4>
                           </div>
                           <div class="accordion-header-toggle">
                             <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
@@ -56,14 +61,17 @@
                         </button>
                         <div id="collapse-3-default" class="accordion-collapse collapse" data-bs-parent="#accordion-default">
                           <div class="accordion-body">
-                            Yes, Tabler is lightweight, optimized for modern browsers, and follows best practices for fast loading and efficiency.
+                            <img src="{{ asset('assets/dist/img/Inscription_patient.png') }}" alt="">
+                            Veuillez remplir tous les champs requis (avec astreis devant) dans le formulaire d'inscription du patient. Assurez-vous de fournir des informations précises et complètes pour garantir un suivi médical efficace.
+                            <br> Pour les informations (Ethnies, Profession), Vous pouvez en ajouté en fesant le +
+
                           </div>
                         </div>
                       </div>
                       <div class="accordion-item">
                         <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-4-default" aria-expanded="false">
                           <div class="accordion-header-text">
-                            <h4>How accessible are Tabler components?</h4>
+                            <h4>Comment modifier, Imprimer le dossier, Faire une Consultation, Hospitaliser, Suivi du Patient</h4>
                           </div>
                           <div class="accordion-header-toggle">
                             <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
@@ -74,7 +82,14 @@
                         </button>
                         <div id="collapse-4-default" class="accordion-collapse collapse" data-bs-parent="#accordion-default">
                           <div class="accordion-body">
-                            Tabler components follow WAI-ARIA standards and support keyboard navigation, screen readers, and accessibility best practices.
+                            <img src="{{ asset('assets/dist/img/action_patient.png') }}" alt="">
+                            <ul>
+                              <li>Modifier : Pour modifier les informations liées au patient.</li>
+                              <li>Ouvrir la fiche de dossier: Avoir la fiche médicale du patient</li>
+                              <li>Consultation : Faire une consultation</li>
+                              <li>A Hospitaliser : Pour declarer que le patient est Hospitalisé</li>
+                              <li>Suivi du Patient : Pour avoir l'historique des prestations (Consultation, Hospitalisation) du patient. </li>
+                            </ul>
                           </div>
                         </div>
                       </div>
@@ -88,7 +103,7 @@
                     <div class="accordion-item">
                       <button class="accordion-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1-flush" aria-expanded="true">
                         <div class="accordion-header-text">
-                          <h4>What makes Tabler different from other UI frameworks?</h4>
+                          <h4>Enregistrement d'une consultation</h4>
                         </div>
                         <div class="accordion-header-toggle">
                           <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
@@ -97,16 +112,28 @@
                           </svg>
                         </div>
                       </button>
-                      <div id="collapse-1-flush" class="accordion-collapse collapse show" data-bs-parent="#accordion-flush">
+                      <div id="collapse-1-flush" class="accordion-collapse collapse" data-bs-parent="#accordion-flush">
                         <div class="accordion-body">
-                          Tabler offers a modern, responsive design with a clean aesthetic, built on Bootstrap for ease of use and flexibility.
+                          <img src="{{ asset('assets/dist/img/Consultation.png') }}" alt="">
+                          <ul>
+                            Veuillez selectionner le Medecin traitant
+                            <li>Selectionner la prestation</li>
+                            <li>Le prix unitaire sort automatiquement mais vous pouvez le modifié</li>
+                            <li>La quantité</li>
+                            <li>Le taux de prise en charge de l'assurance</li>
+                            <li>Le cout total de la ligne se calcule sur la dernière ligne</li>
+
+                          </ul>
+                          Faire + Ajouter une autre prestation si vous voulez ajouter une autre.
+                          <br>Renseigner les informations liées aux prix à savoir : La reduction, le montant perçu puis faire Enregistrer pour enregistrer la consultation.
+                          <br>NB: LORSQUE VOTRE ROLE (EN HAUT A DROITE) EST CAISSIERE ALORS VOUS ALLEZ ENCAISSER L'ARGENT DIRECTEMENT ET ACCEDER A VOTRE JOURNAL DE CAISSE DANS LE CAS CONTRAIRE LE PATIENT DEVRA MONTER POUR PAYER EN HAUT)
                         </div>
                       </div>
                     </div>
                     <div class="accordion-item">
                       <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-2-flush" aria-expanded="false">
                         <div class="accordion-header-text">
-                          <h4>How can I customize Tabler components to fit my design needs?</h4>
+                          <h4>Erreur sur la consultation et le montant est dejà dans le point ? (Admin)</h4>
                         </div>
                         <div class="accordion-header-toggle">
                           <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
@@ -117,46 +144,34 @@
                       </button>
                       <div id="collapse-2-flush" class="accordion-collapse collapse" data-bs-parent="#accordion-flush">
                         <div class="accordion-body">
-                          You can customize Tabler components using CSS variables, SCSS, and utility classes to match your design preferences.
+                          Etape 01
+                          <ul>
+                            <li>
+                              1 - Cliquer le sur le bouton de navigation Comptabilité puis journal de caisse <br>
+                              <span></span>
+                              <img src="{{ asset('assets/dist/img/journal.png') }}" alt="">
+
+                              2 - Selectionner le paiement puis cliqué sur le bouton Action Puis Supprimé <br>
+                              <img src="{{ asset('assets/dist/img/journal_caisse.png') }}" alt="">
+                            </li>
+                            Etape 02
+                            
+                              <li>
+                              1 - Allez sur le menu des patient cliqué sur Action du patient puis Suivi du Patient <br>
+                              <span></span>
+                              <img src="{{ asset('assets/dist/img/action_patient.png') }}" alt="">
+
+                              2 - Selectionner la consultaion puis cliqué sur Modifier puis modifié les informations paiement puis cliqué sur le bouton Action Puis Supprimé <br>
+                              <img src="{{ asset('assets/dist/img/journal_caisse.png') }}" alt="">
+                            </li>
+                           
+                          </ul>
+                          
                         </div>
                       </div>
                     </div>
-                    <div class="accordion-item">
-                      <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-3-flush" aria-expanded="false">
-                        <div class="accordion-header-text">
-                          <h4>Is Tabler optimized for performance and fast loading times?</h4>
-                        </div>
-                        <div class="accordion-header-toggle">
-                          <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
-                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-                            <path d="M6 9l6 6l6 -6"></path>
-                          </svg>
-                        </div>
-                      </button>
-                      <div id="collapse-3-flush" class="accordion-collapse collapse" data-bs-parent="#accordion-flush">
-                        <div class="accordion-body">
-                          Yes, Tabler is lightweight, optimized for modern browsers, and follows best practices for fast loading and efficiency.
-                        </div>
-                      </div>
-                    </div>
-                    <div class="accordion-item">
-                      <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-4-flush" aria-expanded="false">
-                        <div class="accordion-header-text">
-                          <h4>How accessible are Tabler components?</h4>
-                        </div>
-                        <div class="accordion-header-toggle">
-                          <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
-                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-                            <path d="M6 9l6 6l6 -6"></path>
-                          </svg>
-                        </div>
-                      </button>
-                      <div id="collapse-4-flush" class="accordion-collapse collapse" data-bs-parent="#accordion-flush">
-                        <div class="accordion-body">
-                          Tabler components follow WAI-ARIA standards and support keyboard navigation, screen readers, and accessibility best practices.
-                        </div>
-                      </div>
-                    </div>
+                    
+                    
                   </div>
                 </div>
               </div>

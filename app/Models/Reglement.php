@@ -36,6 +36,13 @@ class Reglement extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];
+  
+    public function depense()
+    {
+        return $this->belongsTo(Depense::class, 'depense_id');
+    }
+
+
 
     public function consultation()
     {

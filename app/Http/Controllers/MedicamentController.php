@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Medicament;
 use App\Models\CategorieMedicament;
 use App\Models\Fournisseur;
 use App\Models\HospitalisationMedicament;
+use App\Models\Medicament;
 use App\Models\StockMouvement;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 

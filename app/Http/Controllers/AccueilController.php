@@ -17,11 +17,11 @@ class AccueilController extends Controller
             ->orderBy('date_heure')
             ->get();
 
-        $patients = Patient::all();
-        $medecins = Medecin::all();
-        $specialites = Specialite::all();
+        $patients = Patient::orderBy('nom')->get();
+        $medecins = Medecin::orderBy('nom_complet')->get();
 
-        return view('dashboard.pages.index', compact('rendezVous', 'patients', 'medecins', 'specialites'));
+
+        return view('dashboard.pages.index', compact('rendezVous', 'patients', 'medecins'));
     }
 
     public function storeRdv(Request $request)
@@ -63,7 +63,7 @@ class AccueilController extends Controller
 
         $rendezVou->update($validated);
 
-        return redirect()->route('rendez-vous.index')
+        return redirect()->route('home')
             ->with('success', 'Rendez-vous mis à jour avec succès');
     }
 
@@ -71,7 +71,7 @@ class AccueilController extends Controller
     {
         $rendezVou->delete();
 
-        return redirect()->route('rendez-vous.index')
+        return redirect()->route('home')
             ->with('success', 'Rendez-vous supprimé avec succès');
     }
 }

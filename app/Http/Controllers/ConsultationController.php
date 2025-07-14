@@ -190,25 +190,6 @@ private function enregistrerPaiement(Consultation $consultation, float $montant,
 }
 
 
-//     public function index()
-// {
-//     // Vérification des permissions
-//     if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
-//         abort(403, 'Accès non autorisé.');
-//     }
-
-//     // Récupération des règlements avec les relations nécessaires
-//     $reglements = Reglement::with([
-//             'consultation.patient', 
-//             'consultation.medecin',
-//             'hospitalisation.patient',
-//             'user'
-//         ])
-//         ->latest()
-//         ->get(); 
-
-//     return view('dashboard.pages.comptabilites.reglement', compact('reglements'));
-// }
 
     public function edit(Consultation $consultation)
     {
@@ -242,6 +223,109 @@ private function enregistrerPaiement(Consultation $consultation, float $montant,
         ));
     }
 
+
+// public function update(Request $request, Consultation $consultation)
+// {
+//     if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière'])) {
+//         abort(403, 'Accès non autorisé.');
+//     }
+
+//     $validated = $request->validate([
+//         'medecin_id' => 'required|exists:medecins,id',
+//         'specialite' => 'required',
+//         'prestations' => 'required|array|min:1',
+//         'prestations.*.prestation_id' => 'required|exists:prestations,id',
+//         'prestations.*.montant' => 'required|numeric|min:500',
+//         'prestations.*.quantite' => 'required|integer|min:1',
+//         'prestations.*.taux' => 'nullable|numeric|min:0|max:100',
+//         'reduction' => 'required|numeric|min:0',
+//         'total' => 'required|numeric|min:0',
+//         'ticket_moderateur' => 'required|numeric|min:0',
+
+//         'montant_a_paye' => [
+//             'required',
+//             'numeric',
+//             'min:0',
+//             function ($attribute, $value, $fail) use ($consultation) {
+//                 if ($value < $consultation->montant_paye) {
+//                     $fail('Le montant à payer ('.$value.' FCFA) ne peut pas être inférieur au montant déjà payé ('.$consultation->montant_paye.' FCFA)');
+//                 }
+//             },
+//         ],
+//         'methode_paiement' => 'required_if:montant_paye,>0|in:cash,mobile_money,virement',
+//         'montant_paye' => 'nullable|numeric|min:0|max:'.$request->montant_a_paye
+//     ]);
+//     // dd($validated);
+
+//     if (isset($validated['montant_paye']) && $validated['montant_paye'] > $validated['montant_a_paye']) {
+//         return back()->with('error', 'Le montant payé ne peut pas dépasser le montant à payer');
+//     }
+
+//     // Détermination des montants
+//     $isCaissiere = Auth::user()->hasRole('Caissière');
+//     $montantPaye = $isCaissiere ? ($validated['montant_paye'] ?? 0) : 0;
+//     $resteAPayer = $validated['montant_a_paye'] - ($consultation->montant_paye + $montantPaye);
+
+//     DB::transaction(function() use ($consultation, $validated, $montantPaye, $resteAPayer) {
+//         // Mise à jour de la consultation
+//         $consultation->update([
+//             'medecin_id' => $validated['medecin_id'],
+//             'specialite' => $validated['specialite'],
+//             'total' => $validated['total'],
+//             'ticket_moderateur' => $validated['ticket_moderateur'],
+//             'reduction' => $validated['reduction'],
+//             'montant_a_paye' => $validated['montant_a_paye'],
+//             'montant_paye' => $consultation->montant_paye + $montantPaye,
+//             'reste_a_payer' => $resteAPayer
+//         ]);
+
+//         // Mise à jour des prestations
+//         $consultation->prestations()->detach();
+//         foreach ($validated['prestations'] as $prestation) {
+//             $consultation->prestations()->attach($prestation['prestation_id'], [
+//                 'quantite' => $prestation['quantite'],
+//                 'montant' => $prestation['montant'],
+//                 'taux' => $prestation['taux'] ?? 0,
+//                 'total' => $prestation['montant'] * $prestation['quantite']
+//             ]);
+//         }
+
+//         // Enregistrement du paiement si montant payé > 0
+//         if ($montantPaye > 0) {
+//             $this->enregistrerPaiement(
+//                 consultation: $consultation,
+//                 montant: $montantPaye,
+                
+//                 methode: $validated['methode_paiement'],
+//                 type: 'entrée'
+//             );
+//         }
+//     });
+
+//     $dernierReglement = $consultation->reglements()->latest()->first();
+
+//     // Régénération du PDF
+//     $pdf = Pdf::loadView('dashboard.documents.recu', [
+//         'consultation' => $consultation->fresh(),
+//         'patient' => $consultation->patient,
+//         'medecin' => $consultation->medecin,
+//         'prestations' => $consultation->prestations,
+//         'date' => $consultation->date_consultation->format('d/m/Y H:i'),
+//         'numeroRecu' => $consultation->numero_recu,
+//         'user' => $consultation->user,
+//         'reglement' => $dernierReglement,
+        
+//     ]);
+
+//     $pdfPath = 'consultations/recu-'.$consultation->id.'-'.now()->format('YmdHis').'.pdf';
+//     Storage::disk('public')->put($pdfPath, $pdf->output());
+//     $consultation->update(['pdf_path' => $pdfPath]);
+
+//     return back()->with([
+//         'success' => 'Consultation mise à jour avec succès',
+//         'pdf_url' => Storage::url($pdfPath)
+//     ]);
+// }
 
 public function update(Request $request, Consultation $consultation)
 {
@@ -283,7 +367,9 @@ public function update(Request $request, Consultation $consultation)
     $montantPaye = $isCaissiere ? ($validated['montant_paye'] ?? 0) : 0;
     $resteAPayer = $validated['montant_a_paye'] - ($consultation->montant_paye + $montantPaye);
 
-    DB::transaction(function() use ($consultation, $validated, $montantPaye, $resteAPayer) {
+    $reglement = null;
+
+    DB::transaction(function() use ($consultation, $validated, $montantPaye, $resteAPayer, &$reglement) {
         // Mise à jour de la consultation
         $consultation->update([
             'medecin_id' => $validated['medecin_id'],
@@ -309,14 +395,19 @@ public function update(Request $request, Consultation $consultation)
 
         // Enregistrement du paiement si montant payé > 0
         if ($montantPaye > 0) {
-            $this->enregistrerPaiement(
+            $reglement = $this->enregistrerPaiement(
                 consultation: $consultation,
                 montant: $montantPaye,
-                methode: $validated['methode_paiement'] ?? 'Cash',
+                methode: $validated['methode_paiement'],
                 type: 'entrée'
             );
         }
     });
+
+    // Get the latest reglement if none was created in this update
+    if (!$reglement) {
+        $reglement = $consultation->reglements()->latest()->first();
+    }
 
     // Régénération du PDF
     $pdf = Pdf::loadView('dashboard.documents.recu', [
@@ -327,6 +418,8 @@ public function update(Request $request, Consultation $consultation)
         'date' => $consultation->date_consultation->format('d/m/Y H:i'),
         'numeroRecu' => $consultation->numero_recu,
         'user' => $consultation->user,
+        'reglement' => $reglement,
+        'totalPaye' => $consultation->montant_paye,
     ]);
 
     $pdfPath = 'consultations/recu-'.$consultation->id.'-'.now()->format('YmdHis').'.pdf';

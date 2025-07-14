@@ -168,7 +168,7 @@
                                 <th>Numéro de reçu</th>
                                 <th>Nom & Prénoms</th>
                                 <th>Montant</th>
-                                <th>Encaisser Par</th>
+                                <th>Utilisateur</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -189,7 +189,7 @@
                                                         </a>
                                                     @endif
                                                     
-                                                    <a class="dropdown-item detail-mouvement" href="#" 
+                                                    {{-- <a class="dropdown-item detail-mouvement" href="#" 
                                                         data-bs-toggle="modal" 
                                                         data-bs-target="@if($reglement->consultation) #modal-detail @else #modal-hospitalisation-detail @endif"
                                                         data-type="{{ $reglement->consultation ? 'consultation' : 'hospitalisation' }}"
@@ -232,6 +232,26 @@
                                                         ] : null) }}"
                                                         data-caissier="{{ $reglement->user->name }}">
                                                         Détail du mouvement
+                                                    </a> --}}
+                                                    <a class="dropdown-item detail-mouvement" href="#" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="@if($reglement->consultation) #modal-detail @elseif($reglement->hospitalisation) #modal-hospitalisation-detail @else #modal-depense-detail @endif"
+                                                        data-type="{{ $reglement->consultation ? 'consultation' : ($reglement->hospitalisation ? 'hospitalisation' : 'depense') }}"
+                                                        data-patient="@if($reglement->consultation) {{ $reglement->consultation->patient->nom }} {{ $reglement->consultation->patient->prenoms }} @elseif($reglement->hospitalisation) {{ $reglement->hospitalisation->patient->nom }} {{ $reglement->hospitalisation->patient->prenoms }} @else {{ $reglement->depense->libelle ?? 'Dépense' }} @endif"
+                                                        data-date="{{ $reglement->created_at->format('d/m/Y H:i') }}"
+                                                        data-recus="@if($reglement->consultation) {{ $reglement->consultation->numero_recu }} @elseif($reglement->hospitalisation) HOSP-{{ $reglement->hospitalisation->id }} @else {{ $reglement->numero_recu }} @endif"
+                                                        data-total="{{ number_format($reglement->consultation->total ?? ($reglement->hospitalisation->total ?? $reglement->montant), 0, ',', ' ') }}"
+                                                        data-reduction="{{ number_format($reglement->consultation->reduction ?? ($reglement->hospitalisation->reduction ?? 0), 0, ',', ' ') }}"
+                                                        data-ticket="{{ number_format($reglement->consultation->ticket_moderateur ?? ($reglement->hospitalisation->ticket_moderateur ?? 0), 0, ',', ' ') }}"
+                                                        data-encaisser="{{ number_format($reglement->montant, 0, ',', ' ') }}"
+                                                        data-caissier="{{ $reglement->user->name }}"
+                                                        @if($reglement->depense)
+                                                            data-categorie="{{ $reglement->depense->category->name ?? 'Non catégorisé' }}"
+                                                            data-methode="{{ $reglement->methode_paiement }}"
+                                                            data-description="{{ $reglement->depense->description }}"
+                                                            data-cheque="{{ $reglement->depense->numero_cheque }}"
+                                                        @endif>
+                                                        Détail du mouvement
                                                     </a>
                                                     
                                                     @auth
@@ -251,8 +271,26 @@
                                         </div>
                                     </td>
                                     <td>{{ $reglement->created_at->format('d/m/Y H:i') }}</td>
-                                    <td>{{ $reglement->consultation->numero_recu ?? 'HOSP-'.$reglement->hospitalisation->id }}</td>
-                                    <td>{{ $reglement->consultation->patient->nom ?? $reglement->hospitalisation->patient->nom }} {{ $reglement->consultation->patient->prenoms ?? $reglement->hospitalisation->patient->prenoms }}</td>
+                                    <td>
+                                        @if($reglement->consultation)
+                                            {{ $reglement->consultation->numero_recu }}
+                                        @elseif($reglement->hospitalisation)
+                                            HOSP-{{ $reglement->hospitalisation->id }}
+                                        @else
+                                            {{ $reglement->depense->numero_recu ?? 'N/A' }}
+                                        @endif
+                                    </td>
+                                    {{-- <td>{{ $reglement->consultation->numero_recu ?? 'HOSP-'.$reglement->hospitalisation->id }}</td> --}}
+                                    <td>
+                                        @if($reglement->consultation)
+                                            {{ $reglement->consultation->patient->nom }} {{ $reglement->consultation->patient->prenoms }}
+                                        @elseif($reglement->hospitalisation)
+                                            {{ $reglement->hospitalisation->patient->nom }} {{ $reglement->hospitalisation->patient->prenoms }}
+                                        @else
+                                           {{ $reglement->depense->libelle ?? 'N/A' }}
+                                        @endif
+                                    </td>
+                                    {{-- <td>{{ $reglement->consultation->patient->nom ?? $reglement->hospitalisation->patient->nom }} {{ $reglement->consultation->patient->prenoms ?? $reglement->hospitalisation->patient->prenoms }}</td> --}}
                                     <td>{{ number_format($reglement->montant, 0, ',', ' ') }} FCFA</td>
                                     <td>{{ $reglement->user->name }}</td>
                                 </tr>
@@ -414,13 +452,76 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Détails Dépense -->
+<div class="modal modal-blur fade" id="modal-depense-detail" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Détails de la dépense</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Libellé</label>
+                        <input type="text" class="form-control" id="depense-libelle" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Date</label>
+                        <input type="text" class="form-control" id="depense-date" readonly>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Numéro de reçu</label>
+                        <input type="text" class="form-control" id="depense-numero" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Enregistré par</label>
+                        <input type="text" class="form-control" id="depense-caissier" readonly>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Catégorie</label>
+                        <input type="text" class="form-control" id="depense-categorie" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Méthode de paiement</label>
+                        <input type="text" class="form-control" id="depense-methode" readonly>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" id="depense-description" rows="3" readonly></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">Montant</label>
+                        <input type="text" class="form-control" id="depense-montant" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Numéro de chèque</label>
+                        <input type="text" class="form-control" id="depense-cheque" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
-<script>
+{{-- <script>
     document.addEventListener('DOMContentLoaded', function() {
     // Gestion des détails de mouvement
     document.querySelectorAll('.detail-mouvement').forEach(item => {
@@ -502,6 +603,93 @@
                     `;
                     medsTbody.appendChild(tr);
                 });
+            }
+        });
+    });
+});
+</script> --}}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Gestion des détails de mouvement
+    document.querySelectorAll('.detail-mouvement').forEach(item => {
+        item.addEventListener('click', function() {
+            const type = this.getAttribute('data-type');
+            const patient = this.getAttribute('data-patient');
+            const date = this.getAttribute('data-date');
+            const recus = this.getAttribute('data-recus');
+            const total = this.getAttribute('data-total');
+            const reduction = this.getAttribute('data-reduction');
+            const ticket = this.getAttribute('data-ticket');
+            const encaisser = this.getAttribute('data-encaisser');
+            const caissier = this.getAttribute('data-caissier');
+            
+            if (type === 'consultation') {
+                // Remplissage modal consultation
+                document.getElementById('detail-patient').value = patient;
+                document.getElementById('detail-date').value = date;
+                document.getElementById('detail-recus').value = recus;
+                document.getElementById('detail-caissier').value = caissier;
+                document.getElementById('detail-montant').value = total + ' XOF';
+                document.getElementById('detail-ticket').value = ticket + ' XOF';
+                document.getElementById('detail-reduction').value = reduction + ' XOF';
+                document.getElementById('detail-encaisser').value = encaisser + ' XOF';
+                
+                // Remplissage des prestations
+                const prestations = JSON.parse(this.getAttribute('data-prestations'));
+                const tbody = document.getElementById('detail-prestations');
+                tbody.innerHTML = '';
+                
+                prestations.forEach(presta => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${presta.libelle}</td>
+                        <td>${presta.quantite}</td>
+                        <td>${presta.montant}</td>
+                        <td>${presta.total} </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else if (type === 'hospitalisation') {
+                // Remplissage modal hospitalisation
+                const hospData = JSON.parse(this.getAttribute('data-hospitalisation'));
+                
+                document.getElementById('hosp-date-entree').value = hospData.date_entree;
+                document.getElementById('hosp-date-sortie').value = hospData.date_sortie;
+                document.getElementById('hosp-medecin').value = hospData.medecin;
+                document.getElementById('hosp-total').value = total + ' XOF';
+                document.getElementById('hosp-ticket').value = ticket + ' XOF';
+                document.getElementById('hosp-reduction').value = reduction + ' XOF';
+                document.getElementById('hosp-reste').value = hospData.reste + ' XOF';
+                
+                // Remplissage des frais d'hospitalisation
+                const detailsTbody = document.getElementById('hosp-details');
+                detailsTbody.innerHTML = '';
+                
+                hospData.details.forEach(detail => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${detail.libelle}</td>
+                        <td>${detail.quantite}</td>
+                        <td>${detail.prix} </td>
+                        <td>${detail.total} </td>
+                    `;
+                    detailsTbody.appendChild(tr);
+                });
+            } else {
+                // Remplissage modal dépense
+                document.getElementById('depense-libelle').value = patient; // On réutilise patient pour le libellé
+                document.getElementById('depense-date').value = date;
+                document.getElementById('depense-numero').value = recus;
+                document.getElementById('depense-caissier').value = caissier;
+                document.getElementById('depense-montant').value = encaisser + ' XOF';
+                
+                // Pour les autres champs, vous devrez les ajouter dans vos data-attributes
+                // Exemple:
+                // document.getElementById('depense-categorie').value = this.getAttribute('data-categorie');
+                // document.getElementById('depense-methode').value = this.getAttribute('data-methode');
+                // document.getElementById('depense-description').value = this.getAttribute('data-description');
+                // document.getElementById('depense-cheque').value = this.getAttribute('data-cheque');
             }
         });
     });

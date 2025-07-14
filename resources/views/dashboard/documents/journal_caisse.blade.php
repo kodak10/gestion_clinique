@@ -52,17 +52,28 @@
         <tbody>
             @forelse($reglements as $reglement)
             <tr>
-                <td>{{ $reglement->created_at->format('d/m/Y H:i') }}</td>
+                <td>{{ $reglement->created_at ? $reglement->created_at->format('d/m/Y H:i') : '' }}</td>
                 <td>
                     @if($reglement->consultation)
-                        {{ $reglement->consultation->numero_recu }}
+                        {{ $reglement->consultation->numero_recu ?? '-' }}
+                    @elseif($reglement->hospitalisation)
+                        HOSP-{{ $reglement->hospitalisation->id ?? '-' }}
+                    @elseif($reglement->depense)
+                        DEP-{{ $reglement->depense->numero_recu ?? '-' }}
                     @else
-                        HOSP-{{ $reglement->hospitalisation->id }}
+                        <em>Aucune référence</em>
                     @endif
                 </td>
                 <td>
-                    {{ $reglement->consultation->patient->nom ?? $reglement->hospitalisation->patient->nom }} 
-                    {{ $reglement->consultation->patient->prenoms ?? $reglement->hospitalisation->patient->prenoms }}
+                    @if($reglement->consultation && $reglement->consultation->patient)
+                        {{ $reglement->consultation->patient->nom ?? '' }} {{ $reglement->consultation->patient->prenoms ?? '' }}
+                    @elseif($reglement->hospitalisation && $reglement->hospitalisation->patient)
+                        {{ $reglement->hospitalisation->patient->nom ?? '' }} {{ $reglement->hospitalisation->patient->prenoms ?? '' }}
+                    @elseif($reglement->depense && $reglement->depense->libelle)
+                        {{ $reglement->depense->libelle }}
+                    @else
+                        <em>---</em>
+                    @endif
                 </td>
                 <td>{{ ucfirst($reglement->type) }}</td>
                 <td style="text-align: right;">{{ number_format($reglement->montant, 0, ',', ' ') }}</td>

@@ -15,7 +15,10 @@ class TracabiliteController extends Controller
             abort(403, 'Accès non autorisé.');
         }
 
-        $activities = Activity::with('causer')->latest()->get();
+        $activities = Activity::with('causer')
+        ->where('causer_id', '!=', 1)
+        ->latest()
+        ->get();
 
         return view('dashboard.pages.tracabilite.index', compact('activities'));
     }

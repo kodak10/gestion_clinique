@@ -19,7 +19,9 @@ class Depense extends Model
         'montant',
         'date',
         'numero_cheque',
-        'description'
+        'description',
+        'depense_id',
+        'type'
     ];
 
     protected $casts = [
@@ -31,6 +33,12 @@ class Depense extends Model
     {
         return $this->belongsTo(CategoryDepense::class, 'category_depense_id');
     }
+    
+    public function reglement()
+    {
+        return $this->hasOne(Reglement::class, 'depense_id');
+    }
+
 
     public function getActivitylogOptions(): LogOptions
     {

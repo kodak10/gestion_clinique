@@ -33,6 +33,18 @@
 
 <div class="page-body">
     <div class="container-xl">
+        @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>Des erreurs ont été détectées :</strong>
+                    <ul class="mt-2 mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
         <div class="card">
             <div class="card-body p-0">
                 <div id="table-default" class="table-responsive">
@@ -65,9 +77,15 @@
                                                     <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modal-edit-{{ $depense->id }}">
                                                         Modifier
                                                     </a>
-                                                    <button class="dropdown-item" onclick="confirmDelete({{ $depense->id }})">
-                                                        Supprimer
-                                                    </button>
+                                                    @auth
+                                                        @if(auth()->user()->hasAnyRole(['Admin', 'Développeur', 'Comptable', 'Respo Caissière']))
+                                                            <button class="dropdown-item" onclick="confirmDelete({{ $depense->id }})">
+                                                                Supprimer
+                                                            </button>
+                                                        @endif
+                                                    @endauth
+
+                                                   
                                                 </div>
                                             </div>
                                         </div>
@@ -83,7 +101,8 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <form action="{{ route('depenses.update', $depense->id) }}" method="POST" class="form-loader">
-                                                @csrf @method('PUT')
+                                                @csrf 
+                                                @method('PUT')
                                                 <div class="modal-body">
                                                     <div class="row">
                                                         <div class="col-lg-6">

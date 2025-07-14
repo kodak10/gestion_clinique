@@ -191,6 +191,19 @@
           </div>
         </div> --}}
         
+         @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>Des erreurs ont été détectées :</strong>
+                    <ul class="mt-2 mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
         <!-- Tableau des RDVs à venir -->
         <div class="col-12">
           <div class="card">
@@ -284,193 +297,12 @@
           </div>
         </div>
         
-        <!-- Hospitalisations en cours -->
-        {{-- <div class="col-md-6">
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title">Patients hospitalisés</h3>
-            </div>
-            <div class="card-table table-responsive">
-              <table class="table table-vcenter">
-                <thead>
-                  <tr>
-                    <th>Patient</th>
-                    <th>Chambre</th>
-                    <th>Entrée</th>
-                    <th>Service</th>
-                    <th class="w-1"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <div class="d-flex py-1 align-items-center">
-                        <span class="avatar me-2" style="background-image: url(./static/avatars/003m.jpg)"></span>
-                        <div class="flex-fill">
-                          <div class="font-weight-medium">Pierre Garnier</div>
-                          <div class="text-muted"><a href="#" class="text-reset">pierre.garnier@example.com</a></div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div>B203</div>
-                      <div class="text-muted">2ème étage</div>
-                    </td>
-                    <td class="text-muted">
-                      2 jours
-                    </td>
-                    <td class="text-muted">
-                      Cardiologie
-                    </td>
-                    <td>
-                      <a href="#" class="btn btn-sm btn-primary">Dossier</a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="d-flex py-1 align-items-center">
-                        <span class="avatar me-2" style="background-image: url(./static/avatars/002f.jpg)"></span>
-                        <div class="flex-fill">
-                          <div class="font-weight-medium">Julie Faure</div>
-                          <div class="text-muted"><a href="#" class="text-reset">julie.faure@example.com</a></div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div>A107</div>
-                      <div class="text-muted">1er étage</div>
-                    </td>
-                    <td class="text-muted">
-                      5 jours
-                    </td>
-                    <td class="text-muted">
-                      Chirurgie
-                    </td>
-                    <td>
-                      <a href="#" class="btn btn-sm btn-primary">Dossier</a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="d-flex py-1 align-items-center">
-                        <span class="avatar me-2">TC</span>
-                        <div class="flex-fill">
-                          <div class="font-weight-medium">Thomas Caron</div>
-                          <div class="text-muted"><a href="#" class="text-reset">thomas.caron@example.com</a></div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div>C305</div>
-                      <div class="text-muted">3ème étage</div>
-                    </td>
-                    <td class="text-muted">
-                      1 jour
-                    </td>
-                    <td class="text-muted">
-                      Neurologie
-                    </td>
-                    <td>
-                      <a href="#" class="btn btn-sm btn-primary">Dossier</a>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
         
-        <!-- Dépenses récentes -->
-        <div class="col-md-6">
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title">Dépenses récentes</h3>
-            </div>
-            <div class="list-group list-group-flush list-group-hoverable">
-              <div class="list-group-item">
-                <div class="row align-items-center">
-                  <div class="col-auto"><span class="status-dot status-dot-animated bg-red d-block"></span></div>
-                  <div class="col text-truncate">
-                    <a href="#" class="text-reset d-block">Médicaments</a>
-                    <div class="d-block text-muted text-truncate mt-n1">
-                      Commande #12345 • Fournisseur PharmaPlus
-                    </div>
-                  </div>
-                  <div class="col-auto">
-                    <span class="text-danger">-1,250€</span>
-                  </div>
-                  <div class="col-auto">
-                    <a href="#" class="list-group-item-actions">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <div class="list-group-item">
-                <div class="row align-items-center">
-                  <div class="col-auto"><span class="status-dot d-block"></span></div>
-                  <div class="col text-truncate">
-                    <a href="#" class="text-reset d-block">Équipement médical</a>
-                    <div class="d-block text-muted text-truncate mt-n1">
-                      Scanner RX-2000 • MedEquip Inc.
-                    </div>
-                  </div>
-                  <div class="col-auto">
-                    <span class="text-danger">-8,750€</span>
-                  </div>
-                  <div class="col-auto">
-                    <a href="#" class="list-group-item-actions show">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <div class="list-group-item">
-                <div class="row align-items-center">
-                  <div class="col-auto"><span class="status-dot d-block"></span></div>
-                  <div class="col text-truncate">
-                    <a href="#" class="text-reset d-block">Maintenance</a>
-                    <div class="d-block text-muted text-truncate mt-n1">
-                      Contrat annuel • TechService Pro
-                    </div>
-                  </div>
-                  <div class="col-auto">
-                    <span class="text-danger">-1,200€</span>
-                  </div>
-                  <div class="col-auto">
-                    <a href="#" class="list-group-item-actions">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <div class="list-group-item">
-                <div class="row align-items-center">
-                  <div class="col-auto"><span class="status-dot status-dot-animated bg-green d-block"></span></div>
-                  <div class="col text-truncate">
-                    <a href="#" class="text-reset d-block">Fournitures bureau</a>
-                    <div class="d-block text-muted text-truncate mt-n1">
-                      Commande #12346 • OfficeWorld
-                    </div>
-                  </div>
-                  <div class="col-auto">
-                    <span class="text-danger">-350€</span>
-                  </div>
-                  <div class="col-auto">
-                    <a href="#" class="list-group-item-actions">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> --}}
       </div>
     </div>
   </div>
 
-  <div class="modal fade" id="createRdvModal" tabindex="-1" aria-labelledby="createRdvModalLabel" aria-hidden="true">
+<div class="modal fade" id="createRdvModal" tabindex="-1" aria-labelledby="createRdvModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -482,7 +314,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="patient_id" class="form-label">Patient</label>
-                        <select class="form-select" id="patient_id" name="patient_id" required>
+                        <select class="form-select select2" id="patient_id" name="patient_id" required>
                             <option value="">Sélectionner un patient</option>
                             @foreach($patients as $patient)
                                 <option value="{{ $patient->id }}">{{ $patient->nom }} {{ $patient->prenoms }}</option>
@@ -490,22 +322,23 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="specialite_id" class="form-label">Spécialité</label>
-                        <select class="form-select" id="specialite_id" name="specialite_id" required>
-                            <option value="">Sélectionner une spécialité</option>
-                            @foreach($specialites as $specialite)
-                                <option value="{{ $specialite->id }}">{{ $specialite->nom }} </option>
-                            @endforeach
-                        </select>
+                        <label for="medecin_id" class="form-label">Médecin</label>
+                        <select class="form-select select2" id="medecin_id" name="medecin_id" required>
+                          <option value="">Sélectionner un médecin</option>
+                          @foreach($medecins as $medecin)
+                              <option value="{{ $medecin->id }}"
+                                  data-specialite="{{ $medecin->specialite->id ?? '' }}"
+                                  data-specialite-nom="{{ $medecin->specialite->nom ?? '' }}">
+                                  {{ $medecin->nom_complet }}
+                              </option>
+                          @endforeach
+                      </select>
+
                     </div>
                     <div class="mb-3">
-                        <label for="medecin_id" class="form-label">Médecin</label>
-                        <select class="form-select" id="medecin_id" name="medecin_id" required>
-                            <option value="">Sélectionner un médecin</option>
-                            @foreach($medecins as $medecin)
-                                <option value="{{ $medecin->id }}">{{ $medecin->nom_complet }}</option>
-                            @endforeach
-                        </select>
+                        <label for="specialite_id" class="form-label">Spécialité</label>
+                        <input type="text" class="form-control" id="specialite_id" name="specialite_nom" readonly>
+                        <input type="hidden" id="specialite_id_value" name="specialite_id">
                     </div>
                     <div class="mb-3">
                         <label for="date_heure" class="form-label">Date et Heure</label>
@@ -547,11 +380,11 @@
                     </div>
                     <div class="mb-3">
                         <label for="edit_specialite_id" class="form-label">Spécialité</label>
-                        <select class="form-select" id="edit_specialite_id" name="specialite_id" required>
+                        {{-- <select class="form-select" id="edit_specialite_id" name="specialite_id" required>
                             @foreach($specialites as $specialite)
                                 <option value="{{ $specialite->id }}">{{ $specialite->nom }}</option>
                             @endforeach
-                        </select>
+                        </select> --}}
                     </div>
                     <div class="mb-3">
                         <label for="edit_medecin_id" class="form-label">Médecin</label>
@@ -610,177 +443,32 @@
     </div>
 </div>
 @push('scripts')
-  {{-- <script>
-    // Graphique des spécialités
-    document.addEventListener("DOMContentLoaded", function () {
-      window.ApexCharts && (new ApexCharts(document.getElementById('chart-specialites'), {
-        series: [{
-          name: 'RDVs',
-          data: [28, 42, 35, 19, 27, 15, 22]
-        }],
-        chart: {
-          type: 'bar',
-          height: 300,
-          fontFamily: 'Inter, sans-serif',
-          toolbar: {
-            show: false
-          }
-        },
-        plotOptions: {
-          bar: {
-            columnWidth: '50%',
-            borderRadius: 4
-          }
-        },
-        dataLabels: {
-          enabled: false
-        },
-        stroke: {
-          show: true,
-          width: 2,
-          colors: ['transparent']
-        },
-        xaxis: {
-          categories: ['Cardiologie', 'Pédiatrie', 'Dermatologie', 'Chirurgie', 'Neurologie', 'Ophtalmologie', 'ORL'],
-          axisBorder: {
-            show: false
-          },
-          axisTicks: {
-            show: false
-          },
-          labels: {
-            style: {
-              colors: '#6b7280',
-              fontSize: '12px',
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: 400
-            }
-          }
-        },
-        yaxis: {
-          labels: {
-            formatter: function (value) {
-              return value
-            },
-            style: {
-              colors: '#6b7280',
-              fontSize: '12px',
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: 400
-            }
-          }
-        },
-        fill: {
-          opacity: 1
-        },
-        colors: ['#206bc4'],
-        grid: {
-          show: true,
-          strokeDashArray: 4,
-          padding: {
-            left: 2,
-            right: 2,
-            top: -14
-          }
-        },
-        tooltip: {
-          y: {
-            formatter: function (val) {
-              return val + " RDVs"
-            }
-          }
-        }
-      }).render()
-      
-      // Graphique des revenus
-      window.ApexCharts && (new ApexCharts(document.getElementById('chart-revenus'), {
-        series: [{
-          name: 'Recettes',
-          data: [1200, 1800, 1500, 2100, 1900, 2300, 2500, 2100, 2400, 2700, 2900, 3200, 
-                3100, 2800, 2600, 2400, 2200, 2500, 2700, 2900, 3100, 3300, 3500, 3700, 
-                3900, 4100, 4300, 4200, 4000, 3800]
-        }],
-        chart: {
-          type: 'area',
-          height: 300,
-          fontFamily: 'Inter, sans-serif',
-          sparkline: {
-            enabled: false
-          },
-          toolbar: {
-            show: false
-          }
-        },
-        fill: {
-          type: 'gradient',
-          gradient: {
-            shadeIntensity: 1,
-            opacityFrom: 0.7,
-            opacityTo: 0.3,
-          }
-        },
-        stroke: {
-          width: 2,
-          curve: 'smooth'
-        },
-        xaxis: {
-          type: 'datetime',
-          categories: Array.from({length: 30}, (_, i) => {
-            const date = new Date()
-            date.setDate(date.getDate() - 30 + i)
-            return date.toISOString().split('T')[0]
-          }),
-          labels: {
-            show: true,
-            style: {
-              colors: '#6b7280',
-              fontSize: '12px',
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: 400
-            }
-          },
-          axisBorder: {
-            show: false
-          },
-          axisTicks: {
-            show: false
-          }
-        },
-        yaxis: {
-          labels: {
-            formatter: function (val) {
-              return val + "€"
-            },
-            style: {
-              colors: '#6b7280',
-              fontSize: '12px',
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: 400
-            }
-          }
-        },
-        colors: ['#5eba00'],
-        grid: {
-          show: true,
-          strokeDashArray: 4,
-          padding: {
-            left: 2,
-            right: 2,
-            top: -14
-          }
-        },
-        tooltip: {
-          x: {
-            format: 'dd/MM/yyyy'
-          },
-          y: {
-            formatter: function (val) {
-              return val + "€"
-            }
-          }
-        }
-      }).render()
-    })
-  </script> --}}
+
+<script>
+$(document).ready(function() {
+    // Initialiser Select2
+    
+
+    $('.select2').select2({
+        dropdownParent: $('#createRdvModal')
+    });
+
+    // Quand on change de médecin, on remplit la spécialité
+    $('#medecin_id').on('change', function() {
+        var selectedMedecin = $(this).find('option:selected');
+        var specialiteNom = selectedMedecin.data('specialite-nom') || '';
+        var specialiteId = selectedMedecin.data('specialite') || '';
+        $('#specialite_id').val(specialiteNom);
+        $('#specialite_id_value').val(specialiteId);
+    });
+
+    // Réinitialiser la spécialité à la fermeture du modal
+    $('#createRdvModal').on('hidden.bs.modal', function () {
+        $('#specialite_id').val('');
+        $('#specialite_id_value').val('');
+        $('#medecin_id').val('').trigger('change');
+    });
+});
+</script>
 @endpush
 @endsection

@@ -261,6 +261,19 @@
                 <div class="payment-methods">
                     <label class="bold">Mode de paiement:</label>
                     <span>
+                        @if($reglement)
+                            @if($reglement->methode_paiement == 'cash')
+                                Cash
+                            @elseif($reglement->methode_paiement == 'mobile_money')
+                                Mobile money
+                            @else
+                                Virement
+                            @endif
+                        @else
+                            Non payé
+                        @endif
+                    </span>
+                    {{-- <span>
                         @if($reglement->methode_paiement == 'cash')
                             Cash
                         @elseif($reglement->methode_paiement == 'mobile_money')
@@ -268,7 +281,7 @@
                         @else
                             Virement
                         @endif
-                    </span>
+                    </span> --}}
                 </div>
 
                 <div class="footer">
@@ -432,6 +445,19 @@
                 <div class="payment-methods">
                     <label class="bold">Mode de paiement:</label>
                     <span>
+                        @if($reglement)
+                            @if($reglement->methode_paiement == 'cash')
+                                Cash
+                            @elseif($reglement->methode_paiement == 'mobile_money')
+                                Mobile money
+                            @else
+                                Virement
+                            @endif
+                        @else
+                            Non payé
+                        @endif
+                    </span>
+                    {{-- <span>
                         @if($reglement->methode_paiement == 'cash')
                             Cash
                         @elseif($reglement->methode_paiement == 'mobile_money')
@@ -439,7 +465,7 @@
                         @else
                             Virement
                         @endif
-                    </span>
+                    </span> --}}
                 </div>
 
                 <div class="footer">
