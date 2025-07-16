@@ -122,8 +122,14 @@ Route::middleware(['auth',])->group(function () {
 
     Route::resource('historique', HistoriqueController::class);
 
-    Route::resource('medicaments', MedicamentController::class);
+    //Route::resource('medicaments', MedicamentController::class);
+    Route::resource('medicaments', MedicamentController::class)->except(['show']);
 
+    Route::post('/{medicament}/update-stock', [MedicamentController::class, 'updateStock'])
+         ->name('medicaments.update-stock');
+
+    Route::get('/medicaments/historique-global-pdf', [MedicamentController::class, 'historiqueGlobalPDF'])
+     ->name('medicaments.historique.global.pdf');
 
     Route::get('/aides', function () {
         return view('dashboard.pages.help');

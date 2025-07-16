@@ -23,20 +23,7 @@ class Medicament extends Model
         'stock',
         'stock_alerte',
         'date_peremption',
-        'categorie_id',
-        'fournisseur_id'
     ];
-
-    public function categorie()
-    {
-        return $this->belongsTo(CategorieMedicament::class);
-    }
-
-    public function fournisseur()
-    {
-        return $this->belongsTo(Fournisseur::class);
-    }
-
 
     protected $casts = [
         'date_peremption' => 'date',
@@ -47,7 +34,7 @@ class Medicament extends Model
     public function hospitalisations()
     {
         return $this->belongsToMany(Hospitalisation::class, 'hospitalisation_medicament')
-                    ->withPivot('stock', 'total')
+                    ->withPivot('quantite', 'total')
                     ->withTimestamps();
     }
 

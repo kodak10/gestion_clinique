@@ -7,6 +7,13 @@
             <div class="col">
                 <h2 class="page-title">Pharmacie</h2>
             </div>
+            <div class="col">
+                <a href="{{ route('print.pharmacie', $hospitalisation->id) }}" 
+                                target="_blank"
+                                class="btn btn-sm btn-primary">
+                                    <i class="fas fa-print"></i> Imprimer
+                                </a>
+            </div>
         </div>
     </div>
 </div>

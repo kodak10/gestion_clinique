@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 class MedicamentController extends Controller
 {
     /**
@@ -23,14 +23,9 @@ class MedicamentController extends Controller
             abort(403, 'Accès non autorisé.');
         }
 
-        $medicaments = Medicament::with(['categorie'])
-            ->orderBy('nom')
-            ->get();
+        $medicaments = Medicament::orderBy('nom')->get();
 
-        $categories = CategorieMedicament::orderBy('nom')->get();
-        // $fournisseurs = Fournisseur::orderBy('nom')->get();
-
-        return view('dashboard.pages.pharmacie.index', compact('medicaments', 'categories'));
+        return view('dashboard.pages.pharmacie.index', compact('medicaments'));
     }
 
     /**
@@ -47,8 +42,6 @@ class MedicamentController extends Controller
             'stock' => 'required|integer|min:0',
             'stock_alerte' => 'required|integer|min:0',
             'date_peremption' => 'nullable|date',
-            'categorie_id' => 'required|exists:categorie_medicaments,id',
-            'fournisseur_id' => 'required|exists:fournisseurs,id',
         ]);
 
         if ($validator->fails()) {
@@ -89,11 +82,10 @@ class MedicamentController extends Controller
             'unite_mesure' => 'required|max:20',
             'prix_achat' => 'required|numeric|min:0',
             'prix_vente' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
+            //'stock' => 'required|integer|min:0',
             'stock_alerte' => 'required|integer|min:0',
             'date_peremption' => 'nullable|date',
-            'categorie_id' => 'required|exists:categorie_medicaments,id',
-            'fournisseur_id' => 'required|exists:fournisseurs,id',
+            
         ]);
 
         if ($validator->fails()) {
@@ -113,82 +105,112 @@ class MedicamentController extends Controller
      */
     public function updateStock(Request $request, Medicament $medicament)
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Comptable'])) {
+                abort(403, 'Accès non autorisé.');
+        }
+
         $request->validate([
-            'operation_type' => 'required|in:entree,sortie,ajustement',
+            'operation_type' => 'required|in:entree,sortie',
             'quantite' => 'required|integer|min:1',
             'motif' => 'nullable|string|max:255'
         ]);
 
-        DB::transaction(function () use ($request, $medicament) {
-            $stockAvant = $medicament->stock;
-            $quantite = $request->quantite;
+        try {
+            DB::transaction(function () use ($request, $medicament) {
+                $stockAvant = $medicament->stock;
+                $quantite = $request->quantite;
+                $type = $request->operation_type;
+                $typeLibelle = $type === 'entree' ? 'entrée' : 'sortie';
 
-            switch ($request->operation_type) {
-                case 'entree':
-                    $medicament->increment('stock', $quantite);
-                    $type = 'entrée';
-                    break;
-                
-                case 'sortie':
-                    if ($quantite > $medicament->stock) {
-                        return back()->with('error', 'Stock insuffisant');
-                    }
-                    $medicament->decrement('stock', $quantite);
-                    $type = 'sortie';
-                    break;
-                
-                case 'ajustement':
-                    $medicament->stock = $quantite;
-                    $medicament->save();
-                    $type = 'ajustement';
-                    break;
-            }
+                // Vérification du stock pour les sorties
+                if ($type === 'sortie' && $quantite > $medicament->stock) {
+                    throw new \Exception('Stock insuffisant');
+                }
 
-            // Enregistrer le mouvement de stock
-            StockMouvement::create([
-                'medicament_id' => $medicament->id,
-                'user_id' => auth()->id(),
-                'type' => $type,
-                'quantite' => $quantite,
-                'stock_avant' => $stockAvant,
-                'stock_apres' => $medicament->stock,
-                'motif' => $request->motif ?? 'Opération de stock'
-            ]);
-        });
+                // Mise à jour du stock
+                $medicament->{$type === 'entree' ? 'increment' : 'decrement'}('stock', $quantite);
 
-        return redirect()->route('medicaments.index')
-            ->with('success', 'Stock mis à jour avec succès');
+                // Enregistrement du mouvement
+                // StockMouvement::create([
+                //     'medicament_id' => $medicament->id,
+                //     'user_id' => auth()->id(),
+                //     'type' => $type,
+                //     'quantite' => $quantite,
+                //     'stock_avant' => $stockAvant,
+                //     'stock_apres' => $medicament->fresh()->stock,
+                // ]);
+            });
+
+            return redirect()->route('medicaments.index')
+                ->with('success', 'Stock mis à jour avec succès');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Erreur lors de la mise à jour: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Supprime un médicament
-     */
     public function destroy(Medicament $medicament)
     {
-        // Vérifier si le médicament est utilisé dans des hospitalisations
-        $usedInHospitalisations = HospitalisationMedicament::where('medicament_id', $medicament->id)->exists();
+        try {
+            DB::transaction(function () use ($medicament) {
+                // Vérification plus complète des utilisations
+                $isUsed = HospitalisationMedicament::where('medicament_id', $medicament->id)
+                    ->orWhereHas('stockMouvements', function($q) use ($medicament) {
+                        $q->where('medicament_id', $medicament->id);
+                    })
+                    ->exists();
 
-        if ($usedInHospitalisations) {
+                if ($isUsed) {
+                    throw new \Exception('Ce médicament ne peut être supprimé car il a des mouvements associés');
+                }
+
+                // Archivage avant suppression
+                StockMouvement::create([
+                    'medicament_id' => $medicament->id,
+                    'user_id' => auth()->id(),
+                    'type' => 'suppression',
+                    'quantite' => $medicament->stock,
+                    'stock_avant' => $medicament->stock,
+                    'stock_apres' => 0,
+                ]);
+
+                $medicament->delete();
+            });
+
             return redirect()->route('medicaments.index')
-                ->with('error', 'Ce médicament ne peut pas être supprimé car il est utilisé dans des hospitalisations');
+                ->with('success', 'Médicament supprimé avec succès');
+
+        } catch (\Exception $e) {
+            return redirect()->route('medicaments.index')
+                ->with('error', $e->getMessage());
         }
-
-        $medicament->delete();
-
-        return redirect()->route('medicaments.index')
-            ->with('success', 'Médicament supprimé avec succès');
     }
 
     /**
      * Affiche l'historique des mouvements de stock
      */
-    public function stockHistory(Medicament $medicament)
+
+    public function historiqueGlobalPDF()
     {
-        $mouvements = StockMouvement::where('medicament_id', $medicament->id)
-            ->with('user')
-            ->orderByDesc('created_at')
+        // Récupérer tous les médicaments avec leur historique
+        $medicaments = Medicament::with(['hospitalisations.patient', 'hospitalisations.medecin'])
+            ->withCount(['hospitalisations as total_prescriptions' => function($query) {
+                $query->select(DB::raw('COALESCE(SUM(quantite), 0)'));
+            }])
+            ->orderBy('nom')
             ->get();
 
-        return view('medicaments.history', compact('medicament', 'mouvements'));
+        // Données pour le PDF
+        $data = [
+            'medicaments' => $medicaments,
+            'date' => now()->format('d/m/Y H:i'),
+            'user' => auth()->user()
+        ];
+
+        // Générer le PDF
+        $pdf = PDF::loadView('dashboard.documents.rapport_pharmacie', $data)
+                ->setPaper('a4', 'landscape');
+
+        return $pdf->stream('historique-global-medicaments-'.now()->format('Y-m-d').'.pdf');
     }
 }

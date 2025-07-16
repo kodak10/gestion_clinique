@@ -8,6 +8,13 @@
                 <h2 class="page-title">Gestion des Médicaments</h2>
             </div>
             <div class="col">
+                <a href="{{ route('medicaments.historique.global.pdf') }}" 
+                target="_blank"
+                class="btn btn-2 float-end mr-3">
+                <i class="fas fa-file-pdf"></i> Historique Global PDF
+                </a>
+            </div>
+            <div class="col">
                 <a href="#" class="btn btn-2 float-end mr-3" data-bs-toggle="modal" data-bs-target="#modal-report">Ajouter un Médicament</a>
             </div>
         </div>
@@ -24,12 +31,10 @@
                             <tr>
                                 <th>Code</th>
                                 <th>Nom</th>
-                                <th>Catégorie</th>
                                 <th>Prix Achat</th>
                                 <th>Prix Vente</th>
                                 <th>Stock</th>
                                 <th>Date Péremption</th>
-                                {{-- <th>Fournisseur</th> --}}
                                 <th class="w-1"></th>
                             </tr>
                         </thead>
@@ -38,7 +43,6 @@
                                 <tr class="{{ $medicament->stock <= $medicament->stock_alerte ? 'bg-danger-lt' : '' }}">
                                     <td>{{ $medicament->code }}</td>
                                     <td>{{ $medicament->nom }}</td>
-                                    <td>{{ $medicament->categorie->nom ?? 'N/A' }}</td>
                                     <td>{{ number_format($medicament->prix_achat, 0) }} FCFA</td>
                                     <td>{{ number_format($medicament->prix_vente, 0) }} FCFA</td>
                                     <td>
@@ -47,7 +51,6 @@
                                         </span>
                                     </td>
                                     <td>{{ $medicament->date_peremption ? $medicament->date_peremption->format('d/m/Y') : 'N/A' }}</td>
-                                    {{-- <td>{{ $medicament->fournisseur->nom ?? 'N/A' }}</td> --}}
                                     <td>
                                         <div class="btn-list flex-nowrap">
                                             <div class="dropdown">
@@ -111,7 +114,7 @@
                                                         <div class="col-lg-4">
                                                             <div class="mb-3">
                                                                 <label class="form-label">Stock actuel</label>
-                                                                <input type="number" class="form-control" name="stock" value="{{ $medicament->stock }}" required>
+                                                                <input type="number" class="form-control" name="stock" value="{{ $medicament->stock }}" disabled>
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-4">
@@ -127,28 +130,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="row">
-                                                        <div class="col-lg-6">
-                                                            <div class="mb-3">
-                                                                <label class="form-label">Catégorie</label>
-                                                                <select class="form-select" name="categorie_id" required>
-                                                                    @foreach($categories as $categorie)
-                                                                        <option value="{{ $categorie->id }}" {{ $medicament->categorie_id == $categorie->id ? 'selected' : '' }}>{{ $categorie->nom }}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-6">
-                                                            <div class="mb-3">
-                                                                <label class="form-label">Fournisseur</label>
-                                                                <select class="form-select" name="fournisseur_id" required>
-                                                                    {{-- @foreach($fournisseurs as $fournisseur)
-                                                                        <option value="{{ $fournisseur->id }}" {{ $medicament->fournisseur_id == $fournisseur->id ? 'selected' : '' }}>{{ $fournisseur->nom }}</option>
-                                                                    @endforeach --}}
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                   
                                                 </div>
                                                 <div class="modal-footer">
                                                     <a href="#" class="btn btn-link link-secondary btn-3" data-bs-dismiss="modal">Annuler</a>
@@ -167,7 +149,7 @@
                                                 <h5 class="modal-title">Gestion de stock - {{ $medicament->nom }}</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
-                                            <form action="{{ route('medicaments.update', $medicament->id) }}" method="POST" class="form-loader">
+                                            <form action="{{ route('medicaments.update-stock', $medicament->id) }}" method="POST" class="form-loader">
                                                 @csrf
                                                 <div class="modal-body">
                                                     <div class="mb-3">
@@ -175,7 +157,6 @@
                                                         <select class="form-select" name="operation_type" id="operation-type-{{ $medicament->id }}" required>
                                                             <option value="entree">Entrée en stock</option>
                                                             <option value="sortie">Sortie de stock</option>
-                                                            <option value="ajustement">Ajustement manuel</option>
                                                         </select>
                                                     </div>
                                                     <div class="mb-3">
@@ -302,36 +283,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label class="form-label">Catégorie</label>
-                                <select class="form-select @error('categorie_id') is-invalid @enderror" name="categorie_id" required>
-                                    <option value="">Sélectionner une catégorie</option>
-                                    @foreach($categories as $categorie)
-                                        <option value="{{ $categorie->id }}" {{ old('categorie_id') == $categorie->id ? 'selected' : '' }}>{{ $categorie->nom }}</option>
-                                    @endforeach
-                                </select>
-                                @error('categorie_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label class="form-label">Fournisseur</label>
-                                <select class="form-select @error('fournisseur_id') is-invalid @enderror" name="fournisseur_id" required>
-                                    <option value="">Sélectionner un fournisseur</option>
-                                    {{-- @foreach($fournisseurs as $fournisseur)
-                                        <option value="{{ $fournisseur->id }}" {{ old('fournisseur_id') == $fournisseur->id ? 'selected' : '' }}>{{ $fournisseur->nom }}</option>
-                                    @endforeach --}}
-                                </select>
-                                @error('fournisseur_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
                 <div class="modal-footer">
                     <a href="#" class="btn btn-link link-secondary btn-3" data-bs-dismiss="modal">Annuler</a>

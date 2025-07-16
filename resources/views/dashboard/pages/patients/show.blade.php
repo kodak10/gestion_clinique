@@ -210,12 +210,17 @@
                                                         <a class="dropdown-item" href="{{ Storage::url($hospitalisation->facture_path) }}" target="_blank">
                                                             Voir la facture
                                                         </a>
-                                                        @if($hospitalisation->status === 'sorti')
-                                                            <form action="{{ route('hospitalisations.rentrer', ['hospitalisation' => $hospitalisation->id]) }}" method="POST" class="d-inline">
-                                                                @csrf
-                                                                <button type="submit" class="btn btn-success btn-sm">Déclarer présent</button>
-                                                            </form>
-                                                        @endif
+                                                         @auth
+                                                            @if(auth()->user()->hasAnyRole(['Admin', 'Développeur', 'Manager']))
+                                                                @if($hospitalisation->status === 'sorti')
+                                                                    <form action="{{ route('hospitalisations.rentrer', ['hospitalisation' => $hospitalisation->id]) }}" method="POST" class="d-inline">
+                                                                        @csrf
+                                                                        <button type="submit" class="btn btn-success btn-sm">Déclarer présent</button>
+                                                                    </form>
+                                                                @endif
+                                                            @endif
+                                                        @endauth
+                                                        
                                                         
                                                     </div>
                                                 </div>

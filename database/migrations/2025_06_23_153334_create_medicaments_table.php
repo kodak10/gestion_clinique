@@ -21,8 +21,6 @@ return new class extends Migration
             $table->integer('stock')->default(0);
             $table->integer('stock_alerte')->default(10);
             $table->date('date_peremption')->nullable();
-            $table->foreignId('categorie_id')->constrained('categorie_medicaments');
-            $table->foreignId('fournisseur_id')->constrained('fournisseurs');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -150,6 +150,75 @@ class HospitalisationController extends Controller
         ));
     }
 
+    // avant de supprimer
+    // public function storePharmacie(Request $request, Hospitalisation $hospitalisation)
+    // {
+    //     if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Pharmacien'])) {
+    //         abort(403, 'Accès non autorisé.');
+    //     }
+
+    //     DB::beginTransaction();
+    //     try {
+    //         // D'abord supprimer tous les médicaments existants pour cette hospitalisation
+    //         DB::table('hospitalisation_medicament')
+    //             ->where('hospitalisation_id', $hospitalisation->id)
+    //             ->delete();
+
+    //         $totalPharmacie = 0;
+    //         $medicamentsTraites = []; // Pour éviter les doublons dans la même requête
+
+    //         foreach ($request->medicaments ?? [] as $med) {
+    //             $medicamentId = $med['medicament_id'];
+    //             $quantite = $med['quantite'];
+    //             $prix = $med['montant'];
+    //             $total = $quantite * $prix;
+
+    //             // Vérifier si ce médicament a déjà été traité dans cette requête
+    //             if (in_array($medicamentId, $medicamentsTraites)) {
+    //                 DB::rollBack();
+    //                 return redirect()->back()->with('error', 
+    //                     'Un médicament est en double.');
+    //             }
+
+    //             $medicamentsTraites[] = $medicamentId;
+
+    //             // Insertion du nouveau médicament
+    //             DB::table('hospitalisation_medicament')->insert([
+    //                 'hospitalisation_id' => $hospitalisation->id,
+    //                 'medicament_id' => $medicamentId,
+    //                 'prix_unitaire' => $prix,
+    //                 'quantite' => $quantite,
+    //                 'total' => $total,
+    //                 'created_at' => now(),
+    //                 'updated_at' => now(),
+    //             ]);
+
+    //             $totalPharmacie += $total;
+    //         }
+
+    //         // Mettre à jour ou créer le détail pour les médicaments
+    //         $hospitalisation->details()->updateOrCreate(
+    //             ['frais_hospitalisation_id' => 2], // ID pour pharmacie
+    //             [
+    //                 'hospitalisation_id' => $hospitalisation->id,
+    //                 'quantite' => 1,
+    //                 'prix_unitaire' => $totalPharmacie,
+    //                 'taux' => 0,
+    //                 'reduction' => 0,
+    //                 'total' => $totalPharmacie,
+    //                 'updated_at' => now()
+    //             ]
+    //         );
+
+    //         DB::commit();
+    //         return redirect()->back()->with('success', 'Médicaments mis à jour avec succès');
+
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         return redirect()->back()->with('error', 'Erreur lors de la mise à jour: ' . $e->getMessage());
+    //     }
+    // }
+
     public function storePharmacie(Request $request, Hospitalisation $hospitalisation)
     {
         if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Pharmacien'])) {
@@ -158,13 +227,36 @@ class HospitalisationController extends Controller
 
         DB::beginTransaction();
         try {
+            // Récupérer les médicaments existants avant suppression
+            $anciensMedicaments = DB::table('hospitalisation_medicament')
+                ->where('hospitalisation_id', $hospitalisation->id)
+                ->get();
+
             // D'abord supprimer tous les médicaments existants pour cette hospitalisation
             DB::table('hospitalisation_medicament')
                 ->where('hospitalisation_id', $hospitalisation->id)
                 ->delete();
 
+            // Remettre les anciens médicaments dans le stock
+            foreach ($anciensMedicaments as $ancienMed) {
+                DB::table('medicaments')
+                    ->where('id', $ancienMed->medicament_id)
+                    ->increment('stock', $ancienMed->quantite);
+
+                // Historique de la restitution
+                DB::table('medicament_mouvements')->insert([
+                    'medicament_id' => $ancienMed->medicament_id,
+                    'quantite' => $ancienMed->quantite,
+                    'type' => 'entree',
+                    'user_id' => Auth::id(),
+                    'hospitalisation_id' => $hospitalisation->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
             $totalPharmacie = 0;
-            $medicamentsTraites = []; // Pour éviter les doublons dans la même requête
+            $medicamentsTraites = [];
 
             foreach ($request->medicaments ?? [] as $med) {
                 $medicamentId = $med['medicament_id'];
@@ -172,11 +264,21 @@ class HospitalisationController extends Controller
                 $prix = $med['montant'];
                 $total = $quantite * $prix;
 
-                // Vérifier si ce médicament a déjà été traité dans cette requête
                 if (in_array($medicamentId, $medicamentsTraites)) {
                     DB::rollBack();
                     return redirect()->back()->with('error', 
                         'Un médicament est en double.');
+                }
+
+                // Vérifier le stock disponible
+                $stockDisponible = DB::table('medicaments')
+                    ->where('id', $medicamentId)
+                    ->value('stock');
+
+                if ($stockDisponible < $quantite) {
+                    DB::rollBack();
+                    return redirect()->back()->with('error', 
+                        'Stock insuffisant pour le médicament: ' . $med['nom']);
                 }
 
                 $medicamentsTraites[] = $medicamentId;
@@ -188,6 +290,24 @@ class HospitalisationController extends Controller
                     'prix_unitaire' => $prix,
                     'quantite' => $quantite,
                     'total' => $total,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                // Mettre à jour le stock
+                DB::table('medicaments')
+                    ->where('id', $medicamentId)
+                    ->decrement('stock', $quantite);
+
+                // Historique de la sortie
+                DB::table('medicament_mouvements')->insert([
+                    'medicament_id' => $medicamentId,
+                    'quantite' => $quantite,
+                    'type' => 'sortie',
+                    // 'motif' => 'Prescription hospitalisation',
+                    // 'utilisateur_nom' => Auth::user()->name,
+                    'user_id' => Auth::id(),
+                    'hospitalisation_id' => $hospitalisation->id,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);

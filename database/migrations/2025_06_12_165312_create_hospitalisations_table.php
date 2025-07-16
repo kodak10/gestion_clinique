@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('hospitalisations', function (Blueprint $table) {
             $table->id();
+            $table->enum('status', ['present', 'sorti'])->default('present');
             $table->foreignId('patient_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained();
             $table->foreignId('medecin_id')->nullable()->constrained()->onDelete('set null');
