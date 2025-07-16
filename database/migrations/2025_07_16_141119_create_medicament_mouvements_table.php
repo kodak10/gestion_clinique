@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('medicament_id')->constrained()->onDelete('cascade');
             $table->integer('quantite');
-            $table->string('type'); 
             $table->enum('type', ['entree', 'sortie', 'suppression', 'ajustement']);
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('hospitalisation_id')->nullable()->constrained()->onDelete('set null');
