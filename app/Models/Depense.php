@@ -14,6 +14,7 @@ class Depense extends Model
 
     protected $fillable = [
         'category_depense_id',
+        'user_id',
         'numero_recu',
         'libelle',
         'montant',
@@ -21,7 +22,7 @@ class Depense extends Model
         'numero_cheque',
         'description',
         'depense_id',
-        'type'
+        'type',
     ];
 
     protected $casts = [
@@ -38,6 +39,12 @@ class Depense extends Model
     {
         return $this->hasOne(Reglement::class, 'depense_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 
 
     public function getActivitylogOptions(): LogOptions

@@ -43,6 +43,10 @@
                                     
                                 </table>
                             </div>
+                            <div class="mt-3">
+                                {{ $reglements->appends(request()->except('reglements_page'))->links('pagination::bootstrap-5') }}
+
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -77,6 +81,9 @@
                                     </tbody>
                                     
                                 </table>
+                            </div>
+                            <div class="mt-3">
+                                {{ $consultations->appends(request()->except('consultations_page'))->links('pagination::bootstrap-5') }}
                             </div>
                         </div>
                     </div>
@@ -117,6 +124,9 @@
                                     
                                 </table>
                             </div>
+                            <div class="mt-3">
+                                {{ $hospitalisations->appends(request()->except('hospitalisations_page'))->links('pagination::bootstrap-5') }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -154,6 +164,9 @@
                                 </table>
 
                                 
+                            </div>
+                            <div class="mt-3">
+                                {{ $depenses->appends(request()->except('depenses_page'))->links('pagination::bootstrap-5') }}
                             </div>
                         </div>
                     </div>

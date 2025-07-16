@@ -14,7 +14,7 @@ class UtilisateurController extends Controller
 {
     public function index()
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin','Respo Caissière'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -62,7 +62,7 @@ class UtilisateurController extends Controller
 
     public function update(Request $request, $id)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -92,6 +92,10 @@ class UtilisateurController extends Controller
 
     public function toggleStatus($id)
     {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin','Respo Caissière'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+        
         $user = User::findOrFail($id);
         $user->status = $user->status == 'Actif' ? 'Inactif' : 'Actif';
         $user->save();

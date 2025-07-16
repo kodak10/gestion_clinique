@@ -83,7 +83,7 @@ class ReglementController extends Controller
 
     public function index()
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Caissière', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Caissière', 'Comptable', 'Respo Caissière'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -231,7 +231,7 @@ class ReglementController extends Controller
                 'patient' => $model->patient,
                 'date' => now()->format('d/m/Y H:i'),
                 'numeroRecu' => $numeroRecu,
-                'user' => auth()->user(),
+                //'user' => auth()->user(),
                 'reglement' => $reglement
             ];
 

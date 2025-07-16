@@ -51,24 +51,24 @@
                     <table class="table" id="table">
                         <thead>
                             <tr>
+                                <th>Catégorie</th>
+                                <th>Date</th>
                                 <th>Numéro de reçu</th>
                                 <th>Libellé</th>
                                 <th>Montant</th>
-                                <th>Date</th>
-                                <th>N° Cheque</th>
-                                <th>Catégorie</th>
-                                <th class="w-1">Actions</th>
+                                <th>Utilisateur</th>
+                                <th class="w-1"></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($depenses as $depense)
                                 <tr>
+                                    <td>{{ optional($depense->category)->nom ?? 'Non catégorisé' }}</td>
+                                    <td>{{ $depense->date->format('d/m/Y') }}</td>
                                     <td>{{ $depense->numero_recu }}</td>
                                     <td>{{ $depense->libelle }}</td>
                                     <td>{{ number_format($depense->montant, 0, ',', ' ') }} FCFA</td>
-                                    <td>{{ $depense->date->format('d/m/Y') }}</td>
-                                    <td>{{ $depense->numero_cheque ?? '-' }}</td>
-                                    <td>{{ optional($depense->category)->nom ?? 'Non catégorisé' }}</td>
+                                    <td>{{ $depense->user->name }}</td>
                                     <td>
                                         <div class="btn-list flex-nowrap">
                                             <div class="dropdown">

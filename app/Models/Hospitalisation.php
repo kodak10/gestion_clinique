@@ -71,7 +71,7 @@ class Hospitalisation extends Model
             $q->where('category_id', 2); // ID de la catégorie Pharmacie
         });
     }
-
+    
     
 
     public function medicaments()

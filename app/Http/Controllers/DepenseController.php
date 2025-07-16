@@ -13,11 +13,11 @@ class DepenseController extends Controller
 {
     public function index()
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Comptable','Caissière'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Comptable', 'Respo Caissière','Caissière'])) {
             abort(403, 'Accès non autorisé.');
         }
 
-        $depenses = Depense::with('category')
+        $depenses = Depense::with('category', 'user')
             ->orderBy('date', 'desc')
             ->get();
             
@@ -54,6 +54,7 @@ class DepenseController extends Controller
         ]);
 
         DB::transaction(function() use ($validated) {
+            $validated['user_id'] = auth()->id();
             $depense = Depense::create($validated);
 
             // Création du règlement de sortie
@@ -80,35 +81,7 @@ class DepenseController extends Controller
         return view('dashboard.pages.comptabilites.depenses.edit', compact('depense', 'categories'));
     }
 
-    // public function update(Request $request, Depense $depense)
-    // {
-    //     if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Comptable','Caissière'])) {
-    //         abort(403, 'Accès non autorisé.');
-    //     }
-
-    //     $validated = $request->validate([
-    //         'category_depense_id' => 'nullable|exists:category_depenses,id',
-    //         'numero_recu' => 'required|string|unique:depenses,numero_recu,'.$depense->id,
-    //         'libelle' => 'required|string|max:255',
-    //         'montant' => 'required|numeric|min:0',
-    //         'date' => 'required|date',
-    //         'numero_cheque' => 'nullable|string|max:50',
-    //         'description' => 'nullable|string',
-    //     ]);
-
-    //     DB::transaction(function() use ($depense, $validated) {
-    //         $depense->update($validated);
-
-    //         // Mise à jour du règlement associé
-    //         $depense->reglement()->update([
-    //             'montant' => $validated['montant'],
-    //             //'date_reglement' => $validated['date'],
-    //             //'numero_recu' => $validated['numero_recu']
-    //         ]);
-    //     });
-
-    //     return redirect()->route('depenses.index')->with('success', 'Dépense mise à jour avec succès.');
-    // }
+   
     public function update(Request $request, Depense $depense)
 {
     // dd($request->all());
@@ -134,7 +107,7 @@ class DepenseController extends Controller
         $depense->reglement()->update([
             'montant' => $validated['montant'],
             'updated_at' => $validated['date'],
-            'user_id' => auth()->id(),
+            //'user_id' => auth()->id(),
             'type' => 'sortie'
         ]);
 

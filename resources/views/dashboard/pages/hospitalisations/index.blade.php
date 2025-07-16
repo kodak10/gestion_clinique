@@ -25,9 +25,10 @@
                                 <th>Prénoms</th>
                                 <th>Date de naissance</th>
                                 <th>Contact</th>
+                                <th>Montant de facture Actuel</th>
                                 <th>Total Pharmacie</th>
                                 <th>Total Laboratoire</th>
-                                <th>Montant de facture Actuel</th>
+                                
                             </tr>
                         </thead>
                         <tbody>
@@ -46,18 +47,32 @@
                                                     <a class="dropdown-item" href="{{ route('hospitalisations.facture.create', ['hospitalisation' => $hospitalisation->id]) }}">Facture</a>
                                                     <a class="dropdown-item" href="{{ route('hospitalisations.pharmacie.create', ['hospitalisation' => $hospitalisation->id]) }}">Pharmacie</a>
                                                     <a class="dropdown-item" href="{{ route('hospitalisations.laboratoire.create', ['hospitalisation' => $hospitalisation->id]) }}">Laboratoire</a>
+                                                    @if($hospitalisation->status === 'present')
+                                                    <form action="{{ route('hospitalisations.sortir', ['hospitalisation' => $hospitalisation->id]) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Confirmer la sortie du patient ?')">Déclarer sorti</button>
+                                                    </form>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{ $hospitalisation->patient->numero_dossier }}</td>
+                                    <td>{{ $hospitalisation->patient->num_dossier }}</td>
                                     <td>{{ $hospitalisation->patient->nom }}</td>
                                     <td>{{ $hospitalisation->patient->prenoms }}</td>
                                     <td>{{ $hospitalisation->patient->date_naissance }}</td>
                                     <td>{{ $hospitalisation->patient->contact_patient }}</td>
-                                    <td>{{ $hospitalisation->hospitalisation->service ?? '-' }}</td>
-                                    <td>{{ $hospitalisation->hospitalisation->date_entree ?? '-' }}</td>
-                                    <td>{{ $hospitalisation->hospitalisation->lit ?? '-' }}</td>
+                                    <td>{{ $hospitalisation->total }}</td>
+
+                                    <td>{{ number_format($hospitalisation->examens->sum(function($examen) {
+                                        return $examen->pivot->total ?? 0;
+                                    }), 0, ',', ' ') }} FCFA</td>
+
+                                    <td>{{ number_format($hospitalisation->medicaments->sum(function($examen) {
+                                        return $examen->pivot->total ?? 0;
+                                    }), 0, ',', ' ') }} FCFA</td>
+
+                                    
                                 </tr>
                             @endforeach
                         </tbody>

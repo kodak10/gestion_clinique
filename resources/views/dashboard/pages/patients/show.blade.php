@@ -209,16 +209,23 @@
                                                         </a>
                                                         <a class="dropdown-item" href="{{ Storage::url($hospitalisation->facture_path) }}" target="_blank">
                                                             Voir la facture
-                                                        </a>                                                        
+                                                        </a>
+                                                        @if($hospitalisation->status === 'sorti')
+                                                            <form action="{{ route('hospitalisations.rentrer', ['hospitalisation' => $hospitalisation->id]) }}" method="POST" class="d-inline">
+                                                                @csrf
+                                                                <button type="submit" class="btn btn-success btn-sm">Déclarer présent</button>
+                                                            </form>
+                                                        @endif
+                                                        
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>{{ $hospitalisation->date_entree->format('d/m/Y H:i') }}</td>
-                                        <td>{{ $hospitalisation->date_sortie ? $hospitalisation->date_sortie->format('d/m/Y H:i') : 'En cours' }}</td>
+                                        <td>{{ $hospitalisation->date_sortie ? $hospitalisation->date_sortie->format('d/m/Y H:i') : 'Présent' }}</td>
                                         <td>{{ $hospitalisation->medecin->nom_complet ?? 'Non spécifié' }}</td>
-                                        <td>{{ number_format($hospitalisation->total, 0, ',', ' ') }} FCFA</td>
-                                        <td>{{ number_format($hospitalisation->total - $hospitalisation->reste_a_payer, 0, ',', ' ') }} FCFA</td>
+                                        <td>{{ number_format($hospitalisation->ticket_moderateur, 0, ',', ' ') }} FCFA</td>
+                                        <td>{{ number_format($hospitalisation->ticket_moderateur - $hospitalisation->reste_a_payer, 0, ',', ' ') }} FCFA</td>
                                         <td>{{ number_format($hospitalisation->reste_a_payer, 0, ',', ' ') }} FCFA</td>
                                     </tr>
                                     @endforeach

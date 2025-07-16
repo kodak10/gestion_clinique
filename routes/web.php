@@ -79,6 +79,10 @@ Route::middleware(['auth',])->group(function () {
     Route::post('/hospitalisations/simple/{patient}', [HospitalisationController::class, 'storeSimple'])->name('hospitalisations.store.simple');
     Route::resource('hospitalisations', HospitalisationController::class);
 
+    Route::post('/hospitalisations/{hospitalisation}/sortir', [HospitalisationController::class, 'sortir'])->name('hospitalisations.sortir');
+    Route::post('/hospitalisations/{hospitalisation}/rentrer', [HospitalisationController::class, 'rentrer'])->name('hospitalisations.rentrer');
+
+
     Route::get('/hospitalisations/{hospitalisation}/facture/create', [HospitalisationController::class, 'createFacture'])->name('hospitalisations.facture.create');
     Route::post('/hospitalisations/{hospitalisation}/facture', [HospitalisationController::class, 'storeFacture'])->name('hospitalisations.facture.store');
 

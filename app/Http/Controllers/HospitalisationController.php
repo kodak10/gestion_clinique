@@ -28,15 +28,20 @@ use NumberToWords\NumberToWords;
 class HospitalisationController extends Controller
 {
 
-    public function index()
+   public function index()
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Pharmacien'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Pharmacien', 'Manager'])) {
             abort(403, 'Accès non autorisé.');
         }
 
-        $hospitalisations = Hospitalisation::with('patient')->get();
+        // Filtrer uniquement les hospitalisations dont le status est 'present'
+        $hospitalisations = Hospitalisation::with('patient')
+            ->where('status', 'present')
+            ->get();
+
         return view('dashboard.pages.hospitalisations.index', compact('hospitalisations'));
     }
+
 
     public function storeSimple(Patient $patient)
     {
@@ -93,6 +98,37 @@ class HospitalisationController extends Controller
             return redirect()->back()->with('error', 'Erreur : ' . $e->getMessage());
         }
     }
+
+    public function sortir(Hospitalisation $hospitalisation)
+    {
+        if ($hospitalisation->status === 'sorti') {
+            return redirect()->back()->with('warning', 'Le patient est déjà sorti.');
+        }
+
+        $hospitalisation->status = 'sorti';
+        $hospitalisation->date_sortie = now();
+        $hospitalisation->save();
+
+        return redirect()->back()->with('success', 'Le patient a bien été déclaré sorti.');
+    }
+
+    public function rentrer(Hospitalisation $hospitalisation)
+    {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+        if ($hospitalisation->status === 'present') {
+            return redirect()->back()->with('warning', 'Le patient est déjà présent.');
+        }
+
+        $hospitalisation->status = 'present';
+        $hospitalisation->save();
+
+        return redirect()->back()->with('success', 'Le patient a bien été déclaré présent.');
+    }
+
+
+
 
     public function createPharmacie(Hospitalisation $hospitalisation)
     {
@@ -205,7 +241,7 @@ class HospitalisationController extends Controller
 
     public function storeExamen(Request $request, Hospitalisation $hospitalisation)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Laboratin', 'Receptionniste'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Laboratin', 'Receptionniste', 'Facturié'])) {
             abort(403, 'Accès non autorisé.');
         }
 

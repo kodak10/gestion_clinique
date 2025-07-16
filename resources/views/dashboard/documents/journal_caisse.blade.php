@@ -44,7 +44,7 @@
             <tr>
                 <th>Date</th>
                 <th>N° Reçu</th>
-                <th>Patient</th>
+                <th>Patient / Libellé</th>
                 <th>Type</th>
                 <th>Montant (FCFA)</th>
             </tr>
