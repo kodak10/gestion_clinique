@@ -44,7 +44,7 @@ class HospitalisationController extends Controller
     }
 
 
-   public function storeSimple(Patient $patient)
+    public function storeSimple(Patient $patient)
     {
         if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Caissière'])) {
             abort(403, 'Accès non autorisé.');

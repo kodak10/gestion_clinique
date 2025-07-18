@@ -216,7 +216,7 @@
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Taux (%)</label>
-                                                    <input type="number" class="form-control taux" name="frais_pharmacie[taux]" value="100" readonly>
+                                                    <input type="number" class="form-control taux" name="frais_pharmacie[taux]" value="0" readonly>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Total</label>
@@ -244,7 +244,7 @@
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Taux (%)</label>
-                                                    <input type="number" class="form-control taux" name="frais_laboratoire[taux]" value="100" readonly>
+                                                    <input type="number" class="form-control taux" name="frais_laboratoire[taux]" value="0" readonly>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Total</label>

@@ -312,7 +312,7 @@
                     <th width="15%">Prix Unitaire</th>
                     <th width="10%">Qte</th>
                     <th width="15%">Prise en charge</th>
-                    <th width="20%">Montant</th>
+                    <th width="20%">Montant à payer</th>
                 </tr>
             </thead>
             <tbody>
