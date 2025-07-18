@@ -114,6 +114,10 @@
                 </div>
             </div>
         </div>
+        <div>
+            NB : Les frais de pharmacie, de laboratoire et d'examen sont déjà calculés et affichés dans leurs sections respectives.
+        </div>
+
 
         <!-- Section Médicaments -->
         <div class="card mb-4">
