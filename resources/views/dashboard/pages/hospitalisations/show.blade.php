@@ -68,12 +68,16 @@
             </div>
             
             <div class="row mt-2">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <strong>Date d'entrée :</strong> {{ $hospitalisation->date_entree->format('d/m/Y H:i') }}
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <strong>Date de sortie :</strong> 
                     {{ $hospitalisation->date_sortie ? $hospitalisation->date_sortie->format('d/m/Y H:i') : 'En cours' }}
+                </div>
+                <div class="col-md-4">
+                    <strong>Caution :</strong> 
+                    {{ $hospitalisation->caution }}
                 </div>
             </div>
         </div>
