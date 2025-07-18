@@ -759,6 +759,7 @@ public function show(Hospitalisation $hospitalisation)
         'medicaments',
         'examens'
     ]);
+    dd($hospitalisation);
 
     return view('dashboard.pages.hospitalisations.show', compact('hospitalisation'));
 }
