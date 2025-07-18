@@ -55,10 +55,10 @@
             <div class="row hospitalisation-info">
                 <div class="col-md-6">
                     <div><strong>Patient :</strong> {{ $hospitalisation->patient->nom ?? 'N/A' }} {{ $hospitalisation->patient->prenoms ?? '' }}</div>
-                    <div><strong>N° Hospitalisation :</strong> HOSP-{{ $hospitalisation->id }}</div>
+                    <div><strong>Facture N° :</strong> {{ $hospitalisation->numero_facture }}</div>
                 </div>
                 <div class="col-md-6">
-                    <div><strong>Médecin :</strong> {{ $hospitalisation->medecin->name ?? 'Non spécifié' }}</div>
+                    <div><strong>Médecin :</strong> {{ $hospitalisation->medecin->nom_complet }}</div>
                     <div><strong>Statut :</strong> 
                         <span class="badge bg-{{ $hospitalisation->status == 'present' ? 'success' : 'secondary' }}">
                             {{ $hospitalisation->status == 'present' ? 'En cours' : 'Sorti' }}
@@ -90,20 +90,18 @@
                             <tr>
                                 <th>Libellé</th>
                                 <th class="text-end">Prix Unitaire</th>
-                                <th class="text-end">Taux</th>
+                                <th class="text-end">Prise en charge</th>
                                 <th class="text-end">Quantité</th>
-                                <th class="text-end">Réduction</th>
                                 <th class="text-end">Total</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($hospitalisation->details as $detail)
                             <tr>
-                                <td>{{ $detail->fraisHospitalisation->nom ?? 'N/A' }}</td>
+                                <td>{{ $detail->fraisHospitalisation->libelle }}</td>
                                 <td class="text-end">{{ number_format($detail->prix_unitaire, 0, ',', ' ') }}</td>
                                 <td class="text-end">{{ number_format($detail->taux, 0, ',', ' ') }}%</td>
                                 <td class="text-end">{{ $detail->quantite }}</td>
-                                <td class="text-end">{{ number_format($detail->reduction, 0, ',', ' ') }}</td>
                                 <td class="text-end">{{ number_format($detail->total, 0, ',', ' ') }}</td>
                             </tr>
                             @empty
@@ -136,7 +134,7 @@
                         <tbody>
                             @forelse($hospitalisation->medicaments as $medicament)
                             <tr>
-                                <td>{{ $medicament->nom }} ({{ $medicament->unite_mesure }})</td>
+                                <td>{{ $medicament->nom }}</td>
                                 <td class="text-end">{{ number_format($medicament->pivot->prix_unitaire, 0, ',', ' ') }}</td>
                                 <td class="text-end">{{ $medicament->pivot->quantite }}</td>
                                 <td class="text-end">{{ number_format($medicament->pivot->total, 0, ',', ' ') }}</td>
