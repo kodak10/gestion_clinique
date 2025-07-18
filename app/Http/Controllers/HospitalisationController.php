@@ -748,4 +748,19 @@ public function printPharmacie($id)
     return $pdf->stream('pharmacie_'.$id.'.pdf');
 }
 
+
+public function show(Hospitalisation $hospitalisation)
+{
+    // Eager load all necessary relationships
+    $hospitalisation->load([
+        'patient',
+        'medecin',
+        'details.fraisHospitalisation',
+        'medicaments',
+        'examens'
+    ]);
+
+    return view('dashboard.pages.hospitalisations.show', compact('hospitalisation'));
+}
+
 }
