@@ -114,9 +114,10 @@
                 </div>
             </div>
         </div>
-        <div>
-            NB : Les frais de pharmacie, de laboratoire et d'examen sont déjà calculés et affichés dans leurs sections respectives.
+        <div style="background-color: #fef3c7; color: #92400e; padding: 10px 15px; border-left: 5px solid #f59e0b; font-size: 12px; margin-top: 15px; margin-bottom: 15px; border-radius: 4px;">
+            <strong>NB :</strong> Les frais de pharmacie, de laboratoire et d'examen sont déjà calculés et affichés dans leurs sections respectives.
         </div>
+
 
 
         <!-- Section Médicaments -->
