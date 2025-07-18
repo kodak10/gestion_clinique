@@ -33,6 +33,8 @@ Route::get('/', function () {
 
 Auth::routes(['register' => false]); // Désactive l'inscription si nécessaire
 
+Route::get('/hospitalisations/{id}', [HospitalisationController::class, 'show'])->name('hospitalisations.show');
+
 //Route::middleware(['auth', 'user.status'])->group(function () {
 Route::middleware(['auth',])->group(function () {
 
@@ -77,7 +79,8 @@ Route::middleware(['auth',])->group(function () {
 
 
     Route::post('/hospitalisations/simple/{patient}', [HospitalisationController::class, 'storeSimple'])->name('hospitalisations.store.simple');
-    Route::resource('hospitalisations', HospitalisationController::class);
+    // Route::resource('hospitalisations', HospitalisationController::class);
+    Route::resource('hospitalisations', HospitalisationController::class)->except(['show'])->middleware('auth');
 
     Route::post('/hospitalisations/{hospitalisation}/sortir', [HospitalisationController::class, 'sortir'])->name('hospitalisations.sortir');
     Route::post('/hospitalisations/{hospitalisation}/rentrer', [HospitalisationController::class, 'rentrer'])->name('hospitalisations.rentrer');
