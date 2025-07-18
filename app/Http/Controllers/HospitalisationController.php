@@ -749,7 +749,8 @@ public function printPharmacie($id)
 }
 
 
-public function show(Hospitalisation $hospitalisation)
+public function show($id)
+
 {
     // Eager load all necessary relationships
     $hospitalisation->load([
