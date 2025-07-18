@@ -215,7 +215,7 @@
                                                     <input type="number" class="form-control quantite" name="frais_pharmacie[quantite]" value="{{ $detailsPharmacie->first()->quantite ?? 1 }}" readonly>
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <label class="form-label">Taux (%)</label>
+                                                    <label class="form-label">Prise en charge</label>
                                                     <input type="number" class="form-control taux" name="frais_pharmacie[taux]" value="0" readonly>
                                                 </div>
                                                 <div class="col-md-2">
@@ -243,7 +243,7 @@
                                                     <input type="number" class="form-control quantite" name="frais_laboratoire[quantite]" value="{{ $detailsLaboratoire->first()->quantite ?? 1 }}" readonly>
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <label class="form-label">Taux (%)</label>
+                                                    <label class="form-label">Prise en charge</label>
                                                     <input type="number" class="form-control taux" name="frais_laboratoire[taux]" value="0" readonly>
                                                 </div>
                                                 <div class="col-md-2">
@@ -273,7 +273,7 @@
                                                         <input type="number" class="form-control quantite" name="frais[{{ $currentIndex }}][quantite]" value="{{ $detail->quantite }}" min="1" required>
                                                     </div>
                                                     <div class="col-md-2">
-                                                        <label class="form-label">Taux (%)</label>
+                                                        <label class="form-label">Prise en charge</label>
                                                         <input type="number" class="form-control taux" name="frais[{{ $currentIndex }}][taux]" value="{{ $detail->taux ?? $patient->taux_couverture }}" min="0" max="100" required>
                                                     </div>
                                                     <div class="col-md-2">
@@ -313,7 +313,7 @@
                                                     <input type="number" class="form-control quantite" data-name="frais[__index__][quantite]" value="1" min="1" required>
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <label class="form-label">Taux (%)</label>
+                                                    <label class="form-label">Prise en charge</label>
                                                     <input type="number" class="form-control taux" data-name="frais[__index__][taux]" value="{{ $patient->taux_couverture ?? 70 }}" min="0" max="100" required>
                                                 </div>
                                                 <div class="col-md-2">
