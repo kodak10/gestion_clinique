@@ -68,16 +68,12 @@
             </div>
             
             <div class="row mt-2">
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <strong>Date d'entrée :</strong> {{ $hospitalisation->date_entree->format('d/m/Y H:i') }}
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <strong>Date de sortie :</strong> 
                     {{ $hospitalisation->date_sortie ? $hospitalisation->date_sortie->format('d/m/Y H:i') : 'En cours' }}
-                </div>
-                <div class="col-md-4">
-                    <strong>Caution :</strong> 
-                    {{ $hospitalisation->caution }}
                 </div>
             </div>
         </div>
@@ -218,8 +214,14 @@
             </div>
             <div class="col-md-3 col-sm-6">
                 <div class="total-box">
-                    <strong>Reste à Payer</strong><br>
-                    <span class="h5">{{ number_format($hospitalisation->reste_a_payer, 0, ',', ' ') }} FCFA</span>
+                    <strong>Caution</strong><br>
+                    <span class="h5">{{ number_format($hospitalisation->caution, 0, ',', ' ') }} FCFA</span>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="total-box">
+                    <strong>Montant à Payer</strong><br>
+                    <span class="h5">{{ number_format($hospitalisation->montant_a_paye, 0, ',', ' ') }} FCFA</span>
                 </div>
             </div>
         </div>
