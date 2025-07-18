@@ -750,17 +750,18 @@ public function printPharmacie($id)
 
 
 public function show($id)
-
 {
-    // Eager load all necessary relationships
-    $hospitalisation->load([
+    $hospitalisation = Hospitalisation::with([
         'patient',
         'medecin',
         'details.fraisHospitalisation',
         'medicaments',
         'examens'
-    ]);
-    dd($hospitalisation);
+    ])->find($id);
+
+    if (!$hospitalisation) {
+        abort(404, 'Hospitalisation non trouvée');
+    }
 
     return view('dashboard.pages.hospitalisations.show', compact('hospitalisation'));
 }
