@@ -130,10 +130,11 @@
                         </div>
                       </div>
                     </div>
+
                     <div class="accordion-item">
-                      <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-2-flush" aria-expanded="false">
+                      <button class="accordion-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-2-flush" aria-expanded="true">
                         <div class="accordion-header-text">
-                          <h4>Erreur sur la consultation et le montant est dejà dans le point ? (Admin)</h4>
+                          <h4>Enregistrement des Médicaments du patient (hospitalisation)</h4>
                         </div>
                         <div class="accordion-header-toggle">
                           <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
@@ -144,32 +145,117 @@
                       </button>
                       <div id="collapse-2-flush" class="accordion-collapse collapse" data-bs-parent="#accordion-flush">
                         <div class="accordion-body">
-                          Etape 01
+                          <img src="{{ asset('assets/dist/img/Consultation.png') }}" alt="">
                           <ul>
-                            <li>
-                              1 - Cliquer le sur le bouton de navigation Comptabilité puis journal de caisse <br>
-                              <span></span>
-                              <img src="{{ asset('assets/dist/img/journal.png') }}" alt="">
+                            Veuillez selectionner le Medecin traitant
+                            <li>Selectionner la prestation</li>
+                            <li>Le prix unitaire sort automatiquement mais vous pouvez le modifié</li>
+                            <li>La quantité</li>
+                            <li>Le taux de prise en charge de l'assurance</li>
+                            <li>Le cout total de la ligne se calcule sur la dernière ligne</li>
 
-                              2 - Selectionner le paiement puis cliqué sur le bouton Action Puis Supprimé <br>
-                              <img src="{{ asset('assets/dist/img/journal_caisse.png') }}" alt="">
-                            </li>
-                            Etape 02
-                            
-                              <li>
-                              1 - Allez sur le menu des patient cliqué sur Action du patient puis Suivi du Patient <br>
-                              <span></span>
-                              <img src="{{ asset('assets/dist/img/action_patient.png') }}" alt="">
-
-                              2 - Selectionner la consultaion puis cliqué sur Modifier puis modifié les informations paiement puis cliqué sur le bouton Action Puis Supprimé <br>
-                              <img src="{{ asset('assets/dist/img/journal_caisse.png') }}" alt="">
-                            </li>
-                           
                           </ul>
-                          
+                          Faire + Ajouter une autre prestation si vous voulez ajouter une autre.
+                          <br>Renseigner les informations liées aux prix à savoir : La reduction, le montant perçu puis faire Enregistrer pour enregistrer la consultation.
+                          <br>NB: LORSQUE VOTRE ROLE (EN HAUT A DROITE) EST CAISSIERE ALORS VOUS ALLEZ ENCAISSER L'ARGENT DIRECTEMENT ET ACCEDER A VOTRE JOURNAL DE CAISSE DANS LE CAS CONTRAIRE LE PATIENT DEVRA MONTER POUR PAYER EN HAUT)
                         </div>
                       </div>
                     </div>
+
+
+                    <div class="accordion-item">
+                      <button class="accordion-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-3-flush" aria-expanded="true">
+                        <div class="accordion-header-text">
+                          <h4>Enregistrement des Examens du patient (hospitalisation)</h4>
+                        </div>
+                        <div class="accordion-header-toggle">
+                          <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
+                            <path d="M6 9l6 6l6 -6"></path>
+                          </svg>
+                        </div>
+                      </button>
+                      <div id="collapse-3-flush" class="accordion-collapse collapse" data-bs-parent="#accordion-flush">
+                        <div class="accordion-body">
+                          <img src="{{ asset('assets/dist/img/Consultation.png') }}" alt="">
+                          <ul>
+                            Veuillez selectionner le Medecin traitant
+                            <li>Selectionner la prestation</li>
+                            <li>Le prix unitaire sort automatiquement mais vous pouvez le modifié</li>
+                            <li>La quantité</li>
+                            <li>Le taux de prise en charge de l'assurance</li>
+                            <li>Le cout total de la ligne se calcule sur la dernière ligne</li>
+
+                          </ul>
+                          Faire + Ajouter une autre prestation si vous voulez ajouter une autre.
+                          <br>Renseigner les informations liées aux prix à savoir : La reduction, le montant perçu puis faire Enregistrer pour enregistrer la consultation.
+                          <br>NB: LORSQUE VOTRE ROLE (EN HAUT A DROITE) EST CAISSIERE ALORS VOUS ALLEZ ENCAISSER L'ARGENT DIRECTEMENT ET ACCEDER A VOTRE JOURNAL DE CAISSE DANS LE CAS CONTRAIRE LE PATIENT DEVRA MONTER POUR PAYER EN HAUT)
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="accordion-item">
+                      <button class="accordion-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-4-flush" aria-expanded="true">
+                        <div class="accordion-header-text">
+                          <h4>Enregistrement de la facture d'hospitalisation du Patient</h4>
+                        </div>
+                        <div class="accordion-header-toggle">
+                          <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
+                            <path d="M6 9l6 6l6 -6"></path>
+                          </svg>
+                        </div>
+                      </button>
+                      <div id="collapse-4-flush" class="accordion-collapse collapse" data-bs-parent="#accordion-flush">
+                        <div class="accordion-body">
+                          <img src="{{ asset('assets/dist/img/Consultation.png') }}" alt="">
+                          <ul>
+                            Veuillez selectionner le Medecin traitant
+                            <li>Selectionner la prestation</li>
+                            <li>Le prix unitaire sort automatiquement mais vous pouvez le modifié</li>
+                            <li>La quantité</li>
+                            <li>Le taux de prise en charge de l'assurance</li>
+                            <li>Le cout total de la ligne se calcule sur la dernière ligne</li>
+
+                          </ul>
+                          Faire + Ajouter une autre prestation si vous voulez ajouter une autre.
+                          <br>Renseigner les informations liées aux prix à savoir : La reduction, le montant perçu puis faire Enregistrer pour enregistrer la consultation.
+                          <br>NB: LORSQUE VOTRE ROLE (EN HAUT A DROITE) EST CAISSIERE ALORS VOUS ALLEZ ENCAISSER L'ARGENT DIRECTEMENT ET ACCEDER A VOTRE JOURNAL DE CAISSE DANS LE CAS CONTRAIRE LE PATIENT DEVRA MONTER POUR PAYER EN HAUT)
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="accordion-item">
+                      <button class="accordion-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-5-flush" aria-expanded="true">
+                        <div class="accordion-header-text">
+                          <h4>Gestion du Stock des médicaments</h4>
+                        </div>
+                        <div class="accordion-header-toggle">
+                          <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
+                            <path d="M6 9l6 6l6 -6"></path>
+                          </svg>
+                        </div>
+                      </button>
+                      <div id="collapse-5-flush" class="accordion-collapse collapse" data-bs-parent="#accordion-flush">
+                        <div class="accordion-body">
+                          <img src="{{ asset('assets/dist/img/Consultation.png') }}" alt="">
+                          <ul>
+                            Veuillez selectionner le Medecin traitant
+                            <li>Selectionner la prestation</li>
+                            <li>Le prix unitaire sort automatiquement mais vous pouvez le modifié</li>
+                            <li>La quantité</li>
+                            <li>Le taux de prise en charge de l'assurance</li>
+                            <li>Le cout total de la ligne se calcule sur la dernière ligne</li>
+
+                          </ul>
+                          Faire + Ajouter une autre prestation si vous voulez ajouter une autre.
+                          <br>Renseigner les informations liées aux prix à savoir : La reduction, le montant perçu puis faire Enregistrer pour enregistrer la consultation.
+                          <br>NB: LORSQUE VOTRE ROLE (EN HAUT A DROITE) EST CAISSIERE ALORS VOUS ALLEZ ENCAISSER L'ARGENT DIRECTEMENT ET ACCEDER A VOTRE JOURNAL DE CAISSE DANS LE CAS CONTRAIRE LE PATIENT DEVRA MONTER POUR PAYER EN HAUT)
+                        </div>
+                      </div>
+                    </div>
+                   
                     
                     
                   </div>
@@ -182,7 +268,7 @@
                       <div class="accordion-item">
                         <button class="accordion-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1-tabs" aria-expanded="true">
                           <div class="accordion-header-text">
-                            <h4>What makes Tabler different from other UI frameworks?</h4>
+                            <h4>Encaisser un payement</h4>
                           </div>
                           <div class="accordion-header-toggle">
                             <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
@@ -191,52 +277,20 @@
                             </svg>
                           </div>
                         </button>
-                        <div id="collapse-1-tabs" class="accordion-collapse collapse show" data-bs-parent="#accordion-tabs">
+                        <div id="collapse-1-tabs" class="accordion-collapse collapse" data-bs-parent="#accordion-tabs">
                           <div class="accordion-body">
-                            Tabler offers a modern, responsive design with a clean aesthetic, built on Bootstrap for ease of use and flexibility.
+                            <img src="{{ asset('assets/dist/img/header.png') }}" alt="">
+                            Cliquez sur le bouton "Comptabilité" dans le menu de navigation puis "Règlements" pour accéder à la liste des factures ou consultation non soldé.
+                            Dans le champs "Search", entrez le nom du patient ou le numéro de la facture ou de la consultation pour trouver la consultation ou la facture à encaisser. <br>
+                            Cliquez sur le bouton "Action" du patient puis "Payer" pour ouvrir le formulaire d'encaissement. Cliquez sur "Detail" pour voir les informations de la consultation ou de la facture. <br>
+
                           </div>
                         </div>
                       </div>
                       <div class="accordion-item">
-                        <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-2-tabs" aria-expanded="false">
+                        <button class="accordion-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-4-tabs" aria-expanded="true">
                           <div class="accordion-header-text">
-                            <h4>How can I customize Tabler components to fit my design needs?</h4>
-                          </div>
-                          <div class="accordion-header-toggle">
-                            <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-                              <path d="M6 9l6 6l6 -6"></path>
-                            </svg>
-                          </div>
-                        </button>
-                        <div id="collapse-2-tabs" class="accordion-collapse collapse" data-bs-parent="#accordion-tabs">
-                          <div class="accordion-body">
-                            You can customize Tabler components using CSS variables, SCSS, and utility classes to match your design preferences.
-                          </div>
-                        </div>
-                      </div>
-                      <div class="accordion-item">
-                        <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-3-tabs" aria-expanded="false">
-                          <div class="accordion-header-text">
-                            <h4>Is Tabler optimized for performance and fast loading times?</h4>
-                          </div>
-                          <div class="accordion-header-toggle">
-                            <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-                              <path d="M6 9l6 6l6 -6"></path>
-                            </svg>
-                          </div>
-                        </button>
-                        <div id="collapse-3-tabs" class="accordion-collapse collapse" data-bs-parent="#accordion-tabs">
-                          <div class="accordion-body">
-                            Yes, Tabler is lightweight, optimized for modern browsers, and follows best practices for fast loading and efficiency.
-                          </div>
-                        </div>
-                      </div>
-                      <div class="accordion-item">
-                        <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-4-tabs" aria-expanded="false">
-                          <div class="accordion-header-text">
-                            <h4>How accessible are Tabler components?</h4>
+                            <h4>Faire Une depense</h4>
                           </div>
                           <div class="accordion-header-toggle">
                             <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
@@ -247,10 +301,76 @@
                         </button>
                         <div id="collapse-4-tabs" class="accordion-collapse collapse" data-bs-parent="#accordion-tabs">
                           <div class="accordion-body">
-                            Tabler components follow WAI-ARIA standards and support keyboard navigation, screen readers, and accessibility best practices.
+                            <img src="{{ asset('assets/dist/img/header.png') }}" alt="">
+                            Cliquez sur le bouton "Comptabilité" dans le menu de navigation puis "Règlements" pour accéder à la liste des factures ou consultation non soldé.
+                            Dans le champs "Search", entrez le nom du patient ou le numéro de la facture ou de la consultation pour trouver la consultation ou la facture à encaisser. <br>
+                            Cliquez sur le bouton "Action" du patient puis "Payer" pour ouvrir le formulaire d'encaissement. Cliquez sur "Detail" pour voir les informations de la consultation ou de la facture. <br>
+
                           </div>
                         </div>
                       </div>
+                      <div class="accordion-item">
+                        <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-2-tabs" aria-expanded="false">
+                          <div class="accordion-header-text">
+                            <h4>Journal de caisse</h4>
+                          </div>
+                          <div class="accordion-header-toggle">
+                            <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
+                              <path d="M6 9l6 6l6 -6"></path>
+                            </svg>
+                          </div>
+                        </button>
+                        <div id="collapse-2-tabs" class="accordion-collapse collapse" data-bs-parent="#accordion-tabs">
+                          <div class="accordion-body">
+                            <img src="{{ asset('assets/dist/img/header.png') }}" alt="">
+                            Cliquez sur le bouton "Comptabilité" dans le menu de navigation puis "Journal de caisse" pour accéder au journal de caisse.
+                            Dans le champs "Search", entrez le nom du patient ou le numéro de la facture ou de la consultation pour trouver la consultation ou la facture à encaisser. <br>
+                            Cliquez sur le bouton "Action" du patient puis "Payer" pour ouvrir le formulaire d'encaissement. Cliquez sur "Detail" pour voir les informations de la consultation ou de la facture. <br>
+                          </div>
+                        </div>
+                      </div>
+                       <div class="accordion-item">
+                        <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-3-tabs" aria-expanded="false">
+                          <div class="accordion-header-text">
+                            <h4>Erreur sur la consultation et le montant est dejà dans le point ou Encaissement  (Admin)</h4>
+                          </div>
+                          <div class="accordion-header-toggle">
+                            <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
+                              <path d="M6 9l6 6l6 -6"></path>
+                            </svg>
+                          </div>
+                        </button>
+                        <div id="collapse-3-tabs" class="accordion-collapse collapse" data-bs-parent="#accordion-tabs">
+                          <div class="accordion-body">
+                            Etape 01
+                            <ul>
+                              <li>
+                                1 - Cliquer le sur le bouton de navigation Comptabilité puis journal de caisse <br>
+                                <span></span>
+                                <img src="{{ asset('assets/dist/img/journal.png') }}" alt="">
+
+                                2 - Selectionner le paiement puis cliqué sur le bouton Action Puis Supprimé <br>
+                                <img src="{{ asset('assets/dist/img/journal_caisse.png') }}" alt="">
+                              </li>
+                              Etape 02
+                              
+                                <li>
+                                1 - Allez sur le menu des patient cliqué sur Action du patient puis Suivi du Patient <br>
+                                <span></span>
+                                <img src="{{ asset('assets/dist/img/action_patient.png') }}" alt="">
+
+                                2 - Selectionner la consultaion puis cliqué sur Modifier puis modifié les informations paiement puis cliqué sur le bouton Action Puis Supprimé <br>
+                                <img src="{{ asset('assets/dist/img/journal_caisse.png') }}" alt="">
+                              </li>
+                            
+                            </ul>
+                            
+                          </div>
+                        </div>
+                      </div>
+                      
                     </div>
                   </div>
                 </div>
@@ -262,7 +382,7 @@
                       <div class="accordion-item">
                         <button class="accordion-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1-inverted" aria-expanded="true">
                           <div class="accordion-header-text">
-                            <h4>What makes Tabler different from other UI frameworks?</h4>
+                            <h4>Creation | Modification d'accès Utilisateur</h4>
                           </div>
                           <div class="accordion-header-toggle">
                             <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
@@ -271,7 +391,7 @@
                             </svg>
                           </div>
                         </button>
-                        <div id="collapse-1-inverted" class="accordion-collapse collapse show" data-bs-parent="#accordion-inverted">
+                        <div id="collapse-1-inverted" class="accordion-collapse collapse" data-bs-parent="#accordion-inverted">
                           <div class="accordion-body">
                             Tabler offers a modern, responsive design with a clean aesthetic, built on Bootstrap for ease of use and flexibility.
                           </div>
@@ -280,7 +400,7 @@
                       <div class="accordion-item">
                         <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-2-inverted" aria-expanded="false">
                           <div class="accordion-header-text">
-                            <h4>How can I customize Tabler components to fit my design needs?</h4>
+                            <h4>Creation | Modification d'assurances</h4>
                           </div>
                           <div class="accordion-header-toggle">
                             <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
@@ -298,7 +418,7 @@
                       <div class="accordion-item">
                         <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-3-inverted" aria-expanded="false">
                           <div class="accordion-header-text">
-                            <h4>Is Tabler optimized for performance and fast loading times?</h4>
+                            <h4>Creation | Modification des frais d'hospitalisation</h4>
                           </div>
                           <div class="accordion-header-toggle">
                             <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
@@ -316,7 +436,7 @@
                       <div class="accordion-item">
                         <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-4-inverted" aria-expanded="false">
                           <div class="accordion-header-text">
-                            <h4>How accessible are Tabler components?</h4>
+                            <h4>Creation | Modification des prestations d'accueil</h4>
                           </div>
                           <div class="accordion-header-toggle">
                             <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
@@ -331,85 +451,19 @@
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="accordion accordion-inverted accordion-plus" id="accordion-inverted-plus">
                       <div class="accordion-item">
-                        <button class="accordion-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1-inverted-plus" aria-expanded="true">
+                        <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-5-inverted" aria-expanded="false">
                           <div class="accordion-header-text">
-                            <h4>What makes Tabler different from other UI frameworks?</h4>
+                            <h4>Creation | Modification des Medecins</h4>
                           </div>
-                          <div class="accordion-header-toggle accordion-header-toggle-plus">
-                            <!-- Download SVG icon from http://tabler.io/icons/icon/plus -->
+                          <div class="accordion-header-toggle">
+                            <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-                              <path d="M12 5l0 14"></path>
-                              <path d="M5 12l14 0"></path>
+                              <path d="M6 9l6 6l6 -6"></path>
                             </svg>
                           </div>
                         </button>
-                        <div id="collapse-1-inverted-plus" class="accordion-collapse collapse show" data-bs-parent="#accordion-inverted-plus">
-                          <div class="accordion-body">
-                            Tabler offers a modern, responsive design with a clean aesthetic, built on Bootstrap for ease of use and flexibility.
-                          </div>
-                        </div>
-                      </div>
-                      <div class="accordion-item">
-                        <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-2-inverted-plus" aria-expanded="false">
-                          <div class="accordion-header-text">
-                            <h4>How can I customize Tabler components to fit my design needs?</h4>
-                          </div>
-                          <div class="accordion-header-toggle accordion-header-toggle-plus">
-                            <!-- Download SVG icon from http://tabler.io/icons/icon/plus -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-                              <path d="M12 5l0 14"></path>
-                              <path d="M5 12l14 0"></path>
-                            </svg>
-                          </div>
-                        </button>
-                        <div id="collapse-2-inverted-plus" class="accordion-collapse collapse" data-bs-parent="#accordion-inverted-plus">
-                          <div class="accordion-body">
-                            You can customize Tabler components using CSS variables, SCSS, and utility classes to match your design preferences.
-                          </div>
-                        </div>
-                      </div>
-                      <div class="accordion-item">
-                        <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-3-inverted-plus" aria-expanded="false">
-                          <div class="accordion-header-text">
-                            <h4>Is Tabler optimized for performance and fast loading times?</h4>
-                          </div>
-                          <div class="accordion-header-toggle accordion-header-toggle-plus">
-                            <!-- Download SVG icon from http://tabler.io/icons/icon/plus -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-                              <path d="M12 5l0 14"></path>
-                              <path d="M5 12l14 0"></path>
-                            </svg>
-                          </div>
-                        </button>
-                        <div id="collapse-3-inverted-plus" class="accordion-collapse collapse" data-bs-parent="#accordion-inverted-plus">
-                          <div class="accordion-body">
-                            Yes, Tabler is lightweight, optimized for modern browsers, and follows best practices for fast loading and efficiency.
-                          </div>
-                        </div>
-                      </div>
-                      <div class="accordion-item">
-                        <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-4-inverted-plus" aria-expanded="false">
-                          <div class="accordion-header-text">
-                            <h4>How accessible are Tabler components?</h4>
-                          </div>
-                          <div class="accordion-header-toggle accordion-header-toggle-plus">
-                            <!-- Download SVG icon from http://tabler.io/icons/icon/plus -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-                              <path d="M12 5l0 14"></path>
-                              <path d="M5 12l14 0"></path>
-                            </svg>
-                          </div>
-                        </button>
-                        <div id="collapse-4-inverted-plus" class="accordion-collapse collapse" data-bs-parent="#accordion-inverted-plus">
+                        <div id="collapse-5-inverted" class="accordion-collapse collapse" data-bs-parent="#accordion-inverted">
                           <div class="accordion-body">
                             Tabler components follow WAI-ARIA standards and support keyboard navigation, screen readers, and accessibility best practices.
                           </div>
@@ -419,118 +473,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="accordion" id="accordion-icons">
-                      <div class="accordion-item">
-                        <button class="accordion-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1-icons" aria-expanded="true">
-                          <div class="accordion-header-icon">
-                            <!-- Download SVG icon from http://tabler.io/icons/icon/link -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-                              <path d="M9 15l6 -6"></path>
-                              <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
-                              <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"></path>
-                            </svg>
-                          </div>
-                          <div class="accordion-header-text">
-                            <h4>What makes Tabler different from other UI frameworks?</h4>
-                          </div>
-                          <div class="accordion-header-toggle">
-                            <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-                              <path d="M6 9l6 6l6 -6"></path>
-                            </svg>
-                          </div>
-                        </button>
-                        <div id="collapse-1-icons" class="accordion-collapse collapse show" data-bs-parent="#accordion-icons">
-                          <div class="accordion-body">
-                            Tabler offers a modern, responsive design with a clean aesthetic, built on Bootstrap for ease of use and flexibility.
-                          </div>
-                        </div>
-                      </div>
-                      <div class="accordion-item">
-                        <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-2-icons" aria-expanded="false">
-                          <div class="accordion-header-icon">
-                            <!-- Download SVG icon from http://tabler.io/icons/icon/link -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-                              <path d="M9 15l6 -6"></path>
-                              <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
-                              <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"></path>
-                            </svg>
-                          </div>
-                          <div class="accordion-header-text">
-                            <h4>How can I customize Tabler components to fit my design needs?</h4>
-                          </div>
-                          <div class="accordion-header-toggle">
-                            <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-                              <path d="M6 9l6 6l6 -6"></path>
-                            </svg>
-                          </div>
-                        </button>
-                        <div id="collapse-2-icons" class="accordion-collapse collapse" data-bs-parent="#accordion-icons">
-                          <div class="accordion-body">
-                            You can customize Tabler components using CSS variables, SCSS, and utility classes to match your design preferences.
-                          </div>
-                        </div>
-                      </div>
-                      <div class="accordion-item">
-                        <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-3-icons" aria-expanded="false">
-                          <div class="accordion-header-icon">
-                            <!-- Download SVG icon from http://tabler.io/icons/icon/link -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-                              <path d="M9 15l6 -6"></path>
-                              <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
-                              <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"></path>
-                            </svg>
-                          </div>
-                          <div class="accordion-header-text">
-                            <h4>Is Tabler optimized for performance and fast loading times?</h4>
-                          </div>
-                          <div class="accordion-header-toggle">
-                            <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-                              <path d="M6 9l6 6l6 -6"></path>
-                            </svg>
-                          </div>
-                        </button>
-                        <div id="collapse-3-icons" class="accordion-collapse collapse" data-bs-parent="#accordion-icons">
-                          <div class="accordion-body">
-                            Yes, Tabler is lightweight, optimized for modern browsers, and follows best practices for fast loading and efficiency.
-                          </div>
-                        </div>
-                      </div>
-                      <div class="accordion-item">
-                        <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-4-icons" aria-expanded="false">
-                          <div class="accordion-header-icon">
-                            <!-- Download SVG icon from http://tabler.io/icons/icon/link -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-                              <path d="M9 15l6 -6"></path>
-                              <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
-                              <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"></path>
-                            </svg>
-                          </div>
-                          <div class="accordion-header-text">
-                            <h4>How accessible are Tabler components?</h4>
-                          </div>
-                          <div class="accordion-header-toggle">
-                            <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-                              <path d="M6 9l6 6l6 -6"></path>
-                            </svg>
-                          </div>
-                        </button>
-                        <div id="collapse-4-icons" class="accordion-collapse collapse" data-bs-parent="#accordion-icons">
-                          <div class="accordion-body">
-                            Tabler components follow WAI-ARIA standards and support keyboard navigation, screen readers, and accessibility best practices.
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              
             </div>
     </div>
 @endsection

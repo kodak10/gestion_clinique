@@ -40,7 +40,7 @@
         
         .header-center {
             text-align: center;
-            margin: 0 100px;
+            margin: 20 100px;
         }
         
         .header-center h1 {
@@ -252,7 +252,7 @@
             
             <div class="header-center">
                 <h1>CLINIQUE SILOE CORPORATION</h1>
-                <p>BP 1234 Abidjan | Tél: 01 02 03 04 05 | Email: contact@cliniquesiloe.ci</p>
+                <p> Tél: 01 73 73 73 55 | Email: cliniquesiloevie@gmail.com | Site internet : cliniquesiloecorporation.com</p>
             </div>
             <div class="clear"></div>
         </div>
