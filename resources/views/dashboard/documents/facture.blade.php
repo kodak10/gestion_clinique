@@ -242,11 +242,13 @@
         <div class="header">
             
             <div class="logo-placeholder"><img src="assets/dist/img/logo.png" alt=""></div>
+            
             <div class="qr-code">
-              @if($hospitalisation->qr_code_path)
-                <img src="{{ asset('storage/'.$hospitalisation->qr_code_path) }}" alt="QR Code">
-              @endif
+              <img src="{{ public_path('storage/' . $hospitalisation->qr_code_path) }}" alt="QR Code" style="max-width:100%; max-height:100%;">
+
+              {{-- <img src="{{ 'storage/'.$hospitalisation->qr_code_path }}" alt="QR Code" style="max-width:100%; max-height:100%;"> --}}
             </div>
+
             
             <div class="header-center">
                 <h1>CLINIQUE SILOE CORPORATION</h1>

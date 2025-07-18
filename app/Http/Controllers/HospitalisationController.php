@@ -69,15 +69,20 @@ class HospitalisationController extends Controller
                 'date_entree' => now(),
             ]);
 
-            // Génération et stockage du QR code
-            $qrContent = "HOSP-{$hospitalisation->id}-{$numeroFacture}";
-            $qrCode = QrCode::format('png')->size(200)->generate($qrContent);
-            
+            // Génération de l'URL de consultation détail
+            $detailUrl = route('hospitalisations.show', $hospitalisation->id); // Assure-toi que cette route existe
+
+            // Génération et stockage du QR code, ENCODANT l'URL
+            $qrCodeImage = \QrCode::format('png')
+                ->size(200)
+                ->margin(2)
+                ->generate($detailUrl);
+
             $directory = 'qr-codes/hospitalisations';
             $fileName = "hosp-{$hospitalisation->id}-{$numeroFacture}.png";
             $path = "{$directory}/{$fileName}";
-            
-            Storage::disk('public')->put($path, $qrCode);
+
+            Storage::disk('public')->put($path, $qrCodeImage);
             
             // Mise à jour avec le chemin du QR code
             $hospitalisation->update(['qr_code_path' => $path]);
@@ -105,7 +110,7 @@ class HospitalisationController extends Controller
             DB::commit();
             
             return redirect()->back()->with([
-                'success' => 'Le patient a été hospitalisé avec le numéro de facture: '.$numeroFacture,
+                'success' => 'Le patient a été hospitalisé avec succès.',
                 'qr_code_path' => $path // Optionnel: pour afficher directement
             ]);
             
