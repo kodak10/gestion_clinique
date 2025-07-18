@@ -162,7 +162,7 @@
                             <tr>
                                 <th>Examen</th>
                                 <th class="text-end">Prix</th>
-                                <th class="text-end">Taux</th>
+                                <th class="text-end">Prise en charge</th>
                                 <th class="text-end">Quantité</th>
                                 <th class="text-end">Total</th>
                             </tr>
@@ -216,7 +216,9 @@
         </div>
 
         <div class="mt-4 text-center text-muted small no-print">
-            Clinique Siloe Corporation - © {{ date('Y') }} - Imprimé le {{ now()->format('d/m/Y H:i') }}
+            Clinique Siloe Corporation - © {{ date('Y') }} - Consulté le {{ now()->format('d/m/Y H:i') }} <br>
+
+            <span>Développé par ATCHIN PARFAIT | Email: Atchinaymard10@gmail.com | Tél: +2250103810998</span>
         </div>
     </div>
 
