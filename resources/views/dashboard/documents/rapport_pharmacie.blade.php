@@ -48,9 +48,9 @@
             @foreach($medicament->hospitalisations as $prescription)
             <tr>
                 <td>{{ $prescription->created_at->format('d/m/Y H:i') }}</td>
-                <td>{{ $prescription->hospitalisation->patient->nom_complet ?? 'N/A' }}</td>
+                <td>{{ $prescription->hospitalisation->patient->nom ?? '' }} {{ $prescription->hospitalisation->patient->prenoms ?? '' }}</td>
                 <td>{{ $prescription->hospitalisation->numero ?? 'N/A' }}</td>
-                <td>{{ $prescription->hospitalisation->medecin->nom ?? 'N/A' }}</td>
+                <td>{{ $prescription->hospitalisation->medecin->nom_complet ?? 'N/A' }}</td>
                 <td class="text-center">{{ $prescription->quantite }}</td>
                 <td class="text-center">{{ number_format($prescription->total, 2) }} FCFA</td>
             </tr>

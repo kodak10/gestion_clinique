@@ -30,6 +30,13 @@ class ConsultationController extends Controller
         return view('dashboard.pages.consultation.create', compact('patient', 'categories', 'categorie_medecins'));
     }
 
+    private function generateReceiptNumber()
+    {
+        $lastReceipt = Consultation::orderBy('id', 'desc')->first();
+        $lastNumber = $lastReceipt ? intval(substr($lastReceipt->numero_recu, 1)) : 0;
+        $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+        return 'R' . $newNumber;
+    }
 
 public function store(Request $request, Patient $patient)
 {
@@ -76,7 +83,8 @@ public function store(Request $request, Patient $patient)
         'montant_paye' => $montantPaye,
         'reste_a_payer' => $resteAPayer,
         'date_consultation' => now(),
-        'numero_recu' => date('Ymd').'-'.Str::upper(Str::random(6)),
+        // 'numero_recu' => date('Ymd').'-'.Str::upper(Str::random(6)),
+        'numero_recu' => $this->generateReceiptNumber(),
     ]);
 
     // Enregistrement des prestations

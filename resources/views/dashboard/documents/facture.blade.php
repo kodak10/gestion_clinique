@@ -1,269 +1,371 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Facture Proforma</title>
-  <style>
-    @page {
-      size: A4 portrait;
-      margin: 5px;
-    }
-    body {
-      font-family: Arial, sans-serif;
-      background: #f3f2f2;
-      margin: 0;
-      padding: 0;
-    }
-    .header {
-      background: #000;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-    .logo {
-      float: left;
-      margin-top: -20px;
-    }
-    .logo img {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-    }
-    .title {
-      font-size: 20px;
-      font-weight: bold;
-    }
-    .sub-title {
-      font-size: 18px;
-      margin-top: 10px;
-    }
-    .clearfix {
-      clear: both;
-    }
-    .section {
-      margin: 0;
-    }
-    .block {
-      display: inline-block;
-      vertical-align: top;
-      width: 48%;
-      margin-bottom: 10px;
-    }
-    .block h4 {
-      background: #d9d6d1;
-      padding: 5px;
-      margin: 0 0 5px 0;
-    }
-    .block p {
-      margin: 5px 0;
-    }
-    .block input {
-      border: none;
-      border-bottom: 1px solid #000;
-      background: transparent;
-      width: 80%;
-    }
-    .dates {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    .dates span {
-      background: #000;
-      color: white;
-      padding: 5px 10px;
-      margin: 5px;
-      display: inline-block;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    th, td {
-      border: 1px solid #000;
-      padding: 5px;
-      text-align: center;
-      font-size: 14px;
-    }
-    th {
-      background: #000;
-      color: white;
-    }
-    .totaux {
-      margin-top: 20px;
-      float: right;
-      width: 40%;
-    }
-    .totaux td {
-      text-align: left;
-    }
-    .totaux th {
-      background: #000;
-      color: white;
-    }
-    .footer {
-      clear: both;
-      margin: 20px;
-      font-size: 14px;
-    }
-    .footer p {
-      margin: 5px 0;
-    }
-    .mention {
-      background: red;
-      color: white;
-      text-align: center;
-      padding: 10px;
-      margin-top: 30px;
-      font-weight: bold;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Facture d'Hospitalisation</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 1cm;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            font-size: 12px;
+        }
+        
+        .invoice-container {
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        .header {
+            width: 100%;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #1a5276;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logo-placeholder img {
+            width: 80px;
+            height: 80px;            
+            text-align: center;
+            line-height: 80px;
+            float: left;
+        }
+        
+        .header-center {
+            text-align: center;
+            margin: 0 100px;
+        }
+        
+        .header-center h1 {
+            color: #1a5276;
+            margin: 0;
+            font-size: 18px;
+            text-transform: uppercase;
+        }
+        
+        .header-center p {
+            margin: 3px 0;
+            font-size: 12px;
+            color: #555;
+        }
+        
+        .qr-code {
+            width: 80px;
+            height: 80px;
+            background-color: #f0f0f0;
+            border: 1px dashed #999;
+            color: #666;
+            text-align: center;
+            line-height: 80px;
+            float: right;
+        }
+        
+        .invoice-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 15px 0;
+            color: #1a5276;
+            text-decoration: underline;
+        }
+        
+        .invoice-number {
+            text-align: center;
+            margin: 10px auto;
+            padding: 8px;
+            background-color: #1a5276;
+            color: white;
+            font-weight: bold;
+            border-radius: 3px;
+            width: 200px;
+            font-size: 12px;
+        }
+        
+        .info-grid {
+            width: 100%;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        
+        .column-left {
+            width: 48%;
+            float: left;
+        }
+        
+        .column-right {
+            width: 48%;
+            float: right;
+        }
+        
+        .info-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+        }
+        
+        .info-card h3 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            color: white;
+            padding: 6px;
+            background-color: #1a5276;
+            border-radius: 3px;
+        }
+        
+        .info-row {
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+        
+        .info-row strong {
+            display: inline-block;
+            width: 120px;
+            color: #555;
+        }
+        
+        .highlight-box {
+            background: #1a5276;
+            border-left: 4px solid #3498db;
+            padding: 6px;
+            margin: 8px 0;
+            font-weight: bold;
+            color: white;
+            font-size: 12px;
+            width: 48%;
+            display: inline-block;
+            box-sizing: border-box;
+        }
+        
+        .dates-container {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .payment-row {
+            width: 100%;
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+        
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 12px;
+        }
+        
+        .items-table th {
+            background-color: #1a5276;
+            color: white;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .items-table td {
+            padding: 6px;
+            border: 1px solid #ddd;
+        }
+        
+        .items-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .total-section {
+            width: 35%;
+            float: right;
+            border: 1px solid #ddd;
+            border-top: none;
+            margin-top: -1px;
+        }
+        
+        .total-row {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            display: table;
+            width: 100%;
+        }
+        
+        .total-row span {
+            display: table-cell;
+            width: 60%;
+        }
+        
+        .total-row strong {
+            display: table-cell;
+            width: 40%;
+            text-align: right;
+        }
+        
+        .total-row:last-child {
+            border-bottom: none;
+        }
+        
+        .signature-section {
+            
+            width: 100%;
+        }
+        
+        .signature-box {
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+        
+        .footer {
+            width: 100%;
+            margin-top: 20px;
+            padding-top: 10px;
+            font-size: 11px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+        
+        .clear {
+            clear: both;
+        }
+    </style>
 </head>
 <body>
+    <div class="invoice-container">
+        <div class="header">
+            
+            <div class="logo-placeholder"><img src="assets/dist/img/logo.png" alt=""></div>
+            <div class="qr-code">
+              @if($hospitalisation->qr_code_path)
+                <img src="{{ asset('storage/'.$hospitalisation->qr_code_path) }}" alt="QR Code">
+              @endif
+            </div>
+            
+            <div class="header-center">
+                <h1>CLINIQUE SILOE CORPORATION</h1>
+                <p>BP 1234 Abidjan | Tél: 01 02 03 04 05 | Email: contact@cliniquesiloe.ci</p>
+            </div>
+            <div class="clear"></div>
+        </div>
+        
+        <div class="invoice-title">FACTURE D'HOSPITALISATION</div>
+        
+        <div class="invoice-number">N° Facture : {{ $hospitalisation->numero_facture ?? 'H00540' }}</div>
+        
+        <div class="info-grid">
+            <div class="column-left">
+                <div class="info-card">
+                    <h3>Coordonnées du patient</h3>
+                    <div class="info-row"><strong>Dossier n°:</strong> {{ $hospitalisation->patient->num_dossier }}</div>
+                    <div class="info-row"><strong>Nom du Patient :</strong> {{ $hospitalisation->patient->nom }} {{ $hospitalisation->patient->prenoms }}</div>
+                    <div class="info-row"><strong>Date de Naissance:</strong> {{ optional($hospitalisation->patient->date_naissance)->format('d/m/Y') }}</div>
+                    <div class="info-row"><strong>Contact :</strong> {{ $hospitalisation->patient->contact_patient ?? '' }}</div>
+                    <div class="info-row"><strong>Contact parent:</strong> {{ $hospitalisation->patient->contact_urgence ?? '' }}</div>
+                </div>
+            </div>
+            
+            <div class="column-right">
+                <div class="info-card">
+                    <h3>Medecin Traitant</h3>
+                    <div class="info-row"><strong>Nom :</strong> {{ $hospitalisation->medecin->nom_complet }}</div>
+                    <div class="info-row"><strong>Spécialité:</strong> {{ $hospitalisation->medecin->specialite->nom }}</div>
+                </div>
+                
+                <div class="info-card">
+                    <h3>Assurance</h3>
+                    <div class="info-row"><strong>Assurance :</strong> {{ $hospitalisation->patient->assurance->name ?? 'Aucun' }}</div>
+                    <div class="info-row"><strong>Matricule:</strong> {{ $hospitalisation->patient->matricule_assurance ?? 'Aucun' }}</div>
+                    <div class="info-row"><strong>Taux de couverture:</strong> {{ $hospitalisation->patient->taux_couverture ?? '0' }}%</div>
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+        
+        <div class="dates-container">
+            <div class="highlight-box" style="float: left;"><strong>Date D'entrée:</strong> {{ optional($hospitalisation->date_entree)->format('d/m/Y') }}</div>
+            <div class="highlight-box" style="float: right;"><strong>Date de Sortie:</strong> {{ optional($hospitalisation->date_sortie)->format('d/m/Y') }}</div>
+            <div class="clear"></div>
+        </div>
+        
+        <div class="payment-row">
+            <div style="float: left; width: 48%;">
+                <div class="info-row"><strong>Caution:</strong> {{ number_format($hospitalisation->caution ?? 6000, 0, ',', ' ') }} FCFA</div>
+            </div>
+            <div style="float: right; width: 48%;">
+                <div class="info-row"><strong>Payeur:</strong> {{ $hospitalisation->payeur ?? '' }}</div>
+            </div>
+            <div class="clear"></div>
+        </div>
+        
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th width="5%">N°</th>
+                    <th width="35%">Libellé</th>
+                    <th width="15%">Prix Unitaire</th>
+                    <th width="10%">Qte</th>
+                    <th width="15%">Prise en charge</th>
+                    <th width="20%">Montant</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($details as $detail)
+                  <tr>
+                      <td>{{ $loop->iteration }}</td>
+                      <td>{{ $detail->frais->libelle }}</td>
+                      <td>{{ number_format($detail->prix_unitaire ?? 0, 0, ',', ' ') }}</td>
+                      <td>{{ $detail->quantite ?? 1 }}</td>
+                      <td>{{ $detail->taux ?? 0 }}</td>
+                      <td>{{ number_format($detail->total ?? 0, 0, ',', ' ') }}</td>
+                  </tr>
+                  @endforeach
 
-  <div class="header">
-    <div class="logo">
-      <img src="{{ public_path('assets/dist/img/logo.png') }}" alt="Logo">
+            </tbody>
+        </table>
+        
+       <div class="total-section">
+          <div class="total-row">
+              <span>Total TTC :</span>
+              <strong>{{ number_format($hospitalisation->total ?? 0, 0, ',', ' ') }}</strong>
+          </div>
+          <div class="total-row">
+              <span>Ticket Modérateur :</span>
+              <strong>{{ number_format($hospitalisation->ticket_moderateur ?? 0, 0, ',', ' ') }}</strong>
+          </div>
+          <div class="total-row">
+              <span>Réduction :</span>
+              <strong>{{ number_format($hospitalisation->reduction ?? 0, 0, ',', ' ') }}</strong>
+          </div>
+          <div class="total-row">
+              <span>Net à Payer :</span>
+              <strong>{{ number_format($hospitalisation->montant_a_paye ?? 0, 0, ',', ' ') }} FCFA</strong>
+          </div>
+      </div>
+
+        
+        <div class="signature-section">
+            <div class="signature-box">
+                <p>Etablie le : <span>{{ now()->format('d/m/Y à H\hi') }}</span></p>
+                <p style="margin-bottom: 50px;">Par : <span>{{ $hospitalisation->user->name }}</span></p>
+                <span>Arrêté la présente facture à la somme de:</span><br>
+                <p><strong>{{ $montantEnLettres }} francs CFA</strong></p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <span>Aucun remboursement ne sera possible après règlement de la facture.</span><br>
+            <span><strong>La Direction</strong></span>
+            <div style="margin-top: 5px; font-size: 10px;">
+                Développé par ATCHIN PARFAIT | Email: Atchinaymard10@gmail.com | Tél: +2250103810998
+            </div>
+        </div>
     </div>
-    <div class="title">CLINIQUE SILOE CORPORATION</div>
-    <div class="sub-title">FACTURE PROFORMA</div>
-    <div class="clearfix"></div>
-  </div>
-
-  <div class="section">
-    <div class="block">
-      <h4>COORDONNEES DU PATIENT</h4>
-      <p>NOM ET PRENOMS : {{ $patient->nom }} {{ $patient->prenoms }}</p>
-      <p>DATE DE NAISSANCE : {{ $patient->date_naissance->format('d/m/Y') }}</p>
-    </div>
-    <div class="block">
-      <h4>MEDECIN TRAITANT</h4>
-      <p>NOM : {{ $medecin->nom_complet }}</p>
-      <h4>SPECIALITE</h4>
-      <p>{{ $medecin->specialite->nom }}</p>
-    </div>
-    <div class="dates">
-      <span>DATE D'ENTREE: {{ $hospitalisation->date_entree->format('d/m/Y') }}</span>
-      <span>DATE DE SORTIE: {{ $hospitalisation->date_sortie->format('d/m/Y') }}</span>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>N°</th>
-          <th>LIBELLÉ</th>
-          <th>QTE</th>
-          <th>PRIX UNITAIRE</th>
-          <th>TAUX</th>
-          <th>TOTAL</th>
-        </tr>
-      </thead>
-      <tbody>
-        @foreach($details as $index => $detail)
-        <tr>
-          <td>{{ $index + 1 }}</td>
-          <td>{{ $detail->frais->libelle }}</td>
-          <td>{{ $detail->quantite }}</td>
-          <td>{{ number_format($detail->prix_unitaire, 0, ',', ' ') }}</td>
-          <td>{{ number_format($detail->taux, 0, ',', ' ') }}%</td>
-          <td>{{ number_format($detail->total, 0, ',', ' ') }}</td>
-        </tr>
-        @endforeach
-      </tbody>
-    </table>
-
-    <table class="totaux">
-      <tr><th>TOTAL TTC</th><td>{{ number_format($hospitalisation->total, 0, ',', ' ') }} </td></tr>
-      <tr><th>TICKET MODERATEUR</th><td>{{ number_format($hospitalisation->ticket_moderateur, 0, ',', ' ') }}</td></tr>
-      <tr><th>REDUCTION</th><td>{{ number_format($hospitalisation->reduction, 0, ',', ' ') }}</td></tr>
-      <tr><th>NET A PAYER</th><td>{{ number_format($hospitalisation->montant_a_paye, 0, ',', ' ') }} FCFA</td></tr>
-    </table>
-
-    <div class="footer">
-      <p>Etablie le : {{ now()->format('d/m/Y') }} &nbsp;&nbsp;&nbsp; Par : {{ auth()->user()->name }}</p>
-      <p>Arrêté la présente facture à la somme de :</p>
-      <p><strong>{{ $montantEnLettres }} Francs CFA</strong></p>
-    </div>
-
-    <div class="mention">
-      Aucun remboursement ne sera possible après le règlement de la facture<br>
-      la Direction
-    </div>
-  </div>
-
 </body>
-{{-- <body>
-
-  <div class="header">
-    <div class="logo">
-      <img src="logo.png" alt="Logo">
-    </div>
-    <div class="title">CLINIQUE SILOE CORPORATION</div>
-    <div class="sub-title">FACTURE PROFORMA</div>
-    <div class="clearfix"></div>
-  </div>
-
-  <div class="section">
-    <div class="block">
-      <h4>COORDONNEES DU PATIENT</h4>
-      <p>NOM ET PRENOMS : <input type="text"></p>
-      <p>DATE DE NAISSANCE : <input type="text" style="width: 50%;"></p>
-    </div>
-    <div class="block">
-      <h4>MEDECIN TRAITANT</h4>
-      <p>NOM : <input type="text"></p>
-      <h4>ASSURANCE</h4>
-      <p>ASSURANCE : <input type="text"></p>
-    </div>
-    <div class="dates">
-      <span>DATE D’ENTREE</span>
-      <span>DATE DE SORTIE</span>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>N°</th>
-          <th>LIBELLÉ</th>
-          <th>QTE</th>
-          <th>PRIX UNITAIRE</th>
-          <th>TAUX</th>
-          <th>TOTAL</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- 10 lignes vides -->
-        <tr><td colspan="6">&nbsp;</td></tr>
-        <tr><td colspan="6">&nbsp;</td></tr>
-        <tr><td colspan="6">&nbsp;</td></tr>
-        <tr><td colspan="6">&nbsp;</td></tr>
-        <tr><td colspan="6">&nbsp;</td></tr>
-        <tr><td colspan="6">&nbsp;</td></tr>
-        <tr><td colspan="6">&nbsp;</td></tr>
-        <tr><td colspan="6">&nbsp;</td></tr>
-        <tr><td colspan="6">&nbsp;</td></tr>
-        <tr><td colspan="6">&nbsp;</td></tr>
-      </tbody>
-    </table>
-
-    <table class="totaux">
-      <tr><th>TOTAL TTC</th><td></td></tr>
-      <tr><th>TICKET MODERATEUR</th><td></td></tr>
-      <tr><th>REDUCTION</th><td></td></tr>
-      <tr><th>NET A PAYER</th><td></td></tr>
-    </table>
-
-    <div class="footer">
-      <p>ETABLI LE : ___________ &nbsp;&nbsp;&nbsp; PAR : __________________________</p>
-      <p>Arrêté la présente facture à la somme de :</p>
-      <p><strong>Centre Quarante mille Francs CFA</strong></p>
-    </div>
-
-    <div class="mention">
-      Aucun remboursement ne sera possible apres le reglement de la facture<br>
-      la Direction
-    </div>
-  </div>
-
-</body> --}}
 </html>

@@ -1,192 +1,409 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Facture Proforma</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f3f2f2;
-      margin: 0;
-      padding: 0;
-    }
-    .header {
-      background: #000;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-    .logo {
-      float: left;
-      margin-top: -20px;
-    }
-    .logo img {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-    }
-    .title {
-      font-size: 20px;
-      font-weight: bold;
-    }
-    .sub-title {
-      font-size: 18px;
-      margin-top: 10px;
-    }
-    .clearfix {
-      clear: both;
-    }
-    .section {
-      margin: 20px;
-    }
-    .block {
-      display: inline-block;
-      vertical-align: top;
-      width: 48%;
-      margin-bottom: 10px;
-    }
-    .block h4 {
-      background: #d9d6d1;
-      padding: 5px;
-      margin: 0 0 5px 0;
-    }
-    .block p {
-      margin: 5px 0;
-    }
-    .block input {
-      border: none;
-      border-bottom: 1px solid #000;
-      background: transparent;
-      width: 80%;
-    }
-    .dates {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    .dates span {
-      background: #000;
-      color: white;
-      padding: 5px 10px;
-      margin: 5px;
-      display: inline-block;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    th, td {
-      border: 1px solid #000;
-      padding: 5px;
-      text-align: center;
-      font-size: 14px;
-    }
-    th {
-      background: #000;
-      color: white;
-    }
-    .totaux {
-      margin-top: 20px;
-      float: right;
-      width: 40%;
-    }
-    .totaux td {
-      text-align: left;
-    }
-    .totaux th {
-      background: #000;
-      color: white;
-    }
-    .footer {
-      clear: both;
-      margin: 20px;
-      font-size: 14px;
-    }
-    .footer p {
-      margin: 5px 0;
-    }
-    .mention {
-      background: red;
-      color: white;
-      text-align: center;
-      padding: 10px;
-      margin-top: 30px;
-      font-weight: bold;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Facture d'Hospitalisation</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f9f9f9;
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        .invoice-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+            padding-bottom: 150px;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #1a5276;
+            position: relative;
+        }
+        
+        .logo-placeholder {
+            width: 80px;
+            height: 80px;
+            background-color: #f0f0f0;
+            border: 1px dashed #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+        
+        .header-center {
+            text-align: center;
+            flex-grow: 1;
+            padding: 0 20px;
+        }
+        
+        .header-center h1 {
+            color: #1a5276;
+            margin: 0;
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+        
+        .header-center p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .invoice-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #1a5276;
+            text-decoration: underline;
+            position: relative;
+        }
+        
+        .invoice-number {
+    text-align: center;
+    margin: 15px auto; /* auto centre horizontalement */
+    padding: 10px;
+    background-color: #1a5276;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    display: block; /* nécessaire pour que margin auto fonctionne */
+    width: 200px;
+    box-sizing: border-box;
+}
+
+        
+        .info-grid {
+            display: block;
+            width: 100%;
+            margin-bottom: 0px;
+        }
+        
+        .info-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+        }
+        
+        .info-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: white;
+            padding: 8px;
+            background-color: #1a5276;
+            border-radius: 3px;
+            width: 100%;
+        }
+        
+        .info-row {
+            margin-bottom: 8px;
+            font-size: 13px;
+            display: flex;
+        }
+        
+        .info-row strong {
+            display: inline-block;
+            width: 150px;
+            color: #555;
+        }
+        
+        .highlight-box {
+            background: #1a5276;
+            border-left: 4px solid #3498db;
+            padding: 8px;
+            margin: 10px 0;
+            font-weight: bold;
+            display: inline-block;
+            width: 48%;
+            color: white;
+        }
+        
+        .dates-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .dates-container .highlight-box:first-child {
+            margin-right: 20px;
+        }
+        
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .items-table th {
+            background-color: #1a5276;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .items-table td {
+            padding: 6px 5px;
+            border: 1px solid #ddd;
+            line-height: 1.3;
+            
+        }
+        
+        .items-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .total-section {
+            margin-top: -1px;
+            float: right;
+            width: 35%;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .total-row:last-child {
+            border-bottom: none;
+        }
+        
+        .signature-section {
+            margin-top: 40px;
+        }
+        
+        .signature-box {
+            margin-bottom: 20px;
+        }
+        
+        .footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px 30px;
+            font-size: 12px;
+            text-align: center;
+            
+            background-color: white;
+        }
+        
+        .qr-code {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 100px;
+            height: 100px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px dashed #999;
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .clear {
+            clear: both;
+        }
+    </style>
 </head>
 <body>
-
-  <div class="header">
-    <div class="logo">
-      <img src="logo.png" alt="Logo">
+    <div class="invoice-container">
+        <div class="qr-code">QR CODE</div>
+        
+        <div class="header">
+            <div class="logo-placeholder">LOGO</div>
+            <div class="header-center">
+                <h1>CLINIQUE SILOE CORPORATION</h1>
+                <p>BP 1234 Abidjan | Tél: 01 02 03 04 05 | Email: contact@cliniquesiloe.ci</p>
+            </div>
+            <div style="width: 80px;"></div> <!-- Pour équilibrer le layout -->
+        </div>
+        
+        <div class="invoice-title">FACTURE D'HOSPITALISATION </div>
+        
+        <div class="invoice-number"><span>N° Facture : H00540</span> </div>
+        
+        <div class="info-grid">
+            <div style="display: flex; gap: 20px;">
+                <div style="width: 48%;">
+                    <div class="info-card">
+                        <h3 class="highlight-box">Coordonnées du patient</h3>
+                        <div class="info-row"><strong>Dossier n°:</strong> P268/07/24</div>
+                        <div class="info-row"><strong>Nom du Patient :</strong> KPANGNI ABDOUL RAZAK</div>
+                        <div class="info-row"><strong>Date de Naissance:</strong> 01/01/2021</div>
+                        <div class="info-row"><strong>Contact :</strong> 0544737645</div>
+                        <div class="info-row"><strong>Nom du parent:</strong> MME KPANGNI</div>
+                        <div class="info-row"><strong>Contact parent:</strong> 0709215747</div>
+                    </div>
+                </div>
+                
+                <div style="width: 48%;">
+                    <div class="info-card">
+                        <h3 class="highlight-box">Medecin Traitant</h3>
+                        <div class="info-row"><strong>Nom :</strong> DR TIA SYLVAIN</div>
+                        <div class="info-row"><strong>Spécialité:</strong> RESIDENT</div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3 class="highlight-box">Assurance</h3>
+                        <div class="info-row"><strong>Assurance :</strong> Aucun</div>
+                        <div class="info-row"><strong>Matricule:</strong> Aucun</div>
+                        <div class="info-row"><strong>Taux de couverture:</strong> 0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dates-container">
+            <div class="highlight-box"><strong>Date D'entrée:</strong> 21/07/2024</div>
+            <div class="highlight-box"><strong>Date de Sortie:</strong> 23/07/2024</div>
+        </div>
+        
+        <div class="payment-row">
+            <div style="width: 48%;">
+                <div class="info-row"><strong>Caution:</strong> 6 000 </div>
+            </div>
+            <div style="width: 48%;">
+                <div class="info-row"><strong>Payeur:</strong> KPANGNI ABDOUL RAZAK</div>
+            </div>
+        </div>
+        
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th width="5%">N°</th>
+                    <th width="35%">Libellé</th>
+                    <th width="15%">Prix Unitaire</th>
+                    <th width="10%">Qte</th>
+                    <th width="15%">Prise en charge</th>
+                    <th width="20%">Montant</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>ACTE DE TRANSFUSION</td>
+                    <td>10 000</td>
+                    <td>1</td>
+                    <td>0%</td>
+                    <td>10 000</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>ASSISTANCE MEDICALE</td>
+                    <td>18 000 </td>
+                    <td>2</td>
+                    <td>0%</td>
+                    <td>36 000 </td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>INFIMIERE</td>
+                    <td>14 000 </td>
+                    <td>1</td>
+                    <td>0%</td>
+                    <td>14 000 </td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>CHAMBRE SIMPLE</td>
+                    <td>20 000 </td>
+                    <td>2</td>
+                    <td>0%</td>
+                    <td>40 000 </td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>CONSULTATION PEDIATRIE</td>
+                    <td>14 000 </td>
+                    <td>1</td>
+                    <td>0%</td>
+                    <td>14 000 </td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>PHARMACIE</td>
+                    <td>26 850 </td>
+                    <td>1</td>
+                    <td>0%</td>
+                    <td>26 850 </td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>VISITE MEDICALE</td>
+                    <td>11 200 </td>
+                    <td>1</td>
+                    <td>0%</td>
+                    <td>11 200 </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="total-section">
+            <div class="total-row">
+                <span>Total TTC :</span>
+                <strong>152 050 </strong>
+            </div>
+            <div class="total-row">
+                <span>Ticket Moderateur :</span>
+                <strong>0 </strong>
+            </div>
+            <div class="total-row">
+                <span>Réduction :</span>
+                <strong>0 </strong>
+            </div>
+            <div class="total-row">
+                <span>Net A Payer :</span>
+                <strong>146 050 FCFA</strong>
+            </div>
+        </div>
+        
+        <div class="signature-section">
+            <div class="signature-box">
+                <p>Elablie le :  <span>18/07/2025 à 09h12</span></p>
+                <p style="margin-bottom: 100px;">Par :  <span>NGORAN RICHARD</span></p>
+                <span>Arrêté la présente facture à la somme de:</span> <br>
+                <p><strong>Cent Quarante-Six Mille Cinquante Francs CFA</strong></p>
+            </div>
+            
+        </div>
+        
+        <div class="footer">
+            <sapn>Aucun remboursement ne sera possible après reglement de la facture.</span><br>
+            <span><strong>La Direction</strong></span>
+            <div class="developer-info" style="margin-top: 10px;border-top: 1px solid #ddd;">
+                Développé par ATCHIN PARFAIT | Email: Atchinaymard10@gmail.com | Tél: +2250103810998
+            </div>
+        </div>
     </div>
-    <div class="title">CLINIQUE SILOE CORPORATION</div>
-    <div class="sub-title">FACTURE PROFORMA</div>
-    <div class="clearfix"></div>
-  </div>
-
-  <div class="section">
-    <div class="block">
-      <h4>COORDONNEES DU PATIENT</h4>
-      <p>NOM ET PRENOMS : <input type="text"></p>
-      <p>DATE DE NAISSANCE : <input type="text" style="width: 50%;"></p>
-    </div>
-    <div class="block">
-      <h4>MEDECIN TRAITANT</h4>
-      <p>NOM : <input type="text"></p>
-      <h4>ASSURANCE</h4>
-      <p>ASSURANCE : <input type="text"></p>
-    </div>
-    <div class="dates">
-      <span>DATE D’ENTREE</span>
-      <span>DATE DE SORTIE</span>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>N°</th>
-          <th>LIBELLÉ</th>
-          <th>QTE</th>
-          <th>PRIX UNITAIRE</th>
-          <th>TAUX</th>
-          <th>TOTAL</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- 10 lignes vides -->
-        <tr><td colspan="6">&nbsp;</td></tr>
-        <tr><td colspan="6">&nbsp;</td></tr>
-        <tr><td colspan="6">&nbsp;</td></tr>
-        <tr><td colspan="6">&nbsp;</td></tr>
-        <tr><td colspan="6">&nbsp;</td></tr>
-        <tr><td colspan="6">&nbsp;</td></tr>
-        <tr><td colspan="6">&nbsp;</td></tr>
-        <tr><td colspan="6">&nbsp;</td></tr>
-        <tr><td colspan="6">&nbsp;</td></tr>
-        <tr><td colspan="6">&nbsp;</td></tr>
-      </tbody>
-    </table>
-
-    <table class="totaux">
-      <tr><th>TOTAL TTC</th><td></td></tr>
-      <tr><th>TICKET MODERATEUR</th><td></td></tr>
-      <tr><th>REDUCTION</th><td></td></tr>
-      <tr><th>NET A PAYER</th><td></td></tr>
-    </table>
-
-    <div class="footer">
-      <p>ETABLI LE : ___________ &nbsp;&nbsp;&nbsp; PAR : __________________________</p>
-      <p>Arrêté la présente facture à la somme de :</p>
-      <p><strong>Centre Quarante mille Francs CFA</strong></p>
-    </div>
-
-    <div class="mention">
-      Aucun remboursement ne sera possible apres le reglement de la facture<br>
-      la Direction
-    </div>
-  </div>
-
 </body>
 </html>

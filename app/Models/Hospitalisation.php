@@ -14,6 +14,8 @@ class Hospitalisation extends Model
     use HasFactory, LogsActivity, SoftDeletes;
 
     protected $fillable = [
+        'numero_facture',
+        'qr_code_path',
         'patient_id',
         'user_id', 
         'medecin_id',
@@ -58,6 +60,8 @@ class Hospitalisation extends Model
     {
         return $this->belongsTo(Medecin::class);
     }
+
+    
     
 
     public function fraisHospitalisations()

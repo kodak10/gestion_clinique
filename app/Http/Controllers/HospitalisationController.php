@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use NumberToWords\NumberToWords;
 
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 class HospitalisationController extends Controller
 {
 
@@ -43,26 +44,23 @@ class HospitalisationController extends Controller
     }
 
 
-    public function storeSimple(Patient $patient)
+   public function storeSimple(Patient $patient)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Caissière'])) {
             abort(403, 'Accès non autorisé.');
         }
-
-        // Vérifier qu'il n'est pas déjà hospitalisé
-        // $existe = Hospitalisation::where('patient_id', $patient->id)->whereNull('date_sortie')->exists();
-
-        // if ($existe) {
-        //     return redirect()->back()->with('error', 'Ce patient est déjà hospitalisé.');
-        // }
 
         DB::beginTransaction();
 
         try {
+            // Génération du numéro de facture unique
+            $numeroFacture = $this->generateInvoiceNumber();
+
             // Création de l'hospitalisation
             $hospitalisation = Hospitalisation::create([
                 'patient_id' => $patient->id,
                 'user_id' => auth()->id(),
+                'numero_facture' => $numeroFacture,
                 'total' => 0,
                 'ticket_moderateur' => 0,
                 'reduction' => 0,
@@ -71,7 +69,20 @@ class HospitalisationController extends Controller
                 'date_entree' => now(),
             ]);
 
-            // Ajout des deux lignes de détails avec frais_hospitalisation_id 1 et 2
+            // Génération et stockage du QR code
+            $qrContent = "HOSP-{$hospitalisation->id}-{$numeroFacture}";
+            $qrCode = QrCode::format('png')->size(200)->generate($qrContent);
+            
+            $directory = 'qr-codes/hospitalisations';
+            $fileName = "hosp-{$hospitalisation->id}-{$numeroFacture}.png";
+            $path = "{$directory}/{$fileName}";
+            
+            Storage::disk('public')->put($path, $qrCode);
+            
+            // Mise à jour avec le chemin du QR code
+            $hospitalisation->update(['qr_code_path' => $path]);
+
+            // Ajout des deux lignes de détails
             $hospitalisation->details()->createMany([
                 [
                     'frais_hospitalisation_id' => 1,
@@ -92,11 +103,24 @@ class HospitalisationController extends Controller
             ]);
 
             DB::commit();
-            return redirect()->back()->with('success', 'Le patient a été hospitalisé.');
+            
+            return redirect()->back()->with([
+                'success' => 'Le patient a été hospitalisé avec le numéro de facture: '.$numeroFacture,
+                'qr_code_path' => $path // Optionnel: pour afficher directement
+            ]);
+            
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Erreur : ' . $e->getMessage());
         }
+    }
+
+    private function generateInvoiceNumber()
+    {
+        $lastInvoice = Hospitalisation::orderBy('id', 'desc')->first();
+        $lastNumber = $lastInvoice ? intval(substr($lastInvoice->numero_facture, 1)) : 0;
+        $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+        return 'H' . $newNumber;
     }
 
     public function sortir(Hospitalisation $hospitalisation)
