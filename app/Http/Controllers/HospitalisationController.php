@@ -31,7 +31,7 @@ class HospitalisationController extends Controller
 
    public function index()
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Pharmacien', 'Manager'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Pharmacien','Laboratin', 'Manager'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -161,7 +161,7 @@ class HospitalisationController extends Controller
 
     public function createPharmacie(Hospitalisation $hospitalisation)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Laboratin', 'Receptionniste', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Comptable'])) {
             abort(403, 'Accès non autorisé.');
         }
 
