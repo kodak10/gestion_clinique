@@ -8,6 +8,9 @@
                 <h2 class="page-title">Pharmacie</h2>
             </div>
             <div class="col">
+                <a href="#" class="btn btn-2 float-end mr-3" data-bs-toggle="modal" data-bs-target="#modal-report">Ajouter un Médicament</a>
+            </div>
+            <div class="col">
                 <a href="{{ route('print.pharmacie', $hospitalisation->id) }}" 
                                 target="_blank"
                                 class="btn btn-sm btn-primary">
@@ -158,6 +161,115 @@
         </div>
     </div>
 </form>
+
+<!-- Modal de création -->
+<div class="modal modal-blur fade" id="modal-report" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nouveau Médicament</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('medicaments.store') }}" method="POST" class="form-loader">
+                @csrf
+                <div class="modal-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label class="form-label">Code</label>
+                                <input type="text" class="form-control @error('code') is-invalid @enderror" name="code" value="{{ old('code') }}" required>
+                                @error('code')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label class="form-label">Nom</label>
+                                <input type="text" class="form-control @error('nom') is-invalid @enderror" name="nom" value="{{ old('nom') }}" required>
+                                @error('nom')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label class="form-label">Unité de mesure</label>
+                                <input type="text" class="form-control @error('unite_mesure') is-invalid @enderror" name="unite_mesure" value="{{ old('unite_mesure') }}" required>
+                                @error('unite_mesure')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label class="form-label">Prix d'achat (FCFA)</label>
+                                <input type="number" step="0.01" class="form-control @error('prix_achat') is-invalid @enderror" name="prix_achat" value="{{ old('prix_achat') }}" required>
+                                @error('prix_achat')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label class="form-label">Prix de vente (FCFA)</label>
+                                <input type="number" step="0.01" class="form-control @error('prix_vente') is-invalid @enderror" name="prix_vente" value="{{ old('prix_vente') }}" required>
+                                @error('prix_vente')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label class="form-label">Stock initial</label>
+                                <input type="number" class="form-control @error('stock') is-invalid @enderror" name="stock" value="{{ old('stock', 0) }}" required>
+                                @error('stock')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label class="form-label">Stock d'alerte</label>
+                                <input type="number" class="form-control @error('stock_alerte') is-invalid @enderror" name="stock_alerte" value="{{ old('stock_alerte', 10) }}" required>
+                                @error('stock_alerte')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label class="form-label">Date péremption</label>
+                                <input type="date" class="form-control @error('date_peremption') is-invalid @enderror" name="date_peremption" value="{{ old('date_peremption') }}">
+                                @error('date_peremption')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-link link-secondary btn-3" data-bs-dismiss="modal">Annuler</a>
+                    <button type="submit" class="btn btn-primary btn-5 ms-auto">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
     </div>
 </div>
