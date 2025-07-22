@@ -4,6 +4,7 @@ use App\Http\Controllers\AccueilController;
 use App\Http\Controllers\AssuranceController;
 use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\DepenseController;
+use App\Http\Controllers\ExamenController;
 use App\Http\Controllers\FraisHospitalisationController;
 use App\Http\Controllers\HistoriqueController;
 use App\Http\Controllers\HospitalisationController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\TracabiliteController;
 use App\Http\Controllers\UtilisateurController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
 
 
 
@@ -127,6 +129,8 @@ Route::middleware(['auth',])->group(function () {
 
     //Route::resource('medicaments', MedicamentController::class);
     Route::resource('medicaments', MedicamentController::class)->except(['show']);
+
+    Route::resource('examens', ExamenController::class)->except(['show']);
 
     Route::post('/{medicament}/update-stock', [MedicamentController::class, 'updateStock'])
          ->name('medicaments.update-stock');

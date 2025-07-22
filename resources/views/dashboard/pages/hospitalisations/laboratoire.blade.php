@@ -8,6 +8,10 @@
                 <h2 class="page-title">Examens</h2>
             </div>
             <div class="col">
+                <a href="#" class="btn btn-2 float-end mr-3" data-bs-toggle="modal" data-bs-target="#modal-examen">Ajouter un Examen</a>
+            </div>
+            </div>
+            <div class="col">
                 <a href="{{ route('print.laboratoire', $hospitalisation->id) }}" 
                                 target="_blank"
                                 class="btn btn-sm btn-primary">
@@ -31,142 +35,213 @@
         @endif
         
         <form id="consultation-form" action="{{ route('hospitalisations.laboratoire.store', $hospitalisation->id) }}" method="POST">
-    @csrf
-    <input type="hidden" name="numero_recu" id="numero-recu">
+            @csrf
+            <input type="hidden" name="numero_recu" id="numero-recu">
 
-    <div class="row">
-        <!-- Informations Patient -->
-        <div class="col-md-12">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h3 class="card-title">Informations Patient</h3>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label class="form-label">Nom & Prénoms</label>
-                                <input type="text" class="form-control" value="{{ $patient->nom }} {{ $patient->prenoms }}" readonly>
-                            </div>
+            <div class="row">
+                <!-- Informations Patient -->
+                <div class="col-md-12">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Informations Patient</h3>
                         </div>
-                        <div class="col-lg-3">
-                            <div class="mb-3">
-                                <label class="form-label">Assurance</label>
-                                <input type="text" class="form-control" value="{{ $patient->assurance->name ?? 'Aucune' }}" readonly>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <div class="mb-3">
-                                <label class="form-label">Taux Couverture</label>
-                                <input type="text" class="form-control" id="assurance-taux" value="{{ $patient->assurance->taux ?? '0' }}%" readonly>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nom & Prénoms</label>
+                                        <input type="text" class="form-control" value="{{ $patient->nom }} {{ $patient->prenoms }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">Assurance</label>
+                                        <input type="text" class="form-control" value="{{ $patient->assurance->name ?? 'Aucune' }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">Taux Couverture</label>
+                                        <input type="text" class="form-control" id="assurance-taux" value="{{ $patient->assurance->taux ?? '0' }}%" readonly>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Carte examens -->
-        <div class="col-md-12">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="examens-repeater">
-                        <div data-repeater-list="examens">
+                <!-- Carte examens -->
+                <div class="col-md-12">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="examens-repeater">
+                                <div data-repeater-list="examens">
 
-                            {{-- examens déjà prescrits --}}
-                            @foreach($examensPrescrits as $med)
-                                <div data-repeater-item class="mb-3 border-bottom pb-3">
-                                    <div class="row mt-2">
-                                        <div class="col-md-4">
-                                            <select class="form-select examen-select" name="examen_id" required>
-                                                <option value="">Sélectionner un examen</option>
-                                                @foreach($allexamens as $option)
-                                                    <option value="{{ $option->id }}"
-                                                        data-prix="{{ $option->prix }}"
-                                                        {{ $option->id == $med->id ? 'selected' : '' }}>
-                                                        {{ $option->nom }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <input type="number" class="form-control montant" name="montant" value="{{ $med->pivot->prix }}">
-                                        </div>
-                                        <div class="col-md-1">
-                                            <input type="number" class="form-control quantite" name="quantite" value="{{ $med->pivot->quantite }}">
-                                        </div>
-                                        <div class="col-md-2">
-                                            {{-- <input type="number" class="form-control taux" name="taux" value="{{ $patient->taux_couverture ?? '0' }}" min="0" max="100"> --}}
-                                            <input type="number" class="form-control taux" name="taux" value="{{ old('taux', $med->pivot->taux ?? $patient->taux_couverture ?? 0) }}" min="0" max="100" step="1" required>
+                                    {{-- examens déjà prescrits --}}
+                                    @foreach($examensPrescrits as $med)
+                                        <div data-repeater-item class="mb-3 border-bottom pb-3">
+                                            <div class="row mt-2">
+                                                <div class="col-md-4">
+                                                    <select class="form-select examen-select" name="examen_id" required>
+                                                        <option value="">Sélectionner un examen</option>
+                                                        @foreach($allexamens as $option)
+                                                            <option value="{{ $option->id }}"
+                                                                data-prix="{{ $option->prix }}"
+                                                                {{ $option->id == $med->id ? 'selected' : '' }}>
+                                                                {{ $option->nom }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input type="number" class="form-control montant" name="montant" value="{{ $med->pivot->prix }}">
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <input type="number" class="form-control quantite" name="quantite" value="{{ $med->pivot->quantite }}">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    {{-- <input type="number" class="form-control taux" name="taux" value="{{ $patient->taux_couverture ?? '0' }}" min="0" max="100"> --}}
+                                                    <input type="number" class="form-control taux" name="taux" value="{{ old('taux', $med->pivot->taux ?? $patient->taux_couverture ?? 0) }}" min="0" max="100" step="1" required>
 
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input type="number" class="form-control total" name="total" value="{{ $med->pivot->total }}" readonly>
+                                                </div>
+                                                
+                                                <div class="col-md-1">
+                                                    <button type="button" data-repeater-delete class="btn btn-danger btn-sm">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col-md-2">
-                                            <input type="number" class="form-control total" name="total" value="{{ $med->pivot->total }}" readonly>
+                                    @endforeach
+
+                                    {{-- Ligne vide pour nouveau examen (si aucun examen prescrit) --}}
+                                    @if($examensPrescrits->isEmpty())
+                                        <div data-repeater-item class="mb-3 border-bottom pb-3">
+                                            <div class="row mt-2">
+                                                <div class="col-md-4">
+                                                    <select class="form-select examen-select" name="examen_id" required>
+                                                        <option value="">Sélectionner un examen</option>
+                                                        @foreach($allexamens as $med)
+                                                            <option value="{{ $med->id }}" data-prix="{{ $med->prix }}">
+                                                                {{ $med->nom }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input type="number" class="form-control montant" name="montant" value="0">
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <input type="number" class="form-control quantite" name="quantite" value="1" min="1">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input type="number" class="form-control taux" name="taux" value="{{ $patient->assurance->taux ?? '0' }}" min="0" max="100">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input type="number" class="form-control total" name="total" value="0" readonly>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <button type="button" data-repeater-delete class="btn btn-danger btn-sm">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
-                                        
-                                        <div class="col-md-1">
-                                            <button type="button" data-repeater-delete class="btn btn-danger btn-sm">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
+                                    @endif
+
                                 </div>
-                            @endforeach
 
-                            {{-- Ligne vide pour nouveau examen (si aucun examen prescrit) --}}
-                            @if($examensPrescrits->isEmpty())
-                                <div data-repeater-item class="mb-3 border-bottom pb-3">
-                                    <div class="row mt-2">
-                                        <div class="col-md-4">
-                                            <select class="form-select examen-select" name="examen_id" required>
-                                                <option value="">Sélectionner un examen</option>
-                                                @foreach($allexamens as $med)
-                                                    <option value="{{ $med->id }}" data-prix="{{ $med->prix }}">
-                                                        {{ $med->nom }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <input type="number" class="form-control montant" name="montant" value="0">
-                                        </div>
-                                        <div class="col-md-1">
-                                            <input type="number" class="form-control quantite" name="quantite" value="1" min="1">
-                                        </div>
-                                        <div class="col-md-2">
-                                            <input type="number" class="form-control taux" name="taux" value="{{ $patient->assurance->taux ?? '0' }}" min="0" max="100">
-                                        </div>
-                                        <div class="col-md-2">
-                                            <input type="number" class="form-control total" name="total" value="0" readonly>
-                                        </div>
-                                        <div class="col-md-1">
-                                            <button type="button" data-repeater-delete class="btn btn-danger btn-sm">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
+                                <button type="button" data-repeater-create class="btn bg-primary-subtle text-primary mt-3">
+                                    <span class="fs-4 me-1">+</span>
+                                    Ajouter un autre examen
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bouton soumettre -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">Enregistrer la consultation</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+
+        <!-- Modal de création d'examen -->
+        <div class="modal modal-blur fade" id="modal-examen" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Nouvel Examen Médical</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ route('examens.store') }}" method="POST" class="form-loader">
+                        @csrf
+                        <div class="modal-body">
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
                                 </div>
                             @endif
-
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Code</label>
+                                        <input type="text" class="form-control @error('code') is-invalid @enderror" name="code" value="{{ old('code') }}" required>
+                                        @error('code')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nom</label>
+                                        <input type="text" class="form-control @error('nom') is-invalid @enderror" name="nom" value="{{ old('nom') }}" required>
+                                        @error('nom')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Prix (FCFA)</label>
+                                        <input type="number" step="0.01" class="form-control @error('prix') is-invalid @enderror" name="prix" value="{{ old('prix') }}" required>
+                                        @error('prix')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                
+                                
+                            </div>
+                            
+                           
+                            
+                            
+                            
+                           
                         </div>
-
-                        <button type="button" data-repeater-create class="btn bg-primary-subtle text-primary mt-3">
-                            <span class="fs-4 me-1">+</span>
-                            Ajouter un autre examen
-                        </button>
-                    </div>
+                        <div class="modal-footer">
+                            <a href="#" class="btn btn-link link-secondary btn-3" data-bs-dismiss="modal">Annuler</a>
+                            <button type="submit" class="btn btn-primary btn-5 ms-auto">Enregistrer</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-
-        <!-- Bouton soumettre -->
-        <div class="row mt-3">
-            <div class="col-12">
-                <button type="submit" class="btn btn-primary">Enregistrer la consultation</button>
-            </div>
-        </div>
-    </div>
-</form>
 
     </div>
 </div>

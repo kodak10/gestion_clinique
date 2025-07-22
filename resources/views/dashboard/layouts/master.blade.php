@@ -1,28 +1,44 @@
 <!doctype html>
-
 <html lang="fr">
-
   <head>
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <title>Gestionnaire de clinique</title>
+    <!-- Titre SEO optimisé (entre 50-60 caractères) -->
+    <title>Logiciel de Gestion de Clinique Médicale</title>
+    
+    <!-- Meta Description (entre 150-160 caractères) -->
+    <meta name="description" content="Optimisez votre clinique avec notre logiciel de gestion médicale complet : prise de rendez-vous, gestion des patients, facturation et suivi médical.">
+    
+    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/dist/img/logo.png') }}">
-
-
+    
+    <!-- Balises SEO essentielles -->
+    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="logiciel clinique, gestion médicale, logiciel médecin, prise de rendez-vous en ligne, gestion patients, facturation médicale, suivi patient">
+    <meta name="author" content="Votre Société">
+    
+    <!-- Open Graph / Réseaux sociaux -->
+    <meta property="og:title" content="Logiciel de Gestion de Clinique Médicale | Solution Complète">
+    <meta property="og:description" content="Solution tout-en-un pour la gestion de votre clinique médicale ou cabinet de santé.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.votreclinique.com">
+    <meta property="og:image" content="{{ asset('assets/dist/img/logo-social.png') }}">
+    
+    <!-- CSRF Token (nécessaire pour Laravel) -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link href="{{ asset('assets/libs/tom-select/dist/css/tom-select.bootstrap5.min.css') }} " rel="stylesheet">
 
+    <!-- Canonical URL (évite le contenu dupliqué) -->
+    <link rel="canonical" href="https://www.votreclinique.com" />
+
+    <!-- Feuilles de style -->
+    <link href="{{ asset('assets/libs/tom-select/dist/css/tom-select.bootstrap5.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/dist/css/tabler.min.css') }}" rel="stylesheet">
-   
-    <link href="{{ asset('assets/dist/css/tabler-payments.min.css') }} " rel="stylesheet">
-    <link href="{{ asset('assets/dist/css/tabler-vendors.min.css') }} " rel="stylesheet">
+    <link href="{{ asset('assets/dist/css/tabler-payments.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/dist/css/tabler-vendors.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/preview/css/demo.min.css') }}" rel="stylesheet">
 
-    <link href="{{ asset('assets/preview/css/demo.min.css') }} " rel="stylesheet">
-    
-    
     @stack('styles')
 
     <style>
@@ -30,6 +46,22 @@
         min-height: 300px;
       }
     </style>
+
+    <!-- Schema.org markup for Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Gestionnaire de Clinique",
+      "operatingSystem": "Web, Windows, macOS",
+      "applicationCategory": "MedicalApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "FR"
+      }
+    }
+    </script>
   </head>
 
   <body>

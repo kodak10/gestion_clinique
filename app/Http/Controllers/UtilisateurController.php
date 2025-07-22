@@ -18,7 +18,11 @@ class UtilisateurController extends Controller
             abort(403, 'Accès non autorisé.');
         }
 
-        $users = User::with('roles')->orderBy('name')->get();
+        //$users = User::with('roles')->orderBy('name')->get();
+        $users = User::with('roles')
+            ->whereNotIn('id', [1])
+            ->orderBy('name')
+            ->get();
 
         $roles = Role::all();
         
