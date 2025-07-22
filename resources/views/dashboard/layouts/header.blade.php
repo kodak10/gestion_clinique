@@ -71,6 +71,18 @@
                       </a>
                     </li>
 
+                    {{-- <li class="nav-item">
+                      <a class="nav-link" href="">
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24" class="icon icon-tabler icons-tabler-filled icon-tabler-walk">
+                            <path d="M13 4a2 2 0 1 0 -2 -2a2 2 0 0 0 2 2zm-2.05 4.1l-.27 .66l-1.19 2.97l-2.49 1.17a1 1 0 0 0 -.49 1.33a1 1 0 0 0 1.33 .49l2.8 -1.31a1 1 0 0 0 .48 -.51l.27 -.66l1.17 2.89l-1.57 5.25a1 1 0 0 0 .68 1.23a1 1 0 0 0 1.23 -.68l1.66 -5.55a1 1 0 0 0 -.01 -.6l-1.66 -4.1l.49 -1.22l1.57 1.57a1 1 0 0 0 1.41 0a1 1 0 0 0 0 -1.41l-2.12 -2.12a1 1 0 0 0 -1.54 .27l-.35 .87z" />
+                          </svg>
+                        </span>
+
+                        <span class="nav-link-title"> Actes Ambulatoires </span>
+                      </a>
+                    </li> --}}
+
                     <li class="nav-item">
                       <a class="nav-link" href="{{ route('hospitalisations.index') }}">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
