@@ -37,8 +37,8 @@ Auth::routes(['register' => false]); // Désactive l'inscription si nécessaire
 
 Route::get('/hospitalisations/{id}', [HospitalisationController::class, 'show'])->name('hospitalisations.show');
 
-//Route::middleware(['auth', 'user.status'])->group(function () {
-Route::middleware(['auth',])->group(function () {
+Route::middleware(['auth', 'user.status'])->group(function () {
+// Route::middleware(['auth',])->group(function () {
 
     
     Route::get('/home', [AccueilController::class, 'home'])->name('home');
