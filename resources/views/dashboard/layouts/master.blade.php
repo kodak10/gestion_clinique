@@ -175,5 +175,34 @@
         @endif
     </script>
 
+   <script>
+$(document).ready(function () {
+    // Date d'expiration de l'hébergement
+    const expirationDate = new Date("2025-08-15T23:59:59");
+    const today = new Date();
+
+    // Calcul des jours restants
+    const timeDiff = expirationDate - today;
+    const daysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+    // Affiche l'alerte uniquement s'il reste 3 jours ou moins
+    if (daysRemaining > 0 && daysRemaining <= 3) {
+        Swal.fire({
+            title: '⚠️ Avertissement Hébergement',
+            html: `Votre hébergement expirera dans <b>${daysRemaining}</b> jour(s) (le 15/08/2025).`,
+            icon: 'warning',
+            allowOutsideClick: false, // empêche de cliquer à l'extérieur
+            allowEscapeKey: false,    // empêche Échap
+            showConfirmButton: true,
+            confirmButtonText: 'Fermer',
+            confirmButtonColor: '#d33',
+            backdrop: true, // plein écran assombri
+        });
+    }
+});
+</script>
+
+
+
 </body>
 </html>

@@ -2,74 +2,120 @@
 
 namespace Database\Seeders;
 
-use App\Models\Medicament;
-use Carbon\Carbon;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Medicament;
 use Illuminate\Support\Str;
 
 class MedicamentSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $medicaments = [
-            [
-                'code' => 'MED001',
-                'nom' => 'Paracétamol 500mg',
-                'unite_mesure' => 'Comprimé',
-                'prix_achat' => 100,
-                'prix_vente' => 150,
-                'stock' => 200,
-                'stock_alerte' => 20,
-                'date_peremption' => Carbon::now()->addMonths(6),
-            ],
-            [
-                'code' => 'MED002',
-                'nom' => 'Amoxicilline 1g',
-                'unite_mesure' => 'Capsule',
-                'prix_achat' => 300,
-                'prix_vente' => 400,
-                'stock' => 150,
-                'stock_alerte' => 15,
-                'date_peremption' => Carbon::now()->addMonths(8),
-            ],
-            [
-                'code' => 'MED003',
-                'nom' => 'Ibuprofène 200mg',
-                'unite_mesure' => 'Comprimé',
-                'prix_achat' => 80,
-                'prix_vente' => 120,
-                'stock' => 300,
-                'stock_alerte' => 30,
-                'date_peremption' => Carbon::now()->addMonths(5),
-            ],
-            [
-                'code' => 'MED004',
-                'nom' => 'Metformine 500mg',
-                'unite_mesure' => 'Comprimé',
-                'prix_achat' => 150,
-                'prix_vente' => 200,
-                'stock' => 100,
-                'stock_alerte' => 10,
-                'date_peremption' => Carbon::now()->addYear(),
-            ],
-            [
-                'code' => 'MED005',
-                'nom' => 'Salbutamol 100mcg',
-                'unite_mesure' => 'Inhalateur',
-                'prix_achat' => 600,
-                'prix_vente' => 750,
-                'stock' => 50,
-                'stock_alerte' => 5,
-                'date_peremption' => Carbon::now()->addMonths(9),
-            ],
+        $noms = [
+            'ABAISSE LANGUE',
+            'ACUPAN',
+            'ADRENALINE',
+            'AIGUILLE PL',
+            'AMOXICILLINE',
+            'ARTEMETHER 20MG',
+            'ARTEMETHER 80MG',
+            'ARTESUN 30MG',
+            'ARTESUN 60MG',
+            'ATROPINE',
+            'CURAM',
+            'BANDE N°10',
+            'BANDE N°15',
+            'BANDE N°5',
+            'BANDE N°7',
+            'BETADINE JAUNE',
+            'BETADINE ROUGE',
+            'BRASSA',
+            'CEFTRIAXONE',
+            'CLAMP DE BARR',
+            'COMPRESSE NON STERIL',
+            'COMPRESSE STERIL',
+            'COTON',
+            'CUTICELLE',
+            'DETAIL GANT',
+            'DEXAMETAXONE',
+            'DICLOFENAC',
+            'DRAIN',
+            'EAU OXYGENE GRAND',
+            'EAU OXYGENE PETIT',
+            'EPHEDRINE',
+            'EPICRANIEN BLEU',
+            'EXACYL',
+            'FIL NYLON N°0',
+            'FIL NYLON N°01',
+            'FIL NYLON N°2',
+            'FIL NYLON N°2/0',
+            'FIL NYLON N°3/0',
+            'G10',
+            'GANT STERIL N°7/5',
+            'GANT STERIL N°8',
+            'GELOPLASMAT',
+            'GENTAMYCINE',
+            'GLUCOSE',
+            'HALOTANE',
+            'HPV',
+            'INTRANULE BLEU',
+            'INTRANULE VERT',
+            'LAME BISTORIE N°23',
+            'LAROXYL',
+            'LASILIX',
+            'LOXEN',
+            'MARCAÏNE',
+            'METRO PERF',
+            'MIDAZOLAM',
+            'NOVALGIN',
+            'PERFUSEUR',
+            'POCHE URINAIRE',
+            'QUININE',
+            'SALE (SSI)',
+            'SERINGUE 10CC',
+            'SERINGUE 20CC',
+            'SERINGUE 5CC',
+            'SERINGUE 60 CC',
+            'SERINGUE INSULINE',
+            'SONDE URINAIRE N°14',
+            'SONDE URINAIRE N°16',
+            'SONDE URINAIRE N°18',
+            'SPASFON INJ',
+            'SYNTHOCINONE',
+            'TETANOS',
+            'TRABAR',
+            'VALIUM',
+            'VITAMINE C',
+            'VITAMINE K1',
+            'VOGALENE',
+            'XYLOCAÏNE 2 %',
+            'XYLOCAÏNE 50ML',
+            'XYLOCAÏNE GEL',
+            'CIMETIDINE',
+            'CASAQUE JETTABLE',
+            'SONDE A 2 VOIE',
+            'DICACILLINE',
+            'BANDE 30 CM',
+            'IMIPENEN 500MG',
+            'SALE 250',
+            'GLUCOSE 250',
+            'NOVALGIN 500',
+            'FINE ECHO',
+            'GLUCOSE 30',
+            'CHAMP JETABLBE',
+            'SPECUIM',
         ];
 
-        foreach ($medicaments as $medicament) {
-            Medicament::create($medicament);
+        foreach ($noms as $nom) {
+            Medicament::create([
+                'code'          => strtoupper(Str::slug($nom, '_')) . '_' . rand(100, 999), // Code unique
+                'nom'           => $nom,
+                'unite_mesure'  => 'pièce', // Valeur par défaut
+                'prix_achat'    => 0,       // Valeur par défaut
+                'prix_vente'    => 0,       // Valeur par défaut
+                'stock'         => 0,
+                'stock_alerte'  => 10,
+                'date_peremption' => null,
+            ]);
         }
     }
 }

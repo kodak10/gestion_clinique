@@ -311,7 +311,7 @@
                     <th width="35%">Libellé</th>
                     <th width="15%">Prix Unitaire</th>
                     <th width="10%">Qte</th>
-                    <th width="15%">Prise en charge</th>
+                    <th width="15%">Prise en charge (%)</th>
                     <th width="20%">Montant à payer</th>
                 </tr>
             </thead>
@@ -322,7 +322,7 @@
                       <td>{{ $detail->frais->libelle }}</td>
                       <td>{{ number_format($detail->prix_unitaire ?? 0, 0, ',', ' ') }}</td>
                       <td>{{ $detail->quantite ?? 1 }}</td>
-                      <td>{{ $detail->taux ?? 0 }}</td>
+                      <td>{{ number_format($detail->taux ?? 0, 0, '', '') }}%</td>
                       <td>{{ number_format($detail->total ?? 0, 0, ',', ' ') }}</td>
                   </tr>
                   @endforeach

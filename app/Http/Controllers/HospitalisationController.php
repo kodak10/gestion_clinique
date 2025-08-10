@@ -293,11 +293,11 @@ class HospitalisationController extends Controller
                 $prix = $med['montant'];
                 $total = $quantite * $prix;
 
-                if (in_array($medicamentId, $medicamentsTraites)) {
-                    DB::rollBack();
-                    return redirect()->back()->with('error', 
-                        'Un médicament est en double.');
-                }
+                // if (in_array($medicamentId, $medicamentsTraites)) {
+                //     DB::rollBack();
+                //     return redirect()->back()->with('error', 
+                //         'Un médicament est en double.');
+                // }
 
                 // Vérifier le stock disponible
                 $stockDisponible = DB::table('medicaments')
@@ -411,11 +411,11 @@ class HospitalisationController extends Controller
                 $taux = isset($examen['taux']) ? floatval($examen['taux']) : 0;
 
                 // Vérifier si cet examen a déjà été traité dans cette requête
-                if (in_array($examenId, $examensTraites)) {
-                    DB::rollBack();
-                    return redirect()->back()->with('error', 
-                        'L\'examen ID '.$examenId.' est en doublon dans le formulaire.');
-                }
+                // if (in_array($examenId, $examensTraites)) {
+                //     DB::rollBack();
+                //     return redirect()->back()->with('error', 
+                //         'L\'examen ID '.$examenId.' est en doublon dans le formulaire.');
+                // }
 
                 $examensTraites[] = $examenId;
 

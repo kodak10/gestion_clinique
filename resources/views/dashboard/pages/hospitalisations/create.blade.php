@@ -158,9 +158,9 @@
 
                     <div class="col-md-6">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h4 class="mb-3">Examens Laboratoire</h4>
+                            <h4 class="mb-3 ">Examens Laboratoire</h4>
                             <div>
-                                <span class="badge bg-primary me-2">
+                                <span class="badge bg-primary me-2 text-white">
                                     {{ number_format($detailsLaboratoire->sum('total'), 0, ',', ' ') }} XOF
                                 </span>
                                 <a href="{{ route('print.laboratoire', $hospitalisation->id) }}" 
@@ -176,7 +176,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <h4 class="mb-3">Pharmacie</h4>
                             <div>
-                                <span class="badge bg-primary me-2">
+                                <span class="badge bg-primary me-2 text-white">
                                     {{ number_format($detailsPharmacie->sum('total'), 0, ',', ' ') }} XOF
                                 </span>
                                 <a href="{{ route('print.pharmacie', $hospitalisation->id) }}" 
