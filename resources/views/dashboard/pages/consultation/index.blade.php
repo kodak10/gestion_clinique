@@ -5,7 +5,7 @@
     <div class="container-xl">
         <div class="row g-2 align-items-center">
             <div class="col">
-                <h2 class="page-title">Consultations</h2>
+                <h2 class="page-title">Acte Ambulatoire</h2>
             </div>
             
             <div class="col">
@@ -27,7 +27,7 @@
                                 <th>Numéro de reçu</th>
                                 <th>Patient</th>
                                 <th>Médecin</th>
-                                <th>Date consultation</th>
+                                <th>Date</th>
                                 <th>Total</th>
                                 <th>Payé</th>
                                 <th>Méthode paiement</th>

@@ -83,6 +83,7 @@ public function store(Request $request, Patient $patient)
         'montant_paye' => $montantPaye,
         'reste_a_payer' => $resteAPayer,
         'date_consultation' => now(),
+        'methode_paiement' => $validated['methode_paiement'] ?? null,
         // 'numero_recu' => date('Ymd').'-'.Str::upper(Str::random(6)),
         'numero_recu' => $this->generateReceiptNumber(),
     ]);
@@ -109,7 +110,7 @@ public function store(Request $request, Patient $patient)
         return redirect()
             ->route('patients.index', $patient)
             ->with([
-                'success' => 'Consultation créée avec succès',
+                'success' => 'Acte Ambulatoire crée avec succès',
                 'pdf_url' => Storage::url($pdfPath) // Utilisez la variable capturée
             ]);
     }
@@ -118,7 +119,7 @@ public function store(Request $request, Patient $patient)
 
     return redirect()
         ->route('patients.index', $patient)
-        ->with('success', 'Consultation créée avec succès');
+        ->with('success', 'Acte Ambulatoire crée avec succès');
 }
 
 public function ajouterPaiement(Request $request, Consultation $consultation)
@@ -169,7 +170,7 @@ private function enregistrerPaiement(Consultation $consultation, float $montant,
         'patient' => $consultation->patient,
         'medecin' => $consultation->medecin,
         'prestations' => $consultation->prestations,
-        'date' => $consultation->date_consultation->format('d/m/Y H:i'),
+        'date' => $reglement->created_at->format('d/m/Y H:i'),
         'numeroRecu' => $consultation->numero_recu,
         'user' => $consultation->user,
         'reglement' => $reglement, // Ajout du règlement spécifique
@@ -435,7 +436,7 @@ public function update(Request $request, Consultation $consultation)
     $consultation->update(['pdf_path' => $pdfPath]);
 
     return back()->with([
-        'success' => 'Consultation mise à jour avec succès',
+        'success' => 'Acte Ambulatoire mis à jour avec succès',
         'pdf_url' => Storage::url($pdfPath)
     ]);
 }

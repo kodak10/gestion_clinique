@@ -17,15 +17,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PatientController extends Controller
 {
-    // public function index()
-    // {
-    //     if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
-    //         abort(403, 'Accès non autorisé.');
-    //     }
 
-    //     $patients = Patient::with('assurance')->orderBy('nom', 'asc')->get();
-    //     return view('dashboard.pages.patients.index', compact('patients'));
-    // }
 public function index()
     {
         if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
@@ -55,7 +47,7 @@ public function index()
                         <div class="dropdown-menu dropdown-menu-end">
                             <a class="dropdown-item" href="'.$edit.'">Modifier</a>
                             <a class="dropdown-item" href="'.$pdf.'" target="_blank">Ouvrir le dossier</a>
-                            <a class="dropdown-item" href="'.$consult.'">Consultation</a>
+                            <a class="dropdown-item" href="'.$consult.'">Acte Ambulatoire</a>
                             <a class="dropdown-item" href="'.$hosp.'" onclick="return confirmHospitalisation(event)">À Hospitaliser</a>
                             <a class="dropdown-item" href="'.$show.'">Suivi du patient</a>
                         </div>

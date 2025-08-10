@@ -166,7 +166,7 @@
                 <!-- Bouton soumettre -->
                 <div class="row mt-3">
                     <div class="col-12">
-                        <button type="submit" class="btn btn-primary">Enregistrer la consultation</button>
+                        <button type="submit" class="btn btn-primary">Enregistrer les Examens</button>
                     </div>
                 </div>
             </div>

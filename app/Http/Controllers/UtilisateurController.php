@@ -24,7 +24,8 @@ class UtilisateurController extends Controller
             ->orderBy('name')
             ->get();
 
-        $roles = Role::all();
+       $roles = Role::where('name', '!=', 'Developpeur')->get();
+
         
         return view('dashboard.pages.parametrages.acces_utilisateurs', compact('users', 'roles'));
     }

@@ -43,103 +43,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($activities as $index => $activity)
-                                <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                   
-                                    <td>
-                                        @php
-                                            $event = $activity->event;
-                                            $status = [
-                                                'created' => 'Création',
-                                                'updated' => 'Modification',
-                                                'deleted' => 'Suppression',
-                                                'restored' => 'Restauration',
-                                            ];
-                                            $badgeClass = match($event) {
-                                                'created' => 'bg-success',
-                                                'updated' => 'bg-warning',
-                                                'deleted' => 'bg-danger',
-                                                'restored' => 'bg-info',
-                                                default => 'bg-secondary',
-                                            };
-                                        @endphp
-
-                                        <span class="badge {{ $badgeClass }}">
-                                            {{ $status[$event] ?? ucfirst($event) }}
-                                        </span>
-                                    </td>
-
-                                    <td>{{ class_basename($activity->subject_type) }}</td>
-                                    <td>{{ $activity->subject_id }}</td>
-                                    <td>
-                                        {{ optional($activity->causer)->name ?? 'Système' }}
-                                        @if($activity->causer && $activity->causer->pseudo)
-                                            <br>
-                                            <small class="text-muted">{{ $activity->causer->pseudo }}</small>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($activity->event == 'updated' && $activity->properties->has('old'))
-                                            <ul class="list-unstyled mb-0">
-                                                @foreach($activity->properties['old'] as $key => $value)
-                                                    <li>
-                                                        <strong>{{ $key }}:</strong>
-                                                        @if(is_array($value) || is_object($value))
-                                                            <pre class="mb-0">{{ json_encode($value, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) }}</pre>
-                                                        @else
-                                                            {{ $value ?? 'NULL' }}
-                                                        @endif
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        @elseif($activity->event == 'deleted')
-                                            <div class="alert alert-danger p-2 mb-0">
-                                                @if($activity->properties->has('old'))
-                                                    <ul class="mb-0">
-                                                        @foreach($activity->properties['old'] as $key => $value)
-                                                            <li>
-                                                                <strong>{{ $key }}:</strong>
-                                                                @if(is_array($value) || is_object($value))
-                                                                    <pre class="mb-0">{{ json_encode($value, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) }}</pre>
-                                                                @else
-                                                                    {{ $value ?? 'NULL' }}
-                                                                @endif
-                                                            </li>
-                                                        @endforeach
-                                                    </ul>
-                                                @else
-                                                    <em>Données non disponibles</em>
-                                                @endif
-                                            </div>
-                                        @else
-                                            <em class="text-muted">N/A</em>
-                                        @endif
-                                    </td>
-
-                                    <td>
-                                        @if($activity->properties->has('attributes'))
-                                            <ul class="list-unstyled mb-0">
-                                                @foreach($activity->properties['attributes'] as $key => $value)
-                                                    <li>
-                                                        <strong>{{ $key }}:</strong>
-                                                        @if(is_array($value) || is_object($value))
-                                                            <pre class="mb-0">{{ json_encode($value, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) }}</pre>
-                                                        @else
-                                                            {{ $value ?? 'NULL' }}
-                                                        @endif
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        @elseif($activity->event == 'deleted')
-                                            <em class="text-muted">Supprimé</em>
-                                        @else
-                                            <em class="text-muted">N/A</em>
-                                        @endif
-                                    </td>
-                                    <td>{{ $activity->created_at->format('d/m/Y à H:i') }}</td>
-                                </tr>
-                            @endforeach
+                            <!-- Les données seront chargées via AJAX -->
                         </tbody>
                     </table>
                 </div>
@@ -191,6 +95,9 @@
 <script>
 $(document).ready(function() {
     $('#log-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ route('tracabilite.data') }}",
         language: {
             url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/French.json'
         },
@@ -202,12 +109,43 @@ $(document).ready(function() {
                 className: 'btn btn-primary',
                 exportOptions: {
                     columns: ':visible'
+                },
+                customize: function (win) {
+                    $(win.document.body).find('table').addClass('print-table');
+                    $(win.document.body).find('pre').css({
+                        'white-space': 'pre-wrap',
+                        'word-wrap': 'break-word',
+                        'background': '#f8f9fa',
+                        'padding': '5px',
+                        'border-radius': '3px',
+                        'margin-bottom': '5px'
+                    });
                 }
             }
         ],
         responsive: true,
         order: [[7, 'desc']],
-        pageLength: 25
+        pageLength: 25,
+        columns: [
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+            { data: 'action', name: 'event' },
+            { data: 'model', name: 'subject_type' },
+            { data: 'subject_id', name: 'subject_id' },
+            { data: 'user', name: 'causer.name' },
+            { data: 'old', name: 'properties', orderable: false, searchable: false },
+            { data: 'new', name: 'properties', orderable: false, searchable: false },
+            { data: 'date', name: 'created_at' }
+        ],
+        columnDefs: [
+            { width: '5%', targets: 0 },
+            { width: '10%', targets: 1 },
+            { width: '10%', targets: 2 },
+            { width: '5%', targets: 3 },
+            { width: '10%', targets: 4 },
+            { width: '25%', targets: 5 },
+            { width: '25%', targets: 6 },
+            { width: '10%', targets: 7 }
+        ]
     });
 });
 </script>

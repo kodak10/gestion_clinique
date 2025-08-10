@@ -15,7 +15,7 @@ class Consultation extends Model
 {
     use HasFactory, LogsActivity, SoftDeletes;
     
-    protected static $logName = 'consultation';
+    protected static $logName = 'Acte Ambulatoire';
     protected static $logOnlyDirty = true;
 
     protected $fillable = [

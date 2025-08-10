@@ -23,7 +23,7 @@
         
         .header {
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 1px;
             padding-bottom: 10px;
             border-bottom: 2px solid #1a5276;
             position: relative;
@@ -243,11 +243,9 @@
             
             <div class="logo-placeholder"><img src="assets/dist/img/logo.png" alt=""></div>
             
-            <div class="qr-code">
+            {{-- <div class="qr-code">
               <img src="{{ public_path('storage/' . $hospitalisation->qr_code_path) }}" alt="QR Code" style="max-width:100%; max-height:100%;">
-
-              {{-- <img src="{{ 'storage/'.$hospitalisation->qr_code_path }}" alt="QR Code" style="max-width:100%; max-height:100%;"> --}}
-            </div>
+            </div> --}}
 
             
             <div class="header-center">

@@ -5,7 +5,7 @@
     <div class="container-xl">
         <div class="row g-2 align-items-center">
             <div class="col">
-                <h2 class="page-title">Nouvelle Consultation</h2>
+                <h2 class="page-title">Nouveau Acte Ambulatoire</h2>
             </div>
         </div>
     </div>
@@ -317,7 +317,7 @@
             <!-- Bouton de soumission -->
             <div class="row mt-3">
                 <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Enregistrer la consultation</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer l'Acte Ambulatoire</button>
                 </div>
             </div>
         </form>

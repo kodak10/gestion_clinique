@@ -38,7 +38,7 @@
             <div class="card-header">
                 <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
                     <li class="nav-item">
-                        <a href="#consultations" class="nav-link active" data-bs-toggle="tab">Consultations</a>
+                        <a href="#consultations" class="nav-link active" data-bs-toggle="tab">Actes Ambulatoires</a>
                     </li>
                     <li class="nav-item">
                         <a href="#hospitalisations" class="nav-link" data-bs-toggle="tab">Hospitalisations</a>
@@ -50,7 +50,7 @@
                     <!-- Onglet Consultations -->
                     <div class="tab-pane active show" id="consultations">
                         <div class="d-flex justify-content-between mb-3">
-                            <h4>Historique des Consultations</h4>
+                            <h4>Historique des Actes Ambulatoires</h4>
                             
                         </div>
                         <div class="table-responsive" style="min-height:200px">

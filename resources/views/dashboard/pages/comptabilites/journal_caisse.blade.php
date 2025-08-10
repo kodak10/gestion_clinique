@@ -181,7 +181,7 @@
                                                 <div class="dropdown-menu dropdown-menu-end">
                                                     @if($reglement->consultation && $reglement->consultation->pdf_path)
                                                         <a class="dropdown-item" href="{{ Storage::url($reglement->consultation->pdf_path) }}" target="_blank">
-                                                            Réimprimer le reçu consultation
+                                                            Réimprimer le reçu d'Acte Ambulatoire
                                                         </a>
                                                     @elseif($reglement->hospitalisation && $reglement->hospitalisation->facture_path)
                                                         <a class="dropdown-item" href="{{ Storage::url($reglement->hospitalisation->facture_path) }}" target="_blank">

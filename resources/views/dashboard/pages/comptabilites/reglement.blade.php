@@ -53,7 +53,7 @@
                                             <div class="dropdown-menu dropdown-menu-end">
                                                 @if($consultation->pdf_path)
                                                     <a class="dropdown-item" href="{{ Storage::url($consultation->pdf_path) }}" target="_blank">
-                                                        Voir la Consultation
+                                                        Voir l'Acte Ambulatoire
                                                     </a>
                                                 @endif
 

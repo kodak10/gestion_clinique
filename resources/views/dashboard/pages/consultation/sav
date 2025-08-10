@@ -297,7 +297,7 @@
             <!-- Bouton de soumission -->
             <div class="row mt-3">
                 <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Mettre à jour la consultation</button>
+                    <button type="submit" class="btn btn-primary">Mettre à jour l'Acte Ambulatoire</button>
                 </div>
             </div>
         </form>

@@ -47,12 +47,18 @@
                                                     <a class="dropdown-item" href="{{ route('hospitalisations.facture.create', ['hospitalisation' => $hospitalisation->id]) }}">Facture</a>
                                                     <a class="dropdown-item" href="{{ route('hospitalisations.pharmacie.create', ['hospitalisation' => $hospitalisation->id]) }}">Pharmacie</a>
                                                     <a class="dropdown-item" href="{{ route('hospitalisations.laboratoire.create', ['hospitalisation' => $hospitalisation->id]) }}">Laboratoire</a>
-                                                    @if($hospitalisation->status === 'present')
-                                                    <form action="{{ route('hospitalisations.sortir', ['hospitalisation' => $hospitalisation->id]) }}" method="POST" class="d-inline">
-                                                        @csrf
-                                                        <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Confirmer la sortie du patient ?')">Déclarer sorti</button>
-                                                    </form>
-                                                    @endif
+                                                    @auth
+                                                        @if(auth()->user()->hasAnyRole(['Admin', 'Développeur', 'Comptable', 'Respo Caissière']))
+                                                            @if($hospitalisation->status === 'present')
+                                                            <form action="{{ route('hospitalisations.sortir', ['hospitalisation' => $hospitalisation->id]) }}" method="POST" class="d-inline">
+                                                                @csrf
+                                                                <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Confirmer la sortie du patient ?')">Déclarer sorti</button>
+                                                            </form>
+                                                            @endif
+                                                        @endif
+                                                    @endauth
+
+                                                   
                                                 </div>
                                             </div>
                                         </div>

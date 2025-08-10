@@ -69,23 +69,23 @@ class HospitalisationController extends Controller
                 'date_entree' => now(),
             ]);
 
-            // Génération de l'URL de consultation détail
-            $detailUrl = route('hospitalisations.show', $hospitalisation->id); // Assure-toi que cette route existe
+            // // Génération de l'URL de consultation détail
+            // $detailUrl = route('hospitalisations.show', $hospitalisation->id); // Assure-toi que cette route existe
 
-            // Génération et stockage du QR code, ENCODANT l'URL
-            $qrCodeImage = \QrCode::format('png')
-                ->size(200)
-                ->margin(2)
-                ->generate($detailUrl);
+            // // Génération et stockage du QR code, ENCODANT l'URL
+            // $qrCodeImage = \QrCode::format('png')
+            //     ->size(200)
+            //     ->margin(2)
+            //     ->generate($detailUrl);
 
-            $directory = 'qr-codes/hospitalisations';
-            $fileName = "hosp-{$hospitalisation->id}-{$numeroFacture}.png";
-            $path = "{$directory}/{$fileName}";
+            // $directory = 'qr-codes/hospitalisations';
+            // $fileName = "hosp-{$hospitalisation->id}-{$numeroFacture}.png";
+            // $path = "{$directory}/{$fileName}";
 
-            Storage::disk('public')->put($path, $qrCodeImage);
+            // Storage::disk('public')->put($path, $qrCodeImage);
             
-            // Mise à jour avec le chemin du QR code
-            $hospitalisation->update(['qr_code_path' => $path]);
+            // // Mise à jour avec le chemin du QR code
+            // $hospitalisation->update(['qr_code_path' => $path]);
 
             // Ajout des deux lignes de détails
             $hospitalisation->details()->createMany([
@@ -111,7 +111,7 @@ class HospitalisationController extends Controller
             
             return redirect()->back()->with([
                 'success' => 'Le patient a été hospitalisé avec succès.',
-                'qr_code_path' => $path // Optionnel: pour afficher directement
+                //'qr_code_path' => $path // Optionnel: pour afficher directement
             ]);
             
         } catch (\Exception $e) {

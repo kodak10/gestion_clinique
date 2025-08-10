@@ -71,7 +71,7 @@
                       <div class="accordion-item">
                         <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-4-default" aria-expanded="false">
                           <div class="accordion-header-text">
-                            <h4>Comment modifier, Imprimer le dossier, Faire une Consultation, Hospitaliser, Suivi du Patient</h4>
+                            <h4>Comment modifier, Imprimer le dossier, Faire un Acte Ambulatoire, Hospitaliser, Suivi du Patient</h4>
                           </div>
                           <div class="accordion-header-toggle">
                             <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
@@ -86,9 +86,9 @@
                             <ul>
                               <li>Modifier : Pour modifier les informations liées au patient.</li>
                               <li>Ouvrir la fiche de dossier: Avoir la fiche médicale du patient</li>
-                              <li>Consultation : Faire une consultation</li>
+                              <li>Acte Ambulatoire : Faire un Acte Ambulatoire</li>
                               <li>A Hospitaliser : Pour declarer que le patient est Hospitalisé</li>
-                              <li>Suivi du Patient : Pour avoir l'historique des prestations (Consultation, Hospitalisation) du patient. </li>
+                              <li>Suivi du Patient : Pour avoir l'historique des prestations (Acte Ambulatoire, Hospitalisation) du patient. </li>
                             </ul>
                           </div>
                         </div>
@@ -103,7 +103,7 @@
                     <div class="accordion-item">
                       <button class="accordion-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1-flush" aria-expanded="true">
                         <div class="accordion-header-text">
-                          <h4>Enregistrement d'une consultation</h4>
+                          <h4>Enregistrement d'un acte Ambulatoire</h4>
                         </div>
                         <div class="accordion-header-toggle">
                           <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
@@ -125,7 +125,7 @@
 
                           </ul>
                           Faire + Ajouter une autre prestation si vous voulez ajouter une autre.
-                          <br>Renseigner les informations liées aux prix à savoir : La reduction, le montant perçu puis faire Enregistrer pour enregistrer la consultation.
+                          <br>Renseigner les informations liées aux prix à savoir : La reduction, le montant perçu puis faire Enregistrer pour enregistrer l'Acte Ambulatoire.
                           <br>NB: LORSQUE VOTRE ROLE (EN HAUT A DROITE) EST CAISSIERE ALORS VOUS ALLEZ ENCAISSER L'ARGENT DIRECTEMENT ET ACCEDER A VOTRE JOURNAL DE CAISSE DANS LE CAS CONTRAIRE LE PATIENT DEVRA MONTER POUR PAYER EN HAUT)
                         </div>
                       </div>
@@ -156,7 +156,7 @@
 
                           </ul>
                           Faire + Ajouter une autre prestation si vous voulez ajouter une autre.
-                          <br>Renseigner les informations liées aux prix à savoir : La reduction, le montant perçu puis faire Enregistrer pour enregistrer la consultation.
+                          <br>Renseigner les informations liées aux prix à savoir : La reduction, le montant perçu puis faire Enregistrer pour enregistrer l'Acte Ambulatoire.
                           <br>NB: LORSQUE VOTRE ROLE (EN HAUT A DROITE) EST CAISSIERE ALORS VOUS ALLEZ ENCAISSER L'ARGENT DIRECTEMENT ET ACCEDER A VOTRE JOURNAL DE CAISSE DANS LE CAS CONTRAIRE LE PATIENT DEVRA MONTER POUR PAYER EN HAUT)
                         </div>
                       </div>
@@ -188,7 +188,7 @@
 
                           </ul>
                           Faire + Ajouter une autre prestation si vous voulez ajouter une autre.
-                          <br>Renseigner les informations liées aux prix à savoir : La reduction, le montant perçu puis faire Enregistrer pour enregistrer la consultation.
+                          <br>Renseigner les informations liées aux prix à savoir : La reduction, le montant perçu puis faire Enregistrer pour enregistrer l'Acte Ambulatoire.
                           <br>NB: LORSQUE VOTRE ROLE (EN HAUT A DROITE) EST CAISSIERE ALORS VOUS ALLEZ ENCAISSER L'ARGENT DIRECTEMENT ET ACCEDER A VOTRE JOURNAL DE CAISSE DANS LE CAS CONTRAIRE LE PATIENT DEVRA MONTER POUR PAYER EN HAUT)
                         </div>
                       </div>
@@ -219,7 +219,7 @@
 
                           </ul>
                           Faire + Ajouter une autre prestation si vous voulez ajouter une autre.
-                          <br>Renseigner les informations liées aux prix à savoir : La reduction, le montant perçu puis faire Enregistrer pour enregistrer la consultation.
+                          <br>Renseigner les informations liées aux prix à savoir : La reduction, le montant perçu puis faire Enregistrer pour enregistrer l'Acte Ambulatoire.
                           <br>NB: LORSQUE VOTRE ROLE (EN HAUT A DROITE) EST CAISSIERE ALORS VOUS ALLEZ ENCAISSER L'ARGENT DIRECTEMENT ET ACCEDER A VOTRE JOURNAL DE CAISSE DANS LE CAS CONTRAIRE LE PATIENT DEVRA MONTER POUR PAYER EN HAUT)
                         </div>
                       </div>
@@ -250,7 +250,7 @@
 
                           </ul>
                           Faire + Ajouter une autre prestation si vous voulez ajouter une autre.
-                          <br>Renseigner les informations liées aux prix à savoir : La reduction, le montant perçu puis faire Enregistrer pour enregistrer la consultation.
+                          <br>Renseigner les informations liées aux prix à savoir : La reduction, le montant perçu puis faire Enregistrer pour enregistrer l'Acte Ambulatoire.
                           <br>NB: LORSQUE VOTRE ROLE (EN HAUT A DROITE) EST CAISSIERE ALORS VOUS ALLEZ ENCAISSER L'ARGENT DIRECTEMENT ET ACCEDER A VOTRE JOURNAL DE CAISSE DANS LE CAS CONTRAIRE LE PATIENT DEVRA MONTER POUR PAYER EN HAUT)
                         </div>
                       </div>
@@ -280,9 +280,9 @@
                         <div id="collapse-1-tabs" class="accordion-collapse collapse" data-bs-parent="#accordion-tabs">
                           <div class="accordion-body">
                             <img src="{{ asset('assets/dist/img/header.png') }}" alt="">
-                            Cliquez sur le bouton "Comptabilité" dans le menu de navigation puis "Règlements" pour accéder à la liste des factures ou consultation non soldé.
-                            Dans le champs "Search", entrez le nom du patient ou le numéro de la facture ou de la consultation pour trouver la consultation ou la facture à encaisser. <br>
-                            Cliquez sur le bouton "Action" du patient puis "Payer" pour ouvrir le formulaire d'encaissement. Cliquez sur "Detail" pour voir les informations de la consultation ou de la facture. <br>
+                            Cliquez sur le bouton "Comptabilité" dans le menu de navigation puis "Règlements" pour accéder à la liste des Factures ou  des Actes Ambulatoires non soldé.
+                            Dans le champs "Search", entrez le nom du patient ou le numéro de la facture ou de la Acte Ambulatoire pour trouver l'Acte Ambulatoire ou la facture à encaisser. <br>
+                            Cliquez sur le bouton "Action" du patient puis "Payer" pour ouvrir le formulaire d'encaissement. Cliquez sur "Detail" pour voir les informations de l'Acte Ambulatoire ou de la facture. <br>
 
                           </div>
                         </div>
@@ -302,9 +302,9 @@
                         <div id="collapse-4-tabs" class="accordion-collapse collapse" data-bs-parent="#accordion-tabs">
                           <div class="accordion-body">
                             <img src="{{ asset('assets/dist/img/header.png') }}" alt="">
-                            Cliquez sur le bouton "Comptabilité" dans le menu de navigation puis "Règlements" pour accéder à la liste des factures ou consultation non soldé.
-                            Dans le champs "Search", entrez le nom du patient ou le numéro de la facture ou de la consultation pour trouver la consultation ou la facture à encaisser. <br>
-                            Cliquez sur le bouton "Action" du patient puis "Payer" pour ouvrir le formulaire d'encaissement. Cliquez sur "Detail" pour voir les informations de la consultation ou de la facture. <br>
+                            Cliquez sur le bouton "Comptabilité" dans le menu de navigation puis "Règlements" pour accéder à la liste des factures ou Acte Ambulatoire non soldé.
+                            Dans le champs "Search", entrez le nom du patient ou le numéro de la facture ou de l'Acte Ambulatoire pour trouver l'Acte Ambulatoire ou la facture à encaisser. <br>
+                            Cliquez sur le bouton "Action" du patient puis "Payer" pour ouvrir le formulaire d'encaissement. Cliquez sur "Detail" pour voir les informations de l'Acte Ambulatoire ou de la facture. <br>
 
                           </div>
                         </div>
@@ -325,15 +325,15 @@
                           <div class="accordion-body">
                             <img src="{{ asset('assets/dist/img/header.png') }}" alt="">
                             Cliquez sur le bouton "Comptabilité" dans le menu de navigation puis "Journal de caisse" pour accéder au journal de caisse.
-                            Dans le champs "Search", entrez le nom du patient ou le numéro de la facture ou de la consultation pour trouver la consultation ou la facture à encaisser. <br>
-                            Cliquez sur le bouton "Action" du patient puis "Payer" pour ouvrir le formulaire d'encaissement. Cliquez sur "Detail" pour voir les informations de la consultation ou de la facture. <br>
+                            Dans le champs "Search", entrez le nom du patient ou le numéro de la facture ou de l'Acte Ambulatoire pour trouver l'Acte Ambulatoire ou la facture à encaisser. <br>
+                            Cliquez sur le bouton "Action" du patient puis "Payer" pour ouvrir le formulaire d'encaissement. Cliquez sur "Detail" pour voir les informations de l'Acte Ambulatoire ou de la facture. <br>
                           </div>
                         </div>
                       </div>
                        <div class="accordion-item">
                         <button class="accordion-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-3-tabs" aria-expanded="false">
                           <div class="accordion-header-text">
-                            <h4>Erreur sur la consultation et le montant est dejà dans le point ou Encaissement  (Admin)</h4>
+                            <h4>Erreur sur l'Acte Ambulatoire et le montant est dejà dans le point ou Encaissement  (Admin)</h4>
                           </div>
                           <div class="accordion-header-toggle">
                             <!-- Download SVG icon from http://tabler.io/icons/icon/chevron-down -->
