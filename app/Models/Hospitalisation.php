@@ -47,7 +47,6 @@ class Hospitalisation extends Model
         return $this->hasMany(HospitalisationDetail::class);
     }
 
-
     public function patient()
     {
         return $this->belongsTo(Patient::class);

@@ -61,7 +61,7 @@ public function index()
             })
             // Colonne Taux
             ->addColumn('taux', function($patient) {
-                return $patient->assurance->taux ?? '0';
+                return $patient->taux_couverture ?? '0';
             })
             // Ajoute ce bloc pour formater la date de naissance
             ->editColumn('date_naissance', function($patient) {
@@ -295,6 +295,8 @@ public function index()
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'envoye_par' => 'nullable|string|max:255',
         ]);
+       // dd($validated); 
+
 
         if ($request->hasFile('photo')) {
         // Supprimer l'ancienne photo

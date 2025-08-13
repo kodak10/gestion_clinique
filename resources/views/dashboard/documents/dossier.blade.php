@@ -319,7 +319,7 @@
                         <td style="padding: 12px 8px;">
                             <strong>TAUX</strong><br>
                             <div style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
-                                {{ $patient->assurance->taux ?? '00' }}%
+                                {{ $patient->taux_couverture ?? '00' }}%
                             </div>
                         </td>
                     </tr>
