@@ -20,7 +20,7 @@ class PatientController extends Controller
 
 public function index()
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière','Receptionniste', 'Caissière', 'Facturié', 'Comptable'])) {
             abort(403, 'Accès non autorisé.');
         }
         return view('dashboard.pages.patients.index');
@@ -84,7 +84,7 @@ public function index()
 
     public function create()
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière','Receptionniste', 'Caissière', 'Facturié', 'Comptable'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -102,7 +102,7 @@ public function index()
 
     public function store(Request $request)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Receptionniste'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière','Receptionniste', 'Caissière', 'Receptionniste'])) {
             abort(403, 'Accès non autorisé.');
         }
 
