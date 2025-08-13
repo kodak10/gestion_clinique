@@ -19,6 +19,11 @@ class ReglementController extends Controller
    
     public function journalCaisse(Request $request)
 {
+
+    if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Caissière','Comptable'])) {
+            abort(403, 'Accès non autorisé.');
+        }
+
     // Récupération des paramètres de filtrage
     $user_id = $request->input('user_id');
     $date_debut = $request->input('date_debut', date('Y-m-d', strtotime('-1 day')));
