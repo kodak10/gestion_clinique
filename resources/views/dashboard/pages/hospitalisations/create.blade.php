@@ -208,15 +208,15 @@
                                                 <div class="col-md-2">
                                                     <label class="form-label">Prix unitaire</label>
                                                     <input type="hidden" name="frais_pharmacie[frais_id]" value="2">
-                                                    <input type="number" class="form-control prix" name="frais_pharmacie[prix]" value="{{ $detailsPharmacie->first()->prix_unitaire ?? 0 }}" readonly>
+                                                    <input type="number" class="form-control prix" name="frais_pharmacie[prix]" value="{{ $detailsPharmacie->first()->prix_unitaire ?? 0 }}" >
                                                 </div>
                                                 <div class="col-md-1">
                                                     <label class="form-label">Quantité</label>
-                                                    <input type="number" class="form-control quantite" name="frais_pharmacie[quantite]" value="{{ $detailsPharmacie->first()->quantite ?? 1 }}" readonly>
+                                                    <input type="number" class="form-control quantite" name="frais_pharmacie[quantite]" value="{{ $detailsPharmacie->first()->quantite ?? 1 }}" >
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Prise en charge</label>
-                                                    <input type="number" class="form-control taux" name="frais_pharmacie[taux]" value="0" readonly>
+                                                    <input type="number" class="form-control taux" name="frais_pharmacie[taux]" value="0" >
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Total</label>
@@ -230,21 +230,21 @@
                                             <div class="row align-items-end">
                                                 <div class="col-md-4">
                                                     <label class="form-label">Libellé</label>
-                                                    <input type="text" class="form-control" value="Laboratoire" readonly>
+                                                    <input type="text" class="form-control" value="Laboratoire">
                                                     <input type="hidden" name="frais_laboratoire[frais_id]" value="1">
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Prix unitaire</label>
                                                     <input type="hidden" name="frais_laboratoire[frais_id]" value="1">
-                                                    <input type="number" class="form-control prix" name="frais_laboratoire[prix]" value="{{ $detailsLaboratoire->first()->prix_unitaire ?? 0 }}" readonly>
+                                                    <input type="number" class="form-control prix" name="frais_laboratoire[prix]" value="{{ $detailsLaboratoire->first()->prix_unitaire ?? 0 }}" >
                                                 </div>
                                                 <div class="col-md-1">
                                                     <label class="form-label">Quantité</label>
-                                                    <input type="number" class="form-control quantite" name="frais_laboratoire[quantite]" value="{{ $detailsLaboratoire->first()->quantite ?? 1 }}" readonly>
+                                                    <input type="number" class="form-control quantite" name="frais_laboratoire[quantite]" value="{{ $detailsLaboratoire->first()->quantite ?? 1 }}" >
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Prise en charge</label>
-                                                    <input type="number" class="form-control taux" name="frais_laboratoire[taux]" value="0" readonly>
+                                                    <input type="number" class="form-control taux" name="frais_laboratoire[taux]" value="0" >
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Total</label>
@@ -464,6 +464,23 @@ $(document).ready(function() {
             });
         }
     });
+
+    function calculerQuantiteAuto() {
+        const dateEntree = new Date($('[name="date_entree"]').val());
+        const dateSortie = new Date($('[name="date_sortie"]').val());
+
+        let diffHeures = 1; // Par défaut 1 si date sortie absente ou invalide
+        if (dateSortie > dateEntree) {
+            diffHeures = Math.ceil((dateSortie - dateEntree) / (1000 * 60 * 60)); // différence en heures arrondie
+        }
+
+        // Pour chaque champ quantité fixe (pharmacie et laboratoire), mettre à jour si pas encore modifié manuellement
+        $('[name="frais_pharmacie[quantite]"], [name="frais_laboratoire[quantite]"]').each(function() {
+            if (!$(this).data('manuallyChanged')) {
+                $(this).val(diffHeures).trigger('input');
+            }
+        });
+    }
 
     // Calcul du total d'une ligne (affiche la part patient)
     function calculerTotalLigne(row) {
