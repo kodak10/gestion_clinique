@@ -585,6 +585,7 @@ class HospitalisationController extends Controller
                 'reste_a_payer' => $validatedData['montant_a_paye'] - ($validatedData['caution'] - $validatedData['caution'] ?? 0),
                 'reduction' => $validatedData['reduction'] ?? 0,
                 'reduction_par' => $validatedData['reduction_par'] ?? null,
+                'user_id' => auth()->id(),
             ]);
 
             // D'abord supprimer tous les détails existants pour cette hospitalisation
