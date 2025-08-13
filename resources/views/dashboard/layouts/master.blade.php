@@ -189,7 +189,7 @@ $(document).ready(function () {
     if (daysRemaining > 0 && daysRemaining <= 3) {
         Swal.fire({
             title: '⚠️ Avertissement Hébergement',
-            html: `Votre hébergement expirera dans <b>${daysRemaining}</b> jour(s) (le 15/08/2025).`,
+            html: `Votre hébergement expirera dans <b>${daysRemaining}</b> jour(s).`,
             icon: 'warning',
             allowOutsideClick: false, // empêche de cliquer à l'extérieur
             allowEscapeKey: false,    // empêche Échap
