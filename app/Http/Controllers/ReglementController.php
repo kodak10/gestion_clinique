@@ -20,7 +20,7 @@ class ReglementController extends Controller
     public function journalCaisse(Request $request)
 {
 
-    if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Caissière','Comptable'])) {
+    if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Caissière','Respo Caissière', 'Comptable'])) {
             abort(403, 'Accès non autorisé.');
         }
 
