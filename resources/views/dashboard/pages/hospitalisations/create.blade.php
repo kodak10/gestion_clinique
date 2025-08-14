@@ -407,14 +407,12 @@
     </div>
 </div>
 @endsection
-
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.repeater/1.2.1/jquery.repeater.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 
 <script>
 $(document).ready(function() {
@@ -465,22 +463,57 @@ $(document).ready(function() {
         }
     });
 
-    function calculerQuantiteAuto() {
-        const dateEntree = new Date($('[name="date_entree"]').val());
-        const dateSortie = new Date($('[name="date_sortie"]').val());
+    // Fonction pour calculer la durée d'hospitalisation en JOURS
+    // Fonction pour calculer la durée d'hospitalisation en jours pleins (00h à 00h)
+    function calculerDureeHospitalisation() {
+        let dateEntree = $('[name="date_entree"]').val();
+        let dateSortie = $('[name="date_sortie"]').val();
 
-        let diffHeures = 1; // Par défaut 1 si date sortie absente ou invalide
-        if (dateSortie > dateEntree) {
-            diffHeures = Math.ceil((dateSortie - dateEntree) / (1000 * 60 * 60)); // différence en heures arrondie
+        if (!dateEntree || !dateSortie) {
+            return 1; // Défaut : 1 jour si une date est manquante
         }
 
-        // Pour chaque champ quantité fixe (pharmacie et laboratoire), mettre à jour si pas encore modifié manuellement
-        $('[name="frais_pharmacie[quantite]"], [name="frais_laboratoire[quantite]"]').each(function() {
+        // Supprimer l'heure pour ne garder que la date (00h)
+        let entree = new Date(dateEntree);
+        entree.setHours(0, 0, 0, 0);
+
+        let sortie = new Date(dateSortie);
+        sortie.setHours(0, 0, 0, 0);
+
+        // Si date sortie avant entrée → forcé à 1
+        if (sortie < entree) {
+            return 1;
+        }
+
+        // Différence en jours (jours pleins uniquement)
+        let diffJours = Math.round((sortie - entree) / (1000 * 60 * 60 * 24));
+
+        // Minimum 1 jour
+        return diffJours < 1 ? 1 : diffJours;
+    }
+
+
+    // Mise à jour automatique des quantités pour tous les frais (en jours)
+    function updateQuantitesAuto() {
+        const diffJours = calculerDureeHospitalisation();
+        
+        // Mettre à jour les quantités pour tous les frais (sauf si modifié manuellement)
+        $('.quantite').each(function() {
             if (!$(this).data('manuallyChanged')) {
-                $(this).val(diffHeures).trigger('input');
+                $(this).val(diffJours).trigger('input');
             }
         });
     }
+
+    // Écouteurs pour les changements de date
+    $('[name="date_entree"], [name="date_sortie"]').on('change', function() {
+        updateQuantitesAuto();
+    });
+
+    // Marquer les quantités modifiées manuellement
+    $(document).on('input', '.quantite', function() {
+        $(this).data('manuallyChanged', true);
+    });
 
     // Calcul du total d'une ligne (affiche la part patient)
     function calculerTotalLigne(row) {
@@ -562,6 +595,7 @@ $(document).ready(function() {
         calculerTotalLigne($(this));
     });
     calculerTousLesTotaux();
+    updateQuantitesAuto(); // Mettre à jour les quantités au chargement
 
     // Validation réduction
     $('#reduction').on('change', function() {
@@ -602,26 +636,4 @@ $(document).ready(function() {
     });
 });
 </script>
-
-<script>
-$(document).ready(function() {
-    @if(session('error'))
-        Swal.fire({
-            icon: 'error',
-            title: 'Erreur',
-            html: `{!! addslashes(session('error')) !!}`
-        });
-    @endif
-});
-</script>
-
-
-@if(session('pdf_url'))
-    <script>
-        window.onload = function() {
-            window.open('{{ session('pdf_url') }}', '_blank');
-        };
-    </script>
-@endif
-
 @endpush
