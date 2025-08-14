@@ -25,26 +25,27 @@
                                     <div class="mb-3">
                                         <label class="form-label">Caissière</label>
                                         @php
-                                            $readonly = Auth::user()->hasAnyRole(['Caissière']);
+                                            $isCaissiereOrComptable = Auth::user()->hasAnyRole(['Caissière', 'Comptable']);
+                                            $canViewOthers = Auth::user()->hasAnyRole(['Admin', 'Developpeur']);
                                         @endphp
 
-                                        <select name="user_id" class="form-select" id="select-optgroups" {{ $readonly ? 'disabled' : '' }}>
+                                        <select name="user_id" class="form-select" id="select-optgroups" 
+                                            {{ $isCaissiereOrComptable && !$canViewOthers ? 'disabled' : '' }}>
                                             <option value="">Toutes les caissières</option>
                                             @foreach($users as $userOption)
                                                 <option value="{{ $userOption->id }}" 
-                                                    @if(request('user_id', Auth::id()) == $userOption->id) selected @endif>
+                                                    @if(request('user_id', $selectedUserId) == $userOption->id) selected @endif>
                                                     {{ $userOption->name }}
                                                 </option>
                                             @endforeach
                                         </select>
 
-                                        @if($readonly)
-                                            <!-- Champ caché pour transmettre la valeur de l'utilisateur connecté si champ désactivé -->
+                                        @if($isCaissiereOrComptable && !$canViewOthers)
                                             <input type="hidden" name="user_id" value="{{ Auth::id() }}">
                                         @endif
-
                                     </div>
                                 </div>
+                                
                                 <div class="col-sm-6 col-md-3">
                                     <div class="mb-3">
                                         <label class="form-label">Période de début</label>

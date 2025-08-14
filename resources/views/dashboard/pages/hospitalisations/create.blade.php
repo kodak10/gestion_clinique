@@ -314,7 +314,7 @@
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Prise en charge</label>
-                                                    <input type="number" class="form-control taux" data-name="frais[__index__][taux]" value="{{ $patient->taux_couverture ?? 70 }}" min="0" max="100" required>
+                                                    <input type="number" class="form-control taux" data-name="frais[__index__][taux]" value="{{ $patient->taux_couverture ?? 0 }}" min="0" max="100" required>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Total</label>
