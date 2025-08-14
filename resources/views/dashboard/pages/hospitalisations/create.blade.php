@@ -596,4 +596,11 @@ $(document).ready(function() {
 });
 </script>
 
+@if(session('pdf_url'))
+    <script>
+        window.onload = function() {
+            window.open('{{ session('pdf_url') }}', '_blank');
+        };
+    </script>
+@endif
 @endpush
