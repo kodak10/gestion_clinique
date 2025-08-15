@@ -36,7 +36,7 @@ class ReglementController extends Controller
         ->orderBy('created_at', 'desc');
     
     // Filtre par utilisateur
-    if (auth()->user()->hasAnyRole(['Caissière', 'Comptable'])) {
+    if (auth()->user()->hasAnyRole(['Caissière'])) {
         // Si l'utilisateur est une caissière/comptable, on filtre par défaut sur ses transactions
         $query->where('user_id', auth()->id());
         

@@ -25,7 +25,7 @@
                                     <div class="mb-3">
                                         <label class="form-label">Caissière</label>
                                         @php
-                                            $isCaissiereOrComptable = Auth::user()->hasAnyRole(['Caissière', 'Comptable']);
+                                            $isCaissiereOrComptable = Auth::user()->hasAnyRole(['Caissière']);
                                             $canViewOthers = Auth::user()->hasAnyRole(['Admin', 'Developpeur']);
                                         @endphp
 
