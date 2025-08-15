@@ -30,9 +30,9 @@
         <table>
             <tr class="medicament-header">
                 <td colspan="6">
-                    {{ $medicament->nom }} ({{ $medicament->code }}) - 
+                    {{ $medicament->nom }} - 
                     Stock: {{ $medicament->stock }} | 
-                    Prix: {{ number_format($medicament->prix_vente, 2) }} FCFA | 
+                    
                     Prescriptions: {{ $medicament->total_prescriptions }}
                 </td>
             </tr>
@@ -41,11 +41,24 @@
                 <th>Date</th>
                 <th>Patient</th>
                 <th>Hospitalisation</th>
-                <th>Médecin</th>
+                <th>Prix de vente</th>
                 <th class="text-center">Quantité</th>
                 <th class="text-center">Total</th>
             </tr>
-            @foreach($medicament->hospitalisations as $prescription)
+            @foreach($medicament->hospitalisations as $hospitalisation)
+                <tr>
+                    <td>{{ $hospitalisation->pivot->created_at->format('d/m/Y H:i') }}</td>
+                    <td>{{ $hospitalisation->patient->nom ?? '' }} {{ $hospitalisation->patient->prenoms ?? '' }}</td>
+                    <td>{{ $hospitalisation->numero_facture ?? 'N/A' }}</td>
+                    <td>{{ number_format($hospitalisation->pivot->prix_unitaire, 2) }}</td>
+                    <td class="text-center">{{ $hospitalisation->pivot->quantite }}</td>
+                    <td class="text-center">{{ number_format($hospitalisation->pivot->total, 2) }} FCFA</td>
+
+                </tr>
+            @endforeach
+
+
+            {{-- @foreach($medicament->hospitalisations as $prescription)
             <tr>
                 <td>{{ $prescription->created_at->format('d/m/Y H:i') }}</td>
                 <td>{{ $prescription->hospitalisation->patient->nom ?? '' }} {{ $prescription->hospitalisation->patient->prenoms ?? '' }}</td>
@@ -54,7 +67,7 @@
                 <td class="text-center">{{ $prescription->quantite }}</td>
                 <td class="text-center">{{ number_format($prescription->total, 2) }} FCFA</td>
             </tr>
-            @endforeach
+            @endforeach --}}
             @else
             <tr>
                 <td colspan="6" class="text-center">Aucune prescription enregistrée</td>

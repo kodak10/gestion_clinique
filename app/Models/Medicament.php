@@ -34,9 +34,15 @@ class Medicament extends Model
     public function hospitalisations()
     {
         return $this->belongsToMany(Hospitalisation::class, 'hospitalisation_medicament')
-                    ->withPivot('quantite', 'total')
+                    ->withPivot('quantite','prix_unitaire', 'total')
                     ->withTimestamps();
     }
+
+    public function mouvements()
+    {
+        return $this->hasMany(MedicamentMouvement::class, 'medicament_id');
+    }
+
 
     public function getActivitylogOptions(): LogOptions
     {

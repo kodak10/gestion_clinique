@@ -15,6 +15,12 @@
                 </a>
             </div>
             <div class="col">
+                <a href="{{ route('medicaments.inventaire.pdf') }}" target="_blank" class="btn btn-primary float-end">
+                    <i class="fas fa-file-pdf"></i> Inventaire Médicaments PDF
+                </a>
+            </div>
+
+            <div class="col">
                 <a href="#" class="btn btn-2 float-end mr-3" data-bs-toggle="modal" data-bs-target="#modal-report">Ajouter un Médicament</a>
             </div>
         </div>

@@ -104,6 +104,9 @@ Route::middleware(['auth', 'user.status'])->group(function () {
 
     Route::get('/medicaments/historique-global-pdf', [MedicamentController::class, 'historiqueGlobalPDF'])->name('medicaments.historique.global.pdf');
 
+    Route::get('/medicaments/inventaire-pdf', [MedicamentController::class, 'inventaireMedicamentsPDF'])
+    ->name('medicaments.inventaire.pdf');
+
     Route::get('/aides', function () {
         return view('dashboard.pages.help');
     })->name('aide');

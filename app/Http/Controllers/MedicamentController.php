@@ -105,8 +105,8 @@ class MedicamentController extends Controller
      */
     public function updateStock(Request $request, Medicament $medicament)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Comptable'])) {
-                abort(403, 'Accès non autorisé.');
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Comptable', 'Pharmacien'])) {
+            abort(403, 'Accès non autorisé.');
         }
 
         $request->validate([
@@ -120,25 +120,33 @@ class MedicamentController extends Controller
                 $stockAvant = $medicament->stock;
                 $quantite = $request->quantite;
                 $type = $request->operation_type;
-                $typeLibelle = $type === 'entree' ? 'entrée' : 'sortie';
 
-                // Vérification du stock pour les sorties
+                // Vérifier stock suffisant pour sortie
                 if ($type === 'sortie' && $quantite > $medicament->stock) {
                     throw new \Exception('Stock insuffisant');
                 }
 
                 // Mise à jour du stock
-                $medicament->{$type === 'entree' ? 'increment' : 'decrement'}('stock', $quantite);
+                if ($type === 'entree') {
+                    $medicament->increment('stock', $quantite);
+                } else {
+                    $medicament->decrement('stock', $quantite);
+                }
 
-                // Enregistrement du mouvement
-                // StockMouvement::create([
-                //     'medicament_id' => $medicament->id,
-                //     'user_id' => auth()->id(),
-                //     'type' => $type,
-                //     'quantite' => $quantite,
-                //     'stock_avant' => $stockAvant,
-                //     'stock_apres' => $medicament->fresh()->stock,
-                // ]);
+                $stockApres = $medicament->fresh()->stock;
+
+                // Enregistrement du mouvement dans medicament_mouvements
+                \App\Models\MedicamentMouvement::create([
+                    'medicament_id' => $medicament->id,
+                    'user_id' => auth()->id(),
+                    'hospitalisation_id' => null,  // car ce n’est pas lié à hospitalisation ici
+                    'type' => $type,
+                    'quantite' => $quantite,
+                    'motif' => $request->motif ?? null,
+                    // si vous avez des colonnes stock_avant, stock_apres dans la table mouvement, ajoutez-les aussi:
+                    //'stock_avant' => $stockAvant,
+                    //'stock_apres' => $stockApres,
+                ]);
             });
 
             return redirect()->route('medicaments.index')
@@ -148,6 +156,7 @@ class MedicamentController extends Controller
             return back()->with('error', 'Erreur lors de la mise à jour: ' . $e->getMessage());
         }
     }
+
 
     public function destroy(Medicament $medicament)
     {
@@ -213,4 +222,33 @@ class MedicamentController extends Controller
 
         return $pdf->stream('historique-global-medicaments-'.now()->format('Y-m-d').'.pdf');
     }
+
+    public function inventaireMedicamentsPDF()
+    {
+        $medicaments = Medicament::with('mouvements')->orderBy('nom')->get();
+
+        // Calculer les totaux sorties, entrées, etc par médicament
+        foreach ($medicaments as $med) {
+            // Sorties
+            $med->total_sorties = $med->mouvements->where('type', 'sortie')->sum('quantite');
+
+            // Entrées
+            $med->total_entrees = $med->mouvements->where('type', 'entree')->sum('quantite');
+
+            // Stock dispo = stock initial + total_entrees - total_sorties
+            // Ou simplement stock actuel si fiable
+            $med->stock_disponible = $med->stock; 
+        }
+
+        $data = [
+            'medicaments' => $medicaments,
+            'date' => now()->format('d-m-Y'),
+        ];
+
+        $pdf = PDF::loadView('dashboard.documents.inventaire_medicaments', $data)
+                ->setPaper('a4', 'portrait');
+
+        return $pdf->stream('inventaire-medicaments-'.now()->format('Y-m-d').'.pdf');
+    }
+
 }
