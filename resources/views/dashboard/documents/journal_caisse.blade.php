@@ -47,6 +47,7 @@
                 <th>Patient / Libellé</th>
                 <th>Type</th>
                 <th>Montant (FCFA)</th>
+                <th>Caissière</th>
             </tr>
         </thead>
         <tbody>
@@ -77,6 +78,7 @@
                 </td>
                 <td>{{ ucfirst($reglement->type) }}</td>
                 <td style="text-align: right;">{{ number_format($reglement->montant, 0, ',', ' ') }}</td>
+                <td style="text-align: right;">{{ $reglement->user->name }}</td>
             </tr>
             @empty
             <tr>
