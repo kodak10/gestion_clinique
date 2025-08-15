@@ -424,6 +424,7 @@ $(document).ready(function() {
         $(element).select2({
             width: '100%',
             placeholder: "Choisir un frais"
+            
         }).on('change', function() {
             const prix = $(this).find('option:selected').data('prix') || 0;
             const row = $(this).closest('[data-repeater-item]');
@@ -432,12 +433,20 @@ $(document).ready(function() {
         });
     }
 
+    // Initialiser Select2 pour les éléments existants au chargement
+    
+
     // Repeater pour les frais dynamiques
     $('.autres-repeater').repeater({
         initEmpty: false,
         show: function() {
             const newItem = $(this).slideDown();
-            initSelect2(newItem.find('.frais-select'));
+
+            // Initialiser Select2 pour le nouveau select
+            const selectElement = newItem.find('.frais-select');
+            initSelect2(selectElement);
+
+            
             
             // Corriger les noms des champs
             const index = newItem.index();
