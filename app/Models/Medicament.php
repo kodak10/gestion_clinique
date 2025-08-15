@@ -43,7 +43,6 @@ class Medicament extends Model
         return $this->hasMany(MedicamentMouvement::class, 'medicament_id');
     }
 
-
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
