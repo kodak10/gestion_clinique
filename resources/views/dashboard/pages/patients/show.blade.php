@@ -160,7 +160,7 @@
                                                             data-total="{{ number_format($hospitalisation->total, 0, ',', ' ') }}"
                                                             data-reduction="{{ number_format($hospitalisation->reduction, 0, ',', ' ') }}"
                                                             data-ticket="{{ number_format($hospitalisation->ticket_moderateur, 0, ',', ' ') }}"
-                                                            data-encaisser="{{ number_format($hospitalisation->total - $hospitalisation->reste_a_payer, 0, ',', ' ') }}"
+                                                            data-encaisser="{{ number_format($hospitalisation->reglements->sum('montant'), 0, ',', ' ') }}"
                                                             data-prestations="{{ json_encode($hospitalisation->details->map(function($item) {
                                                                 return [
                                                                     'libelle' => $item->fraisHospitalisation->libelle,
