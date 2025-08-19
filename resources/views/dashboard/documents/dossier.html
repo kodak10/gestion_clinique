@@ -178,10 +178,6 @@
             width: 100px;
             height: 100px;
         }
-        .info-patient{
-            font-size: 18px;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
@@ -240,13 +236,13 @@
                 <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
                     <tr>
                         <td style="width: 50%; vertical-align: top; padding: 12px 8px;">
-                            NOM & PRÉNOMS<br>
+                            <strong>NOM & PRÉNOMS</strong><br>
                             <div class="info-patient" style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
                                 {{ $patient->nom }} {{ $patient->prenoms }}
                             </div>
                         </td>
                         <td style="width: 50%; vertical-align: top; padding: 12px 8px;">
-                            DATE DE NAISSANCE<br>
+                            <strong>DATE DE NAISSANCE</strong><br>
                             <div class="info-patient" style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
                                 {{ $patient->date_naissance->format('d/m/Y') }}
                             </div>
@@ -255,13 +251,13 @@
 
                     <tr>
                         <td style="padding: 12px 8px;">
-                            SEXE<br>
+                            <strong>SEXE</strong><br>
                             <div class="info-patient" style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
                                 {{ $patient->sexe }}
                             </div>
                         </td>
                         <td style="padding: 12px 8px;">
-                            DOMICILE<br>
+                            <strong>DOMICILE</strong><br>
                             <div class="info-patient" style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
                                 {{ $patient->domicile }}
                             </div>
@@ -270,13 +266,13 @@
 
                     <tr>
                         <td style="padding: 12px 8px;">
-                            ETHNIE<br>
+                            <strong>ETHNIE</strong><br>
                             <div class="info-patient" style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
                                 {{ $patient->ethnie->nom ?? '' }}
                             </div>
                         </td>
                         <td style="padding: 12px 8px;">
-                            RELIGION<br>
+                            <strong>RELIGION</strong><br>
                             <div class="info-patient" style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
                                 {{ $patient->religion ?? '' }}
                             </div>
@@ -285,13 +281,13 @@
 
                     <tr>
                         <td style="padding: 12px 8px;">
-                            CONTACT<br>
+                            <strong>CONTACT</strong><br>
                             <div class="info-patient" style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
                                 {{ $patient->contact_patient }}
                             </div>
                         </td>
                         <td style="padding: 12px 8px;">
-                            PARENT PROCHE<br>
+                            <strong>PARENT PROCHE</strong><br>
                             <div class="info-patient" style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
                                 {{ $patient->contact_urgence ?? '' }}
                             </div>
@@ -300,13 +296,13 @@
 
                     <tr>
                         <td style="padding: 12px 8px;">
-                            GROUPE RHÉSUS<br>
+                            <strong>GROUPE RHÉSUS</strong><br>
                             <div class="info-patient" style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
                                 {{ $patient->groupe_rhesus ?? '' }}
                             </div>
                         </td>
                         <td style="padding: 12px 8px;">
-                            ÉLECTROPHORÈSE<br>
+                            <strong>ÉLECTROPHORÈSE</strong><br>
                             <div class="info-patient" style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
                                 {{ $patient->electrophorese ?? '' }}
                             </div>
@@ -315,13 +311,13 @@
 
                     <tr>
                         <td style="padding: 12px 8px;">
-                            ASSURANCE<br>
+                            <strong>ASSURANCE</strong><br>
                             <div class="info-patient" style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
                                 {{ $patient->assurance->name ?? 'Aucune' }}
                             </div>
                         </td>
                         <td style="padding: 12px 8px;">
-                            TAUX<br>
+                            <strong>TAUX</strong><br>
                             <div class="info-patient" style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 8px 10px; min-height: 30px;">
                                 {{ $patient->taux_couverture ?? '00' }}%
                             </div>

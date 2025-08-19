@@ -88,7 +88,7 @@ public function index()
             abort(403, 'Accès non autorisé.');
         }
 
-        $assurances = Assurance::all();
+        $assurances = Assurance::orderBy('name','asc')->get();
         $professions = Profession::orderBy('nom', 'asc')->get();
         $ethnies = Ethnie::orderBy('nom', 'asc')->get();
 
@@ -245,7 +245,7 @@ public function index()
 
         $professions = Profession::orderBy('nom', 'asc')->get();
         $ethnies = Ethnie::orderBy('nom', 'asc')->get();
-        $assurances = Assurance::all();
+        $assurances = Assurance::orderBy('name','asc')->get();
         return view('dashboard.pages.patients.edit', compact('patient', 'assurances', 'professions', 'ethnies'));
     }
 

@@ -208,15 +208,28 @@
                     <div class="row">
                         <div class="col-lg-4">
                             <div class="mb-3">
-                                <label class="form-label">Assurance</label>
-                                <select class="form-control @error('assurance_id') is-invalid @enderror" name="assurance_id">
+                                <label class="form-label">Assurance <span class="text-danger">*</span></label>
+                                {{-- <select class="form-control @error('assurance_id') is-invalid @enderror" name="assurance_id">
                                     <option value="">Aucune</option>
                                     @foreach($assurances as $assurance)
                                         <option value="{{ $assurance->id }}" {{ old('assurance_id', $patient->assurance_id) == $assurance->id ? 'selected' : '' }}>
                                             {{ $assurance->name }}
                                         </option>
                                     @endforeach
+                                </select> --}}
+                                <select class="form-control @error('assurance_id') is-invalid @enderror" 
+                                        name="assurance_id" required>
+                                    <option value="" disabled {{ old('assurance_id', $patient->assurance_id) ? '' : 'selected' }}>
+                                        Sélectionner l'assurance
+                                    </option>
+                                    @foreach($assurances as $assurance)
+                                        <option value="{{ $assurance->id }}" 
+                                            {{ old('assurance_id', $patient->assurance_id) == $assurance->id ? 'selected' : '' }}>
+                                            {{ $assurance->name }}
+                                        </option>
+                                    @endforeach
                                 </select>
+
                                 @error('assurance_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
