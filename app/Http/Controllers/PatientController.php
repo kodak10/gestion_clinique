@@ -102,7 +102,7 @@ public function index()
 
     public function store(Request $request)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière','Receptionniste', 'Caissière', 'Receptionniste'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Respo Caissière', 'Caissière', 'Receptionniste', 'Facturié'])) {
             abort(403, 'Accès non autorisé.');
         }
 
