@@ -24,6 +24,7 @@ class AssuranceController extends Controller
             'siege' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
+        
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('assurances', 'public');
