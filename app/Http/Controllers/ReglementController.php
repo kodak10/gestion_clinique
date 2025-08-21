@@ -94,14 +94,14 @@ class ReglementController extends Controller
 
         $consultations = Consultation::with(['patient', 'details.prestation', 'reglements'])
             ->where('reste_a_payer', '>', 0)
-            orderBy('created_at')->get();
+            ->orderBy('created_at')->get();
             
 
             
 
         $hospitalisations = Hospitalisation::with(['patient', 'user', 'details.frais', 'reglements'])
             ->where('reste_a_payer', '>', 0)
-            orderBy('created_at')->get();
+            ->orderBy('created_at')->get();
         // dd($hospitalisations);
 
         return view('dashboard.pages.comptabilites.reglement', compact('consultations', 'hospitalisations'));
