@@ -256,7 +256,7 @@
                                                     </a>
                                                     
                                                     @auth
-                                                        @if(auth()->user()->hasAnyRole(['Admin', 'Développeur', 'Comptable', 'Respo Caissière']))
+                                                        @if(auth()->user()->hasAnyRole(['Admin', 'Développeur', 'Comptable']))
                                                             <form action="{{ route('reglements.destroy', $reglement->id) }}" method="POST" class="d-inline">
                                                                 @csrf
                                                                 @method('DELETE')
