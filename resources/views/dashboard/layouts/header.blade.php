@@ -153,7 +153,7 @@
                         </div>
                       </div>
                     </li>
-                    @role('Admin|Developpeur')
+                    @role('Admin|Developpeur|Comptable')
                       <li class="nav-item">
                         <a class="nav-link" href="{{ route('tracabilite.index') }}">
                           <span class="nav-link-icon d-md-none d-lg-inline-block">
