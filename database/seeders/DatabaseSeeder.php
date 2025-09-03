@@ -18,24 +18,24 @@ class DatabaseSeeder extends Seeder
 
     public function run()
     {
-        // Création des rôles
-        $roles = ['Developpeur', 'Admin','Manager', 'Comptable','Facturié', 'Respo Caissière', 'Caissière', 'Receptionniste', 'Pharmacien'];
+        // // Création des rôles
+        // $roles = ['Developpeur', 'Admin','Manager', 'Comptable','Facturié', 'Respo Caissière', 'Caissière', 'Receptionniste', 'Pharmacien'];
         
-        foreach ($roles as $role) {
-            Role::create(['name' => $role]);
-        }
+        // foreach ($roles as $role) {
+        //     Role::create(['name' => $role]);
+        // }
 
-        // Création d'un admin par défaut
-        $admin = \App\Models\User::create([
-            'name' => 'Admin Parfait',
-            'pseudo' => 'Admin',
-            'email' => 'admin@example.com',
-            'phone_number' => '123456789',
-            'password' => bcrypt('password'),
-            'status' => 'Actif'
-        ]);
+        // // Création d'un admin par défaut
+        // $admin = \App\Models\User::create([
+        //     'name' => 'Admin Parfait',
+        //     'pseudo' => 'Admin',
+        //     'email' => 'admin@example.com',
+        //     'phone_number' => '123456789',
+        //     'password' => bcrypt('password'),
+        //     'status' => 'Actif'
+        // ]);
 
-        $admin->assignRole('Admin');
+        // $admin->assignRole('Admin');
 
         $this->call([
             //SpecialiteSeeder::class,
@@ -45,9 +45,9 @@ class DatabaseSeeder extends Seeder
             //SpecialiteSeeder::class,
             //CategoryPrestationsSeeder::class,
             //PrestationSeeder::class,
-            FraisHospitalisationSeeder::class,
+            //FraisHospitalisationSeeder::class,
             MedicamentSeeder::class,
-            ExamenSeeder::class,
+            //ExamenSeeder::class,
             
             
         ]);
