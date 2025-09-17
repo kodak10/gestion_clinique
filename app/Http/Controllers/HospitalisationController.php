@@ -46,7 +46,7 @@ class HospitalisationController extends Controller
 
     public function storeSimple(Patient $patient)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Caissière'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Caissière', 'Facturié'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -161,7 +161,7 @@ class HospitalisationController extends Controller
 
     public function createPharmacie(Hospitalisation $hospitalisation)
     {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Comptable'])) {
+        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Pharmacien'])) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -589,7 +589,9 @@ class HospitalisationController extends Controller
             'total' => $validatedData['total'],
             'ticket_moderateur' => $validatedData['ticket_moderateur'],
             'montant_a_paye' => $validatedData['montant_a_paye'],
-            'reste_a_payer' => $validatedData['montant_a_paye'] - ($validatedData['caution'] ?? 0),
+            // 'reste_a_payer' => $validatedData['montant_a_paye'] - ($validatedData['caution'] ?? 0),
+
+            'reste_a_payer' => $validatedData['montant_a_paye'] ?? 0,
             'reduction' => $validatedData['reduction'] ?? 0,
             'reduction_par' => $validatedData['reduction_par'] ?? null,
             'user_id' => auth()->id(),
