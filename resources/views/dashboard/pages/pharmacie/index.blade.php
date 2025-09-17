@@ -81,13 +81,8 @@
                                                 @csrf @method('PUT')
                                                 <div class="modal-body">
                                                     <div class="row">
-                                                        <div class="col-lg-6">
-                                                            <div class="mb-3">
-                                                                <label class="form-label">Code</label>
-                                                                <input type="text" class="form-control" name="code" value="{{ $medicament->code }}" required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-6">
+                                                        
+                                                        <div class="col-lg-12">
                                                             <div class="mb-3">
                                                                 <label class="form-label">Nom</label>
                                                                 <input type="text" class="form-control" name="nom" value="{{ $medicament->nom }}" required>
@@ -95,19 +90,14 @@
                                                         </div>
                                                     </div>
                                                     <div class="row">
-                                                        <div class="col-lg-4">
-                                                            <div class="mb-3">
-                                                                <label class="form-label">Unité de mesure</label>
-                                                                <input type="text" class="form-control" name="unite_mesure" value="{{ $medicament->unite_mesure }}" required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-4">
+                                                        
+                                                        <div class="col-lg-6">
                                                             <div class="mb-3">
                                                                 <label class="form-label">Prix d'achat (FCFA)</label>
                                                                 <input type="number" step="0.01" class="form-control" name="prix_achat" value="{{ $medicament->prix_achat }}" required>
                                                             </div>
                                                         </div>
-                                                        <div class="col-lg-4">
+                                                        <div class="col-lg-6">
                                                             <div class="mb-3">
                                                                 <label class="form-label">Prix de vente (FCFA)</label>
                                                                 <input type="number" step="0.01" class="form-control" name="prix_vente" value="{{ $medicament->prix_vente }}" required>
@@ -115,24 +105,19 @@
                                                         </div>
                                                     </div>
                                                     <div class="row">
-                                                        <div class="col-lg-4">
+                                                        <div class="col-lg-6">
                                                             <div class="mb-3">
                                                                 <label class="form-label">Stock actuel</label>
                                                                 <input type="number" class="form-control" name="stock" value="{{ $medicament->stock }}" disabled>
                                                             </div>
                                                         </div>
-                                                        <div class="col-lg-4">
+                                                        <div class="col-lg-6">
                                                             <div class="mb-3">
                                                                 <label class="form-label">Stock d'alerte</label>
                                                                 <input type="number" class="form-control" name="stock_alerte" value="{{ $medicament->stock_alerte }}" required>
                                                             </div>
                                                         </div>
-                                                        <div class="col-lg-4">
-                                                            <div class="mb-3">
-                                                                <label class="form-label">Date péremption</label>
-                                                                <input type="date" class="form-control" name="date_peremption" value="{{ $medicament->date_peremption ? $medicament->date_peremption->format('Y-m-d') : '' }}">
-                                                            </div>
-                                                        </div>
+                                                        
                                                     </div>
                                                    
                                                 </div>

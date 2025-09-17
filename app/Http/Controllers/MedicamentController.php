@@ -161,7 +161,7 @@ class MedicamentController extends Controller
             DB::transaction(function () use ($medicament) {
                 // Vérification plus complète des utilisations
                 $isUsed = HospitalisationMedicament::where('medicament_id', $medicament->id)
-                    ->orWhereHas('stockMouvements', function($q) use ($medicament) {
+                    ->orWhereHas('medicament_mouvements', function($q) use ($medicament) {
                         $q->where('medicament_id', $medicament->id);
                     })
                     ->exists();
@@ -171,7 +171,7 @@ class MedicamentController extends Controller
                 }
 
                 // Archivage avant suppression
-                StockMouvement::create([
+                MedicamentMouvement::create([
                     'medicament_id' => $medicament->id,
                     'user_id' => auth()->id(),
                     'type' => 'suppression',
