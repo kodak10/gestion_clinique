@@ -14,15 +14,12 @@ class Medicament extends Model
     use HasFactory, LogsActivity, SoftDeletes;
 
     protected $fillable = [
-        'code',
         'nom',
         
-        'unite_mesure',
         'prix_achat',
         'prix_vente',
         'stock',
         'stock_alerte',
-        'date_peremption',
     ];
 
     protected $casts = [

@@ -90,7 +90,7 @@
         
         .info-grid {
             width: 100%;
-            margin-bottom: 15px;
+            margin-bottom: 0px;
             overflow: hidden;
         }
         

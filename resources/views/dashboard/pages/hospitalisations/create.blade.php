@@ -18,7 +18,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
-            
 
             @if ($errors->any())
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -33,9 +32,10 @@
                 </div>
             @endif
 
-            <form action="{{ route('hospitalisations.facture.store', $hospitalisation->id) }}" method="POST" id="examenForm" >
+            <form action="{{ route('hospitalisations.facture.store', $hospitalisation->id) }}" method="POST" id="examenForm">
                 @csrf
                 <div class="row">
+                    <!-- Informations Patient -->
                     <div class="col-md-6">
                         <div class="card mb-3">
                             <div class="card-header">
@@ -65,6 +65,8 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Medecin Traitant -->
                     <div class="col-md-6">
                         <div class="card mb-3">
                             <div class="card-header">
@@ -107,6 +109,7 @@
                         </div>
                     </div>
 
+                    <!-- Dates et informations complémentaires -->
                     <div class="col-md-12">
                         <div class="card mb-3">
                             <div class="card-body">
@@ -156,16 +159,15 @@
                         </div>
                     </div>
 
+                    <!-- Examens Laboratoire et Pharmacie -->
                     <div class="col-md-6">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h4 class="mb-3 ">Examens Laboratoire</h4>
+                            <h4 class="mb-3">Examens Laboratoire</h4>
                             <div>
                                 <span class="badge bg-primary me-2 text-white">
                                     {{ number_format($detailsLaboratoire->sum('total'), 0, ',', ' ') }} XOF
                                 </span>
-                                <a href="{{ route('print.laboratoire', $hospitalisation->id) }}" 
-                                target="_blank"
-                                class="btn btn-sm btn-primary">
+                                <a href="{{ route('print.laboratoire', $hospitalisation->id) }}" target="_blank" class="btn btn-sm btn-primary">
                                     <i class="fas fa-print"></i> Imprimer
                                 </a>
                             </div>
@@ -179,15 +181,14 @@
                                 <span class="badge bg-primary me-2 text-white">
                                     {{ number_format($detailsPharmacie->sum('total'), 0, ',', ' ') }} XOF
                                 </span>
-                                <a href="{{ route('print.pharmacie', $hospitalisation->id) }}" 
-                                target="_blank"
-                                class="btn btn-sm btn-primary">
+                                <a href="{{ route('print.pharmacie', $hospitalisation->id) }}" target="_blank" class="btn btn-sm btn-primary">
                                     <i class="fas fa-print"></i> Imprimer
                                 </a>
                             </div>
                         </div>
                     </div>
-                   
+
+                    <!-- Frais d'hospitalisation -->
                     <div class="col-md-12 mt-5">
                         <div class="card mb-3">
                             <div class="card-header">
@@ -197,7 +198,7 @@
                                 <div class="autres-repeater">
                                     <div data-repeater-list="frais">
 
-                                        {{-- Ligne fixe : Pharmacie --}}
+                                        <!-- Ligne fixe : Pharmacie -->
                                         <div class="mb-3 border-bottom pb-3">
                                             <div class="row align-items-end">
                                                 <div class="col-md-4">
@@ -207,16 +208,15 @@
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Prix unitaire</label>
-                                                    <input type="hidden" name="frais_pharmacie[frais_id]" value="2">
-                                                    <input type="number" class="form-control prix" name="frais_pharmacie[prix]" value="{{ $detailsPharmacie->first()->prix_unitaire ?? 0 }}" >
+                                                    <input type="number" class="form-control prix" name="frais_pharmacie[prix]" value="{{ $detailsPharmacie->first()->prix_unitaire ?? 0 }}">
                                                 </div>
                                                 <div class="col-md-1">
                                                     <label class="form-label">Quantité</label>
-                                                    <input type="number" class="form-control quantite" name="frais_pharmacie[quantite]" value="{{ $detailsPharmacie->first()->quantite ?? 1 }}" >
+                                                    <input type="number" class="form-control quantite" name="frais_pharmacie[quantite]" value="{{ $detailsPharmacie->first()->quantite ?? 1 }}">
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Prise en charge</label>
-                                                    <input type="number" class="form-control taux" name="frais_pharmacie[taux]" value="0" >
+                                                    <input type="number" class="form-control taux" name="frais_pharmacie[taux]" value="0">
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Total</label>
@@ -225,26 +225,25 @@
                                             </div>
                                         </div>
 
-                                        {{-- Ligne fixe : Laboratoire --}}
+                                        <!-- Ligne fixe : Laboratoire -->
                                         <div class="mb-3 border-bottom pb-3">
                                             <div class="row align-items-end">
                                                 <div class="col-md-4">
                                                     <label class="form-label">Libellé</label>
-                                                    <input type="text" class="form-control" value="Laboratoire">
+                                                    <input type="text" class="form-control" value="Laboratoire" readonly>
                                                     <input type="hidden" name="frais_laboratoire[frais_id]" value="1">
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Prix unitaire</label>
-                                                    <input type="hidden" name="frais_laboratoire[frais_id]" value="1">
-                                                    <input type="number" class="form-control prix" name="frais_laboratoire[prix]" value="{{ $detailsLaboratoire->first()->prix_unitaire ?? 0 }}" >
+                                                    <input type="number" class="form-control prix" name="frais_laboratoire[prix]" value="{{ $detailsLaboratoire->first()->prix_unitaire ?? 0 }}">
                                                 </div>
                                                 <div class="col-md-1">
                                                     <label class="form-label">Quantité</label>
-                                                    <input type="number" class="form-control quantite" name="frais_laboratoire[quantite]" value="{{ $detailsLaboratoire->first()->quantite ?? 1 }}" >
+                                                    <input type="number" class="form-control quantite" name="frais_laboratoire[quantite]" value="{{ $detailsLaboratoire->first()->quantite ?? 1 }}">
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Prise en charge</label>
-                                                    <input type="number" class="form-control taux" name="frais_laboratoire[taux]" value="0" >
+                                                    <input type="number" class="form-control taux" name="frais_laboratoire[taux]" value="0">
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Total</label>
@@ -253,10 +252,16 @@
                                             </div>
                                         </div>
 
-                                        {{-- Autres frais dynamiques --}}
+                                        <!-- Séparateur -->
+                                        <div class="mb-3">
+                                            <hr class="border-2 border-primary">
+                                            <h5 class="text-center text-primary">Frais existants</h5>
+                                        </div>
+
+                                        <!-- Frais existants -->
                                         @php $currentIndex = 0; @endphp
                                         @foreach($autresDetails as $detail)
-                                            <div data-repeater-item class="mb-3 border-bottom pb-3">
+                                            <div class="mb-3 border-bottom pb-3 frais-existant">
                                                 <div class="row align-items-end">
                                                     <div class="col-md-4">
                                                         <label class="form-label">Libellé</label>
@@ -281,7 +286,7 @@
                                                         <input type="number" class="form-control total" name="frais[{{ $currentIndex }}][total]" value="{{ $detail->total }}" readonly>
                                                     </div>
                                                     <div class="col-md-1 text-center">
-                                                        <button type="button" data-repeater-delete class="btn btn-danger btn-sm mt-4">
+                                                        <button type="button" class="btn btn-danger btn-sm mt-4" onclick="supprimerFraisExistant(this)">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </div>
@@ -290,14 +295,20 @@
                                             @php $currentIndex++; @endphp
                                         @endforeach
 
-                                        {{-- Modèle pour ajout dynamique --}}
-                                        <div data-repeater-item class="mb-3 border-bottom pb-3">
+                                        <!-- Séparateur -->
+                                        <div class="mb-3">
+                                            <hr class="border-2 border-success">
+                                            <h5 class="text-center text-success">Nouveaux frais</h5>
+                                        </div>
+
+                                        <!-- Modèle pour nouveaux frais -->
+                                        <div data-repeater-item class="mb-3 border-bottom pb-3 frais-nouveau">
                                             <div class="row align-items-end">
                                                 <div class="col-md-4">
                                                     <label class="form-label">Libellé</label>
-                                                    <select class="form-select frais-select" data-name="frais[__index__][frais_id]" required>
+                                                    <select class="form-select frais-select" name="frais[__index__][frais_id]" required>
                                                         <option value="" disabled selected>Choisir un frais</option>
-                                                        @foreach($autresFrais as $frais)
+                                                        @foreach($tousFrais as $frais)
                                                             <option value="{{ $frais->id }}" data-prix="{{ $frais->montant }}">
                                                                 {{ $frais->libelle }}
                                                             </option>
@@ -306,19 +317,19 @@
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Prix unitaire</label>
-                                                    <input type="number" class="form-control prix" data-name="frais[__index__][prix]" value="0" required>
+                                                    <input type="number" class="form-control prix" name="frais[__index__][prix]" value="0" required>
                                                 </div>
                                                 <div class="col-md-1">
                                                     <label class="form-label">Quantité</label>
-                                                    <input type="number" class="form-control quantite" data-name="frais[__index__][quantite]" value="1" min="1" required>
+                                                    <input type="number" class="form-control quantite" name="frais[__index__][quantite]" value="1" min="1" required>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Prise en charge</label>
-                                                    <input type="number" class="form-control taux" data-name="frais[__index__][taux]" value="{{ $patient->taux_couverture ?? 0 }}" min="0" max="100" required>
+                                                    <input type="number" class="form-control taux" name="frais[__index__][taux]" value="{{ $patient->taux_couverture ?? 0 }}" min="0" max="100" required>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="form-label">Total</label>
-                                                    <input type="number" class="form-control total" data-name="frais[__index__][total]" value="0" readonly>
+                                                    <input type="number" class="form-control total" name="frais[__index__][total]" value="0" readonly>
                                                 </div>
                                                 <div class="col-md-1 text-center">
                                                     <button type="button" data-repeater-delete class="btn btn-danger btn-sm mt-4">
@@ -333,14 +344,13 @@
                                         <span class="fs-4 me-1">+</span> Ajouter un autre frais
                                     </button>
                                 </div>
-
                             </div>
                         </div>
                     </div>
 
-
                 </div>
 
+                <!-- Totaux et réduction -->
                 <div class="row">
                     <div class="col-md-3">
                         <div class="card">
@@ -393,6 +403,7 @@
                     </div>
                 </div>
 
+                <!-- Boutons d'action -->
                 <div class="d-flex justify-content-between align-items-center mt-5">
                     <a href="{{ route('hospitalisations.index') }}" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Retour
@@ -407,6 +418,7 @@
     </div>
 </div>
 @endsection
+
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.repeater/1.2.1/jquery.repeater.min.js"></script>
@@ -421,55 +433,73 @@ $(document).ready(function() {
 
     // Fonction pour initialiser Select2
     function initSelect2(element) {
+        // Détruire Select2 s'il était déjà initialisé
+        if ($(element).hasClass('select2-hidden-accessible')) {
+            $(element).select2('destroy');
+        }
+        
         $(element).select2({
             width: '100%',
             placeholder: "Choisir un frais"
-            
         }).on('change', function() {
             const prix = $(this).find('option:selected').data('prix') || 0;
+            const tauxPriseEnCharge = {{ $patient->taux_couverture ?? 0 }};
             const row = $(this).closest('[data-repeater-item]');
+            
             row.find('.prix').val(prix);
+            row.find('.taux').val(tauxPriseEnCharge);
+            
             calculerTotalLigne(row);
         });
     }
 
     // Initialiser Select2 pour les éléments existants au chargement
-    
+    $('.frais-select').each(function() {
+        initSelect2(this);
+    });
 
     // Repeater pour les frais dynamiques
     $('.autres-repeater').repeater({
         initEmpty: false,
+        defaultValues: {
+            'frais[__index__][taux]': {{ $patient->taux_couverture ?? 0 }}
+        },
         show: function() {
             const newItem = $(this).slideDown();
+            const index = Date.now(); // Index unique basé sur le timestamp
+            
+            // Corriger les noms des champs avec un index unique
+            newItem.find('[name]').each(function() {
+                const originalName = $(this).attr('name');
+                const newName = originalName.replace('__index__', index);
+                $(this).attr('name', newName);
+                $(this).attr('id', $(this).attr('id') + '_' + index);
+            });
+            
+            // Corriger également les data-name
+            newItem.find('[data-name]').each(function() {
+                const originalDataName = $(this).data('name');
+                const newDataName = originalDataName.replace('__index__', index);
+                $(this).attr('data-name', newDataName);
+            });
 
             // Initialiser Select2 pour le nouveau select
             const selectElement = newItem.find('.frais-select');
             initSelect2(selectElement);
 
-            
-            
-            // Corriger les noms des champs
-            const index = newItem.index();
-            newItem.find('[data-name]').each(function() {
-                const name = $(this).data('name').replace('__index__', index);
-                $(this).attr('name', name);
-            });
-            
+            // Pré-remplir avec la valeur de prise en charge du patient
+            newItem.find('.taux').val({{ $patient->taux_couverture ?? 0 }});
+
             // Calculer le total pour la nouvelle ligne
             calculerTotalLigne(newItem);
         },
         hide: function(deleteElement) {
-            $(this).slideUp(deleteElement, function() {
-                $(this).remove();
-                calculerTousLesTotaux();
-            });
-        },
-        ready: function(setIndexes) {
-            $('.frais-select').each(function() {
-                if (!$(this).hasClass('select2-hidden-accessible')) {
-                    initSelect2(this);
-                }
-            });
+            if (confirm('Voulez-vous vraiment supprimer ce frais ?')) {
+                $(this).slideUp(deleteElement, function() {
+                    $(this).remove();
+                    calculerTousLesTotaux();
+                });
+            }
         }
     });
 
@@ -491,20 +521,26 @@ $(document).ready(function() {
     function calculerTousLesTotaux() {
         let totalPrestations = 0;
         let totalTicketModerateur = 0;
-        let totalPriseEnCharge = 0;
 
-        $('.mb-3.border-bottom.pb-3, [data-repeater-item]').each(function() {
-            const prix = parseFloat($(this).find('.prix').val()) || 0;
-            const quantite = parseInt($(this).find('.quantite').val()) || 0;
-            const taux = parseFloat($(this).find('.taux').val()) || 0;
-            
-            const montantBrut = prix * quantite;
-            const priseEnCharge = montantBrut * (taux / 100);
-            const ticketModerateur = montantBrut - priseEnCharge;
-            
-            totalPrestations += montantBrut;
-            totalPriseEnCharge += priseEnCharge;
-            totalTicketModerateur += ticketModerateur;
+        // Inclure les lignes fixes (pharmacie et laboratoire)
+        $('.mb-3.border-bottom.pb-3').each(function() {
+            const total = parseFloat($(this).find('.total').val()) || 0;
+            totalPrestations += total;
+            totalTicketModerateur += total;
+        });
+
+        // Inclure les frais existants
+        $('.frais-existant').each(function() {
+            const total = parseFloat($(this).find('.total').val()) || 0;
+            totalPrestations += total;
+            totalTicketModerateur += total;
+        });
+
+        // Inclure les frais dynamiques
+        $('[data-repeater-item]').each(function() {
+            const total = parseFloat($(this).find('.total').val()) || 0;
+            totalPrestations += total;
+            totalTicketModerateur += total;
         });
 
         $('#total-prestations').val(totalPrestations.toFixed(2));
@@ -516,9 +552,9 @@ $(document).ready(function() {
         $('#a-payer').val(montantAPayer.toFixed(2));
     }
 
-    // Écouteurs d'événements
+    // Écouteurs d'événements pour les changements de valeurs
     $(document).on('input', '.prix, .quantite, .taux', function() {
-        const row = $(this).closest('[data-repeater-item], .mb-3.border-bottom.pb-3');
+        const row = $(this).closest('.mb-3.border-bottom.pb-3, .frais-existant, [data-repeater-item]');
         calculerTotalLigne(row);
     });
 
@@ -533,31 +569,33 @@ $(document).ready(function() {
         if (valeur > 100) $(this).val(100);
     });
 
-// Gestion des dates (sans les heures/minutes)
-$('[name="date_entree"], [name="date_sortie"]').on('change', function() {
-    // Récupération des dates seulement (sans l'heure)
-    const dateEntreeStr = $('[name="date_entree"]').val().split('T')[0];
-    const dateSortieStr = $('[name="date_sortie"]').val().split('T')[0];
-    
-    if (dateEntreeStr && dateSortieStr) {
-        const dateEntree = new Date(dateEntreeStr);
-        const dateSortie = new Date(dateSortieStr);
+    // Gestion des dates avec réinitialisation du flag manuallyChanged
+    $('[name="date_entree"], [name="date_sortie"]').on('change', function() {
+        const dateEntreeStr = $('[name="date_entree"]').val();
+        const dateSortieStr = $('[name="date_sortie"]').val();
         
-        // Vérification que la date de sortie est après l'entrée
-        if (dateSortie >= dateEntree) {
-            // Calcul de la différence en jours (sans tenir compte de l'heure)
-            const diffTime = dateSortie - dateEntree;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (dateEntreeStr && dateSortieStr) {
+            const dateEntree = new Date(dateEntreeStr);
+            const dateSortie = new Date(dateSortieStr);
             
-            // Mise à jour des quantités (sauf si modifiées manuellement)
-            $('.quantite').each(function() {
-                if (!$(this).data('manuallyChanged')) {
-                    $(this).val(diffDays).trigger('input');
-                }
-            });
+            if (dateSortie >= dateEntree) {
+                const diffTime = dateSortie - dateEntree;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                // Réinitialiser le flag manuallyChanged pour permettre la mise à jour
+                $('.quantite').each(function() {
+                    $(this).data('manuallyChanged', false);
+                });
+                
+                // Mettre à jour toutes les quantités (sauf celles modifiées manuellement)
+                $('.quantite').each(function() {
+                    if (!$(this).data('manuallyChanged')) {
+                        $(this).val(diffDays).trigger('input');
+                    }
+                });
+            }
         }
-    }
-});
+    });
 
     // Marquage des quantités modifiées manuellement
     $(document).on('input', '.quantite', function() {
@@ -575,11 +613,20 @@ $('[name="date_entree"], [name="date_sortie"]').on('change', function() {
 
     // Gestion de la soumission du formulaire
     $('#examenForm').on('submit', function(e) {
-        $('[data-repeater-item]').each(function(index) {
-            $(this).find('[data-name]').each(function() {
-                const name = $(this).data('name').replace('__index__', index);
-                $(this).attr('name', name);
+        // Renommer correctement tous les champs des frais dynamiques avant soumission
+        let dynamicIndex = 0;
+        $('[data-repeater-item]').each(function() {
+            $(this).find('[name]').each(function() {
+                const originalName = $(this).attr('name');
+                if (originalName.includes('__index__')) {
+                    const newName = originalName.replace('__index__', dynamicIndex);
+                    $(this).attr('name', newName);
+                } else if (originalName.includes('frais[') && !originalName.includes('frais_')) {
+                    const newName = `frais[${dynamicIndex}][${$(this).attr('name').split('[').pop()}`;
+                    $(this).attr('name', newName);
+                }
             });
+            dynamicIndex++;
         });
 
         const reduction = parseFloat($('#reduction').val()) || 0;
@@ -600,8 +647,17 @@ $('[name="date_entree"], [name="date_sortie"]').on('change', function() {
         return true;
     });
 
+    // Fonction pour supprimer un frais existant
+    window.supprimerFraisExistant = function(button) {
+        if (confirm('Voulez-vous vraiment supprimer ce frais ?')) {
+            const row = $(button).closest('.frais-existant');
+            row.remove();
+            calculerTousLesTotaux();
+        }
+    };
+
     // Calcul initial
-    $('.mb-3.border-bottom.pb-3, [data-repeater-item]').each(function() {
+    $('.mb-3.border-bottom.pb-3, .frais-existant, [data-repeater-item]').each(function() {
         calculerTotalLigne($(this));
     });
     calculerTousLesTotaux();

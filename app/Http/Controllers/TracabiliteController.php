@@ -186,44 +186,58 @@ class TracabiliteController extends Controller
             })
             // Colonne Ancien
             ->addColumn('old', function($activity) {
-                if ($activity->event == 'updated' && $activity->properties->has('old')) {
-                    $html = '<ul class="list-unstyled mb-0">';
+    if ($activity->event == 'updated' && $activity->properties->has('old')) {
+        $html = '<ul class="list-unstyled mb-0">';
+        foreach ($activity->properties['old'] as $key => $value) {
+            $html .= '<li><strong>'.$key.':</strong> ';
+            if($key === 'name') {
+                $html .= '<strong>'.$value.'</strong>';
+            } else {
+                $html .= is_array($value) || is_object($value) 
+                    ? '<pre class="mb-0">'.json_encode($value, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT).'</pre>'
+                    : ($value ?? 'NULL');
+            }
+            $html .= '</li>';
+        }
+        return $html.'</ul>';
+            } elseif ($activity->event == 'deleted') {
+                $html = '<div class="alert alert-danger p-2 mb-0">';
+                if ($activity->properties->has('old')) {
+                    $html .= '<ul class="mb-0">';
                     foreach ($activity->properties['old'] as $key => $value) {
                         $html .= '<li><strong>'.$key.':</strong> ';
-                        $html .= is_array($value) || is_object($value) 
-                            ? '<pre class="mb-0">'.json_encode($value, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT).'</pre>'
-                            : ($value ?? 'NULL');
-                        $html .= '</li>';
-                    }
-                    return $html.'</ul>';
-                } elseif ($activity->event == 'deleted') {
-                    $html = '<div class="alert alert-danger p-2 mb-0">';
-                    if ($activity->properties->has('old')) {
-                        $html .= '<ul class="mb-0">';
-                        foreach ($activity->properties['old'] as $key => $value) {
-                            $html .= '<li><strong>'.$key.':</strong> ';
+                        if($key === 'name') {
+                            $html .= '<strong>'.$value.'</strong>';
+                        } else {
                             $html .= is_array($value) || is_object($value) 
                                 ? '<pre class="mb-0">'.json_encode($value, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT).'</pre>'
                                 : ($value ?? 'NULL');
-                            $html .= '</li>';
                         }
-                        $html .= '</ul>';
-                    } else {
-                        $html .= '<em>Données non disponibles</em>';
+                        $html .= '</li>';
                     }
-                    return $html.'</div>';
+                    $html .= '</ul>';
+                } else {
+                    $html .= '<em>Données non disponibles</em>';
                 }
-                return '<em class="text-muted">N/A</em>';
-            })
+                return $html.'</div>';
+            }
+            return '<em class="text-muted">N/A</em>';
+        })
+
             // Colonne Nouveau
             ->addColumn('new', function($activity) {
                 if ($activity->properties->has('attributes')) {
                     $html = '<ul class="list-unstyled mb-0">';
                     foreach ($activity->properties['attributes'] as $key => $value) {
                         $html .= '<li><strong>'.$key.':</strong> ';
-                        $html .= is_array($value) || is_object($value) 
-                            ? '<pre class="mb-0">'.json_encode($value, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT).'</pre>'
-                            : ($value ?? 'NULL');
+                        // Si c'est le nom, tu peux le mettre en gras ou le mettre en évidence
+                        if($key === 'name') {
+                            $html .= '<strong>'.$value.'</strong>';
+                        } else {
+                            $html .= is_array($value) || is_object($value) 
+                                ? '<pre class="mb-0">'.json_encode($value, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT).'</pre>'
+                                : ($value ?? 'NULL');
+                        }
                         $html .= '</li>';
                     }
                     return $html.'</ul>';
@@ -232,6 +246,7 @@ class TracabiliteController extends Controller
                 }
                 return '<em class="text-muted">N/A</em>';
             })
+
             // Colonne Date
             ->addColumn('date', function($activity) {
                 return $activity->created_at->format('d/m/Y à H:i');

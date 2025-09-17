@@ -35,7 +35,6 @@
                     <table class="table" id="table">
                         <thead>
                             <tr>
-                                <th>Code</th>
                                 <th>Nom</th>
                                 <th>Prix Achat</th>
                                 <th>Prix Vente</th>
@@ -47,7 +46,6 @@
                         <tbody>
                             @foreach ($medicaments as $medicament)
                                 <tr class="{{ $medicament->stock <= $medicament->stock_alerte ? 'bg-danger-lt' : '' }}">
-                                    <td>{{ $medicament->code }}</td>
                                     <td>{{ $medicament->nom }}</td>
                                     <td>{{ number_format($medicament->prix_achat, 0) }} FCFA</td>
                                     <td>{{ number_format($medicament->prix_vente, 0) }} FCFA</td>
@@ -212,16 +210,8 @@
                         </div>
                     @endif
                     <div class="row">
-                        <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label class="form-label">Code</label>
-                                <input type="text" class="form-control @error('code') is-invalid @enderror" name="code" value="{{ old('code') }}" required>
-                                @error('code')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
+                        
+                        <div class="col-lg-12">
                             <div class="mb-3">
                                 <label class="form-label">Nom</label>
                                 <input type="text" class="form-control @error('nom') is-invalid @enderror" name="nom" value="{{ old('nom') }}" required>
@@ -232,16 +222,8 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-4">
-                            <div class="mb-3">
-                                <label class="form-label">Unité de mesure</label>
-                                <input type="text" class="form-control @error('unite_mesure') is-invalid @enderror" name="unite_mesure" value="{{ old('unite_mesure') }}" required>
-                                @error('unite_mesure')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-lg-4">
+                        
+                        <div class="col-lg-6">
                             <div class="mb-3">
                                 <label class="form-label">Prix d'achat (FCFA)</label>
                                 <input type="number" step="0.01" class="form-control @error('prix_achat') is-invalid @enderror" name="prix_achat" value="{{ old('prix_achat') }}" required>
@@ -250,7 +232,7 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-lg-6">
                             <div class="mb-3">
                                 <label class="form-label">Prix de vente (FCFA)</label>
                                 <input type="number" step="0.01" class="form-control @error('prix_vente') is-invalid @enderror" name="prix_vente" value="{{ old('prix_vente') }}" required>
@@ -261,7 +243,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-4">
+                        <div class="col-lg-6">
                             <div class="mb-3">
                                 <label class="form-label">Stock initial</label>
                                 <input type="number" class="form-control @error('stock') is-invalid @enderror" name="stock" value="{{ old('stock', 0) }}" required>
@@ -270,7 +252,7 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-lg-6">
                             <div class="mb-3">
                                 <label class="form-label">Stock d'alerte</label>
                                 <input type="number" class="form-control @error('stock_alerte') is-invalid @enderror" name="stock_alerte" value="{{ old('stock_alerte', 10) }}" required>
@@ -279,15 +261,7 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-lg-4">
-                            <div class="mb-3">
-                                <label class="form-label">Date péremption</label>
-                                <input type="date" class="form-control @error('date_peremption') is-invalid @enderror" name="date_peremption" value="{{ old('date_peremption') }}">
-                                @error('date_peremption')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
+                       
                     </div>
                     
                 </div>

@@ -462,126 +462,304 @@ class HospitalisationController extends Controller
         }
     }
     
-    public function createFacture(Hospitalisation $hospitalisation)
-    {
-        if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Comptable'])) {
-            abort(403, 'Accès non autorisé.');
-        }
+    // public function createFacture(Hospitalisation $hospitalisation)
+    // {
+    //     if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Comptable'])) {
+    //         abort(403, 'Accès non autorisé.');
+    //     }
 
-        $patient = $hospitalisation->patient;
-        $categorie_medecins = Specialite::with('medecins')->get();
+    //     $patient = $hospitalisation->patient;
+    //     $categorie_medecins = Specialite::with('medecins')->get();
 
-        // Formatage des dates pour la vue
-        $dateEntree = $hospitalisation->date_entree 
-            ? \Carbon\Carbon::parse($hospitalisation->date_entree)->format('Y-m-d\TH:i')
-            : now()->format('Y-m-d\TH:i');
+    //     // Formatage des dates pour la vue
+    //     $dateEntree = $hospitalisation->date_entree 
+    //         ? \Carbon\Carbon::parse($hospitalisation->date_entree)->format('Y-m-d\TH:i')
+    //         : now()->format('Y-m-d\TH:i');
         
-        $dateSortie = $hospitalisation->date_sortie
-            ? \Carbon\Carbon::parse($hospitalisation->date_sortie)->format('Y-m-d\TH:i')
-            : null;
+    //     $dateSortie = $hospitalisation->date_sortie
+    //         ? \Carbon\Carbon::parse($hospitalisation->date_sortie)->format('Y-m-d\TH:i')
+    //         : null;
 
-        $detailsLaboratoire = HospitalisationDetail::with('fraisHospitalisation')
-            ->where('hospitalisation_id', $hospitalisation->id)
-            ->where('frais_hospitalisation_id', 1)
-            ->get();
+    //     $detailsLaboratoire = HospitalisationDetail::with('fraisHospitalisation')
+    //         ->where('hospitalisation_id', $hospitalisation->id)
+    //         ->where('frais_hospitalisation_id', 1)
+    //         ->get();
 
-        $detailsPharmacie = HospitalisationDetail::with('fraisHospitalisation')
-            ->where('hospitalisation_id', $hospitalisation->id)
-            ->where('frais_hospitalisation_id', 2)
-            ->get();
+    //     $detailsPharmacie = HospitalisationDetail::with('fraisHospitalisation')
+    //         ->where('hospitalisation_id', $hospitalisation->id)
+    //         ->where('frais_hospitalisation_id', 2)
+    //         ->get();
 
-        $autresDetails = HospitalisationDetail::with('fraisHospitalisation')
-            ->where('hospitalisation_id', $hospitalisation->id)
-            ->whereNotIn('frais_hospitalisation_id', [1, 2])
-            ->get();
+    //     $autresDetails = HospitalisationDetail::with('fraisHospitalisation')
+    //         ->where('hospitalisation_id', $hospitalisation->id)
+    //         ->whereNotIn('frais_hospitalisation_id', [1, 2])
+    //         ->get();
 
-        // Récupérer tous les frais existants (sauf 1 et 2)
-        $tousFrais = FraisHospitalisation::whereNotIn('id', [1, 2])
-            ->orderBy('libelle')
-            ->get();
+    //     // Récupérer tous les frais existants (sauf 1 et 2)
+    //     $tousFrais = FraisHospitalisation::whereNotIn('id', [1, 2])
+    //         ->orderBy('libelle')
+    //         ->get();
 
-        // Récupérer les IDs des frais déjà utilisés
-        $utilises = $autresDetails->pluck('frais_hospitalisation_id')->unique()->toArray();
+    //     // Récupérer les IDs des frais déjà utilisés
+    //     $utilises = $autresDetails->pluck('frais_hospitalisation_id')->unique()->toArray();
 
-        // Filtrer les frais disponibles (ceux qui ne sont pas encore utilisés)
-        $autresFrais = $tousFrais->reject(function ($frais) use ($utilises) {
-            return in_array($frais->id, $utilises);
-        });
+    //     // Filtrer les frais disponibles (ceux qui ne sont pas encore utilisés)
+    //     $autresFrais = $tousFrais->reject(function ($frais) use ($utilises) {
+    //         return in_array($frais->id, $utilises);
+    //     });
 
-        $taux_assurance = $patient->taux_couverture ?? 0;
+    //     $taux_assurance = $patient->taux_couverture ?? 0;
 
-        return view('dashboard.pages.hospitalisations.create', compact(
-            'hospitalisation', 
-            'patient', 
-            'categorie_medecins', 
-            'detailsLaboratoire', 
-            'detailsPharmacie', 
-            'autresFrais',
-            'autresDetails',
-            'taux_assurance',
-            'dateEntree',
-            'dateSortie',
-            'tousFrais'
-        ));
-    }
-
-
-    public function storeFacture(Request $request, Hospitalisation $hospitalisation)
+    //     return view('dashboard.pages.hospitalisations.create', compact(
+    //         'hospitalisation', 
+    //         'patient', 
+    //         'categorie_medecins', 
+    //         'detailsLaboratoire', 
+    //         'detailsPharmacie', 
+    //         'autresFrais',
+    //         'autresDetails',
+    //         'taux_assurance',
+    //         'dateEntree',
+    //         'dateSortie',
+    //         'tousFrais'
+    //     ));
+    // }
+    public function createFacture(Hospitalisation $hospitalisation)
 {
     if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Comptable'])) {
         abort(403, 'Accès non autorisé.');
     }
 
-    // Validation des données
+    $patient = $hospitalisation->patient;
+    $categorie_medecins = Specialite::with('medecins')->get();
+
+    // Formatage des dates pour la vue
+    $dateEntree = $hospitalisation->date_entree 
+        ? \Carbon\Carbon::parse($hospitalisation->date_entree)->format('Y-m-d\TH:i')
+        : now()->format('Y-m-d\TH:i');
+    
+    $dateSortie = $hospitalisation->date_sortie
+        ? \Carbon\Carbon::parse($hospitalisation->date_sortie)->format('Y-m-d\TH:i')
+        : null;
+
+    // Récupérer les détails existants
+    $detailsLaboratoire = HospitalisationDetail::with('fraisHospitalisation')
+        ->where('hospitalisation_id', $hospitalisation->id)
+        ->where('frais_hospitalisation_id', 1)
+        ->get();
+
+    $detailsPharmacie = HospitalisationDetail::with('fraisHospitalisation')
+        ->where('hospitalisation_id', $hospitalisation->id)
+        ->where('frais_hospitalisation_id', 2)
+        ->get();
+
+    $autresDetails = HospitalisationDetail::with('fraisHospitalisation')
+        ->where('hospitalisation_id', $hospitalisation->id)
+        ->whereNotIn('frais_hospitalisation_id', [1, 2])
+        ->get();
+
+    // Récupérer tous les frais existants
+    $tousFrais = FraisHospitalisation::orderBy('libelle')->get();
+
+    $taux_assurance = $patient->taux_couverture ?? 0;
+
+    // Calculer les totaux initiaux
+    $totalInitial = $hospitalisation->total ?? 0;
+    $ticketModerateurInitial = $hospitalisation->ticket_moderateur ?? 0;
+    $montantAPayerInitial = $hospitalisation->montant_a_paye ?? 0;
+
+    return view('dashboard.pages.hospitalisations.create', compact(
+        'hospitalisation', 
+        'patient', 
+        'categorie_medecins', 
+        'detailsLaboratoire', 
+        'detailsPharmacie', 
+        'autresDetails',
+        'taux_assurance',
+        'dateEntree',
+        'dateSortie',
+        'tousFrais',
+        'totalInitial',
+        'ticketModerateurInitial',
+        'montantAPayerInitial'
+    ));
+}
+
+
+//     public function storeFacture(Request $request, Hospitalisation $hospitalisation)
+// {
+//     if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Comptable'])) {
+//         abort(403, 'Accès non autorisé.');
+//     }
+
+//     // Validation des données
+//     $validatedData = $request->validate([
+//         // Champs fixes
+//         'frais_pharmacie.frais_id' => 'required|exists:frais_hospitalisations,id',
+//         'frais_pharmacie.prix' => 'required|numeric|min:0',
+//         'frais_pharmacie.quantite' => 'required|integer|min:1',
+//         'frais_pharmacie.taux' => 'required|numeric|min:0|max:100',
+//         'frais_pharmacie.total' => 'required|numeric|min:0',
+        
+//         'frais_laboratoire.frais_id' => 'required|exists:frais_hospitalisations,id',
+//         'frais_laboratoire.prix' => 'required|numeric|min:0',
+//         'frais_laboratoire.quantite' => 'required|integer|min:1',
+//         'frais_laboratoire.taux' => 'required|numeric|min:0|max:100',
+//         'frais_laboratoire.total' => 'required|numeric|min:0',
+        
+//         // Frais dynamiques
+//         'frais' => 'required|array|min:1',
+//         'frais.*.frais_id' => 'required|exists:frais_hospitalisations,id',
+//         'frais.*.prix' => 'required|numeric|min:0',
+//         'frais.*.quantite' => 'required|integer|min:1',
+//         'frais.*.taux' => 'required|numeric|min:0|max:100',
+//         'frais.*.total' => 'required|numeric|min:0',
+        
+//         // Autres champs
+//         'medecin_id' => 'required|exists:medecins,id',
+//         'specialite_id' => 'required|exists:specialites,id',
+//         'date_entree' => 'required|date',
+//         'date_sortie' => 'required|date|after_or_equal:date_entree',
+//         'caution' => 'nullable|numeric|min:0',
+//         'payeur' => 'nullable|string|max:255',
+//         'total' => 'required|numeric|min:0',
+//         'ticket_moderateur' => 'required|numeric|min:0',
+//         'montant_a_paye' => 'required|numeric|min:0',
+//         'reduction' => 'nullable|numeric|min:0',
+//         'reduction_par' => 'required_if:reduction,>,1|nullable|string|max:255',
+//     ]);
+
+//     // Nettoyer le tableau des frais dynamiques
+//     $frais = array_filter($validatedData['frais'], function($key) {
+//         return is_numeric($key); // Ne garder que les indices numériques
+//     }, ARRAY_FILTER_USE_KEY);
+
+//     //dd($validatedData);
+
+//     DB::beginTransaction();
+//     try {
+//         // Mise à jour de l'hospitalisation
+//         $hospitalisation->update([
+//             'date_entree' => $validatedData['date_entree'],
+//             'date_sortie' => $validatedData['date_sortie'],
+//             'medecin_id' => $validatedData['medecin_id'],
+//             'specialite_id' => $validatedData['specialite_id'],
+//             'caution' => $validatedData['caution'] ?? 0,
+//             'payeur' => $validatedData['payeur'] ?? null,
+//             'total' => $validatedData['total'],
+//             'ticket_moderateur' => $validatedData['ticket_moderateur'],
+//             'montant_a_paye' => $validatedData['montant_a_paye'],
+//             // 'reste_a_payer' => $validatedData['montant_a_paye'] - ($validatedData['caution'] ?? 0),
+
+//             'reste_a_payer' => $validatedData['montant_a_paye'] ?? 0,
+//             'reduction' => $validatedData['reduction'] ?? 0,
+//             'reduction_par' => $validatedData['reduction_par'] ?? null,
+//             'user_id' => auth()->id(),
+//             'statut' => 'facturé'
+//         ]);
+
+//         // Supprimer les anciens détails
+//         $hospitalisation->details()->delete();
+
+//         // Combiner tous les frais (pharmacie + labo + autres)
+//         $allFrais = [
+//             $validatedData['frais_pharmacie'],
+//             $validatedData['frais_laboratoire'],
+//             ...array_values($frais)
+//         ];
+
+//         // Créer les nouveaux détails
+//         foreach ($allFrais as $fraisItem) {
+//             HospitalisationDetail::create([
+//                 'hospitalisation_id' => $hospitalisation->id,
+//                 'frais_hospitalisation_id' => $fraisItem['frais_id'],
+//                 'quantite' => $fraisItem['quantite'],
+//                 'prix_unitaire' => $fraisItem['prix'],
+//                 'taux' => $fraisItem['taux'],
+//                 'total' => $fraisItem['total']
+//             ]);
+//         }
+
+//         // Générer la facture PDF
+//         $facturePath = $this->generateFacturePdf($hospitalisation);
+//         $hospitalisation->update(['facture_path' => $facturePath]);
+
+//         DB::commit();
+
+//         return redirect()->back()
+//             ->with('swal_success', 'Facture enregistrée avec succès.')
+//             ->with('pdf_url', Storage::url($facturePath));
+
+//     } catch (\Exception $e) {
+//         DB::rollBack();
+//         Log::error('Erreur lors de l\'enregistrement de la facture', [
+//             'error' => $e->getMessage(),
+//             'trace' => $e->getTraceAsString()
+//         ]);
+        
+//         return redirect()->back()
+//             ->with('error', 'Une erreur est survenue: ' . $e->getMessage());
+//     }
+// }
+
+public function storeFacture(Request $request, Hospitalisation $hospitalisation)
+{
+    if (!Auth::user()->hasAnyRole(['Developpeur', 'Admin', 'Receptionniste', 'Facturié', 'Comptable'])) {
+        abort(403, 'Accès non autorisé.');
+    }
+
     $validatedData = $request->validate([
-        // Champs fixes
         'frais_pharmacie.frais_id' => 'required|exists:frais_hospitalisations,id',
         'frais_pharmacie.prix' => 'required|numeric|min:0',
         'frais_pharmacie.quantite' => 'required|integer|min:1',
         'frais_pharmacie.taux' => 'required|numeric|min:0|max:100',
         'frais_pharmacie.total' => 'required|numeric|min:0',
-        
+
         'frais_laboratoire.frais_id' => 'required|exists:frais_hospitalisations,id',
         'frais_laboratoire.prix' => 'required|numeric|min:0',
         'frais_laboratoire.quantite' => 'required|integer|min:1',
         'frais_laboratoire.taux' => 'required|numeric|min:0|max:100',
         'frais_laboratoire.total' => 'required|numeric|min:0',
-        
-        // Frais dynamiques
-        'frais' => 'required|array|min:1',
-        'frais.*.frais_id' => 'required|exists:frais_hospitalisations,id',
-        'frais.*.prix' => 'required|numeric|min:0',
-        'frais.*.quantite' => 'required|integer|min:1',
-        'frais.*.taux' => 'required|numeric|min:0|max:100',
-        'frais.*.total' => 'required|numeric|min:0',
-        
+
+        // Frais existants
+        'frais_existants' => 'nullable|array',
+        'frais_existants.*.frais_id' => 'required|exists:frais_hospitalisations,id',
+        'frais_existants.*.prix' => 'required|numeric|min:0',
+        'frais_existants.*.quantite' => 'required|integer|min:1',
+        'frais_existants.*.taux' => 'required|numeric|min:0|max:100',
+        'frais_existants.*.total' => 'required|numeric|min:0',
+
+        // Nouveaux frais
+        'frais_nouveaux' => 'nullable|array',
+        'frais_nouveaux.*.frais_id' => 'required|exists:frais_hospitalisations,id',
+        'frais_nouveaux.*.prix' => 'required|numeric|min:0',
+        'frais_nouveaux.*.quantite' => 'required|integer|min:1',
+        'frais_nouveaux.*.taux' => 'required|numeric|min:0|max:100',
+        'frais_nouveaux.*.total' => 'required|numeric|min:0',
+
         // Autres champs
         'medecin_id' => 'required|exists:medecins,id',
         'specialite_id' => 'required|exists:specialites,id',
         'date_entree' => 'required|date',
-        'date_sortie' => 'required|date|after_or_equal:date_entree',
+        'date_sortie' => 'nullable|date|after_or_equal:date_entree',
         'caution' => 'nullable|numeric|min:0',
         'payeur' => 'nullable|string|max:255',
         'total' => 'required|numeric|min:0',
         'ticket_moderateur' => 'required|numeric|min:0',
         'montant_a_paye' => 'required|numeric|min:0',
         'reduction' => 'nullable|numeric|min:0',
-        'reduction_par' => 'required_if:reduction,>,1|nullable|string|max:255',
+        'reduction_par' => 'required_if:reduction,>,100|nullable|string|max:255',
     ]);
 
-    // Nettoyer le tableau des frais dynamiques
-    $frais = array_filter($validatedData['frais'], function($key) {
-        return is_numeric($key); // Ne garder que les indices numériques
-    }, ARRAY_FILTER_USE_KEY);
-
-    //dd($validatedData);
-
     DB::beginTransaction();
+
     try {
-        // Mise à jour de l'hospitalisation
+        $resteAPayer = $validatedData['montant_a_paye'] - ($validatedData['caution'] ?? 0);
+        $resteAPayer = max(0, $resteAPayer);
+
         $hospitalisation->update([
             'date_entree' => $validatedData['date_entree'],
-            'date_sortie' => $validatedData['date_sortie'],
+            'date_sortie' => $validatedData['date_sortie'] ?? null,
             'medecin_id' => $validatedData['medecin_id'],
             'specialite_id' => $validatedData['specialite_id'],
             'caution' => $validatedData['caution'] ?? 0,
@@ -589,9 +767,7 @@ class HospitalisationController extends Controller
             'total' => $validatedData['total'],
             'ticket_moderateur' => $validatedData['ticket_moderateur'],
             'montant_a_paye' => $validatedData['montant_a_paye'],
-            // 'reste_a_payer' => $validatedData['montant_a_paye'] - ($validatedData['caution'] ?? 0),
-
-            'reste_a_payer' => $validatedData['montant_a_paye'] ?? 0,
+            'reste_a_payer' => $resteAPayer,
             'reduction' => $validatedData['reduction'] ?? 0,
             'reduction_par' => $validatedData['reduction_par'] ?? null,
             'user_id' => auth()->id(),
@@ -601,14 +777,35 @@ class HospitalisationController extends Controller
         // Supprimer les anciens détails
         $hospitalisation->details()->delete();
 
-        // Combiner tous les frais (pharmacie + labo + autres)
-        $allFrais = [
-            $validatedData['frais_pharmacie'],
-            $validatedData['frais_laboratoire'],
-            ...array_values($frais)
+        $allFrais = [];
+
+        // Frais fixes
+        $allFrais[] = [
+            'frais_id' => $validatedData['frais_pharmacie']['frais_id'],
+            'quantite' => $validatedData['frais_pharmacie']['quantite'],
+            'prix' => $validatedData['frais_pharmacie']['prix'],
+            'taux' => $validatedData['frais_pharmacie']['taux'],
+            'total' => $validatedData['frais_pharmacie']['total'],
+        ];
+        $allFrais[] = [
+            'frais_id' => $validatedData['frais_laboratoire']['frais_id'],
+            'quantite' => $validatedData['frais_laboratoire']['quantite'],
+            'prix' => $validatedData['frais_laboratoire']['prix'],
+            'taux' => $validatedData['frais_laboratoire']['taux'],
+            'total' => $validatedData['frais_laboratoire']['total'],
         ];
 
-        // Créer les nouveaux détails
+        // Frais existants
+        if (!empty($validatedData['frais_existants'])) {
+            $allFrais = array_merge($allFrais, array_values($validatedData['frais_existants']));
+        }
+
+        // Nouveaux frais
+        if (!empty($validatedData['frais_nouveaux'])) {
+            $allFrais = array_merge($allFrais, array_values($validatedData['frais_nouveaux']));
+        }
+
+        // Création des détails
         foreach ($allFrais as $fraisItem) {
             HospitalisationDetail::create([
                 'hospitalisation_id' => $hospitalisation->id,
@@ -620,7 +817,7 @@ class HospitalisationController extends Controller
             ]);
         }
 
-        // Générer la facture PDF
+        // Générer facture PDF
         $facturePath = $this->generateFacturePdf($hospitalisation);
         $hospitalisation->update(['facture_path' => $facturePath]);
 
@@ -636,11 +833,14 @@ class HospitalisationController extends Controller
             'error' => $e->getMessage(),
             'trace' => $e->getTraceAsString()
         ]);
-        
+
         return redirect()->back()
             ->with('error', 'Une erreur est survenue: ' . $e->getMessage());
     }
 }
+
+
+
 
     private function generateFacturePdf(Hospitalisation $hospitalisation)
     {

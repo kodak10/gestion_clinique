@@ -6,12 +6,14 @@ use App\Models\CategorieMedicament;
 use App\Models\Fournisseur;
 use App\Models\HospitalisationMedicament;
 use App\Models\Medicament;
+use App\Models\MedicamentMouvement;
 use App\Models\StockMouvement;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Barryvdh\DomPDF\Facade\Pdf;
+
 class MedicamentController extends Controller
 {
     /**
@@ -34,14 +36,11 @@ class MedicamentController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'code' => 'required|unique:medicaments|max:50',
             'nom' => 'required|max:100',
-            'unite_mesure' => 'required|max:20',
             'prix_achat' => 'required|numeric|min:0',
             'prix_vente' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'stock_alerte' => 'required|integer|min:0',
-            'date_peremption' => 'nullable|date',
         ]);
 
         if ($validator->fails()) {
@@ -55,10 +54,10 @@ class MedicamentController extends Controller
 
             // Enregistrer le mouvement de stock initial
             if ($request->stock > 0) {
-                StockMouvement::create([
+                MedicamentMouvement::create([
                     'medicament_id' => $medicament->id,
                     'user_id' => auth()->id(),
-                    'type' => 'initial',
+                    'type' => 'entree',
                     'quantite' => $request->stock,
                     'stock_avant' => 0,
                     'stock_apres' => $request->stock,
@@ -76,15 +75,13 @@ class MedicamentController extends Controller
      */
     public function update(Request $request, Medicament $medicament)
     {
+
         $validator = Validator::make($request->all(), [
-            'code' => 'required|max:50|unique:medicaments,code,'.$medicament->id,
             'nom' => 'required|max:100',
-            'unite_mesure' => 'required|max:20',
             'prix_achat' => 'required|numeric|min:0',
             'prix_vente' => 'required|numeric|min:0',
             //'stock' => 'required|integer|min:0',
             'stock_alerte' => 'required|integer|min:0',
-            'date_peremption' => 'nullable|date',
             
         ]);
 
