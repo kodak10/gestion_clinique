@@ -48,7 +48,7 @@
                                                     <a class="dropdown-item" href="{{ route('hospitalisations.pharmacie.create', ['hospitalisation' => $hospitalisation->id]) }}">Pharmacie</a>
                                                     <a class="dropdown-item" href="{{ route('hospitalisations.laboratoire.create', ['hospitalisation' => $hospitalisation->id]) }}">Laboratoire</a>
                                                     @auth
-                                                        @if(auth()->user()->hasAnyRole(['Admin', 'Développeur', 'Comptable', 'Respo Caissière']))
+                                                        @if(auth()->user()->hasAnyRole(['Admin', 'Développeur', 'Comptable', 'Respo Caissière', 'Receptionniste']))
                                                             @if($hospitalisation->status === 'present')
                                                             <form action="{{ route('hospitalisations.sortir', ['hospitalisation' => $hospitalisation->id]) }}" method="POST" class="d-inline">
                                                                 @csrf
