@@ -39,7 +39,6 @@
                                 <th>Prix Achat</th>
                                 <th>Prix Vente</th>
                                 <th>Stock</th>
-                                <th>Date Péremption</th>
                                 <th class="w-1"></th>
                             </tr>
                         </thead>
@@ -54,7 +53,6 @@
                                             {{ $medicament->stock }} {{ $medicament->unite_mesure }}
                                         </span>
                                     </td>
-                                    <td>{{ $medicament->date_peremption ? $medicament->date_peremption->format('d/m/Y') : 'N/A' }}</td>
                                     <td>
                                         <div class="btn-list flex-nowrap">
                                             <div class="dropdown">
