@@ -20,10 +20,10 @@
                         <thead>
                             <tr>
                                 <th class="w-1"></th>
+                                <th>Date d'éntrée</th>
                                 <th>Numéro de dossier</th>
                                 <th>Nom</th>
                                 <th>Prénoms</th>
-                                <th>Date de naissance</th>
                                 <th>Contact</th>
                                 <th>Montant de facture Actuel</th>
                                 <th>Total Pharmacie</th>
@@ -63,10 +63,11 @@
                                             </div>
                                         </div>
                                     </td>
+                                    <td>{{ $hospitalisation->created_at }}</td>
+
                                     <td>{{ $hospitalisation->patient->num_dossier }}</td>
                                     <td>{{ $hospitalisation->patient->nom }}</td>
                                     <td>{{ $hospitalisation->patient->prenoms }}</td>
-                                    <td>{{ $hospitalisation->patient->date_naissance }}</td>
                                     <td>{{ $hospitalisation->patient->contact_patient }}</td>
                                     <td>{{ $hospitalisation->total }}</td>
 
