@@ -38,6 +38,7 @@ class HospitalisationController extends Controller
         // Filtrer uniquement les hospitalisations dont le status est 'present'
         $hospitalisations = Hospitalisation::with('patient')
             ->where('status', 'present')
+            ->orderBy('created_at', 'desc')
             ->get();
 
         return view('dashboard.pages.hospitalisations.index', compact('hospitalisations'));
